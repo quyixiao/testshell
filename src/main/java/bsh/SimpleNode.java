@@ -43,7 +43,7 @@ package bsh;
 	try to remember to mark these as transient to highlight them.
 
 */
-class SimpleNode implements Node {
+public class SimpleNode implements Node {
     public static SimpleNode JAVACODE =
             new SimpleNode(-1) {
                 public String getSourceFile() {
@@ -62,7 +62,7 @@ class SimpleNode implements Node {
     protected Node parent;
     protected Node[] children;
     protected int id;
-    Token firstToken, lastToken;
+    public Token firstToken, lastToken;
 
     /**
      * the source of the text from which this was parsed

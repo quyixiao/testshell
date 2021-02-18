@@ -1006,6 +1006,7 @@ public class Interpreter
         return new File(file.getCanonicalPath());
     }
 
+
     public static void redirectOutputToFile(String filename) {
         try {
             PrintStream pout = new PrintStream(

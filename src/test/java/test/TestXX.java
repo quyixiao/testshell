@@ -7,12 +7,11 @@ public class TestXX {
 
 
 
-
     @Test
     public void testAMulB() throws Exception {
         Interpreter i = new Interpreter();  // Construct an interpreter
         try {
-            Object object = i.source("/Users/quyixiao/project/TShell/src/main/resources/ab.bsh");
+            Object object = i.source("/Users/quyixiao/project/testshell/src/main/resources/ab.bsh");
             System.out.println(object);
         } catch (Exception e) {
             e.printStackTrace();
@@ -20,14 +19,4 @@ public class TestXX {
     }
 
 
-    @Test
-    public void testb() throws Exception {
-        Interpreter i = new Interpreter();  // Construct an interpreter
-        try {
-            Object object = i.source("/Users/quyixiao/project/TShell/src/main/resources/for.bsh");
-            System.out.println(object);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }
