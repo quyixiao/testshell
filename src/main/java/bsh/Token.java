@@ -48,6 +48,14 @@ public class Token implements java.io.Serializable {
      */
     public int kind;
 
+
+    /**
+     * An integer that describes the kind of this token.  This numbering
+     * system is determined by JavaCCParser, and a table of these numbers is
+     * stored in the file ...Constants.java.
+     */
+    public String tKind;
+
     /**
      * beginLine and beginColumn describe the position of the first character
      * of this token; endLine and endColumn describe the position of the

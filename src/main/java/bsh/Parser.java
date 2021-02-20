@@ -6311,6 +6311,7 @@ void VariableDeclaratorId() #VariableDeclaratorId :
         return false;
     }
 
+
     public ParserTokenManager token_source;
     JavaCharStream jj_input_stream;
     public Token token, jj_nt;
