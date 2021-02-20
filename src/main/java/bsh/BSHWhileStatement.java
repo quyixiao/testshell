@@ -39,7 +39,7 @@ class BSHWhileStatement extends SimpleNode implements ParserConstants {
 
 
     BSHWhileStatement(int id) {
-        super(id);
+        super(id + "");
     }
 
 

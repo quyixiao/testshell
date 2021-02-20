@@ -27,7 +27,7 @@
 
 package bsh;
 
-class JJTParserState {
+public class JJTParserState {
     private java.util.Stack nodes;
     private java.util.Stack marks;
 
@@ -35,7 +35,7 @@ class JJTParserState {
     private int mk;        // current mark
     private boolean node_created;
 
-    JJTParserState() {
+    public JJTParserState() {
         nodes = new java.util.Stack();
         marks = new java.util.Stack();
         sp = 0;
@@ -72,7 +72,7 @@ class JJTParserState {
 
     /* Returns the node on the top of the stack, and remove it from the
        stack.  */
-    Node popNode() {
+    public Node popNode() {
         if (--sp < mk) {
             mk = ((Integer) marks.pop()).intValue();
         }
@@ -80,18 +80,18 @@ class JJTParserState {
     }
 
     /* Returns the node currently on the top of the stack. */
-    Node peekNode() {
+    public Node peekNode() {
         return (Node) nodes.peek();
     }
 
     /* Returns the number of children on the stack in the current node
        scope. */
-    int nodeArity() {
+    public int nodeArity() {
         return sp - mk;
     }
 
 
-    void clearNodeScope(Node n) {
+    public void clearNodeScope(Node n) {
         while (sp > mk) {
             popNode();
         }
@@ -99,7 +99,7 @@ class JJTParserState {
     }
 
 
-    void openNodeScope(Node n) {
+    public void openNodeScope(Node n) {
         marks.push(new Integer(mk));
         mk = sp;
         n.jjtOpen();
@@ -110,7 +110,7 @@ class JJTParserState {
        children.  That number of nodes are popped from the stack and
        made the children of the definite node.  Then the definite node
        is pushed on to the stack. */
-    void closeNodeScope(Node n, int num) {
+    public void closeNodeScope(Node n, int num) {
         mk = ((Integer) marks.pop()).intValue();
         while (num-- > 0) {
             Node c = popNode();
@@ -128,7 +128,7 @@ class JJTParserState {
        made children of the the conditional node, which is then pushed
        on to the stack.  If the condition is false the node is not
        constructed and they are left on the stack. */
-    void closeNodeScope(Node n, boolean condition) {
+    public void closeNodeScope(Node n, boolean condition) {
         if (condition) {
             int a = nodeArity();
             mk = ((Integer) marks.pop()).intValue();

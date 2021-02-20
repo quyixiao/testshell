@@ -31,7 +31,7 @@ import java.lang.reflect.Array;
 
 class BSHArrayInitializer extends SimpleNode {
     BSHArrayInitializer(int id) {
-        super(id);
+        super(id + "");
     }
 
     public Object eval(CallStack callstack, Interpreter interpreter)

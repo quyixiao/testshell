@@ -51,7 +51,7 @@ class BSHType extends SimpleNode
     String descriptor;
 
     BSHType(int id) {
-        super(id);
+        super(id + "");
     }
 
     /**

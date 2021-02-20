@@ -49,7 +49,7 @@ class BSHClassDeclaration extends SimpleNode {
     boolean isInterface;
 
     BSHClassDeclaration(int id) {
-        super(id);
+        super(id + "");
     }
 
     /**

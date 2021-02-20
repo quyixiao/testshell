@@ -1,4 +1,9 @@
-package bsh;
+package tsh;
+
+import bsh.JavaCharStream;
+import bsh.StringUtil;
+import bsh.Token;
+import bsh.TokenMgrError;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -87,6 +92,13 @@ public class TParserTokenManager extends TParserBase implements TParserConstants
         return t;
     }
 
+    protected Token jjFillTokenEof() {
+        Token t = new Token();
+        t.tKind = jjmatchedKind;
+        t.image = "";
+        return t;
+    }
+
 
     public Token getNextToken() {
         Token specialToken = null;
@@ -99,15 +111,16 @@ public class TParserTokenManager extends TParserBase implements TParserConstants
                 curChar = input_stream.BeginToken();
             } catch (java.io.IOException e) {
                 jjmatchedKind = EOF;
-                matchedToken = jjFillToken();
-                matchedToken.specialToken = specialToken;
-                return matchedToken;
+                return jjFillTokenEof();
             }
 
             jjmatchedKind = default_jjmatchedKind;            // 2147483647
             jjmatchedPos = 0;
             curPos = jjMoveStringLiteralDfa0_0();
             if (jjmatchedKind != default_jjmatchedKind) {
+                if (eqOR(jjmatchedKind, EOF)) {
+                    return jjFillTokenEof();
+                }
                 if (jjmatchedPos + 1 < curPos) {
                     input_stream.backup(curPos - jjmatchedPos - 1);
                 }
@@ -155,24 +168,14 @@ public class TParserTokenManager extends TParserBase implements TParserConstants
     }
 
     private final int jjStartNfaWithStates_0(String kind) {
-        if (eqOR(kind, TAB, SPACE, COMMA, EOF, ENTER, NEXT_LINE)) {               //如果遇到 tab ,空格， 和逗号
-            String image = input_stream.GetImage();
-            if (StringUtil.isNotBlank(image)) {       //表明前面有非空格，tab，的字符
-                String match = matchs(image.trim().toCharArray());
-                jjmatchedPos = input_stream.bufpos;
-                if (StringUtil.isNotBlank(match)) {
-                    jjmatchedKind = match;
-                } else {
-                    jjmatchedKind = LITERAL;
-                }
-                return 1;
-            } else if (eqOR(kind, EOF)) {
-                jjmatchedKind = EOF;
-                return 1;
-            }
-        } else if (eqOR(kind, LPAREN, RPAREN, LBRACE, RBRACE, LBRACKET, RBRACKET,
-                SEMICOLON, COMMA, DOT)) {
+        if (eqOR(kind, TAB, SPACE, ENTER, NEXT_LINE)) {               //如果遇到 tab ,空格， 和逗号
+            return getCommon();
+        } else if (eqOR(kind, LPAREN, RPAREN, LBRACE, RBRACE, LBRACKET, RBRACKET, SEMICOLON, COMMA, DOT)) {
             String image = input_stream.GetImage().trim();
+            if (eqOR(image, SEMICOLON)) {                            //如果是; ，略过
+                input_stream.tokenBegin += 1;
+                return 0;
+            }
             if (image.length() > 1) {
                 input_stream.backup(1);
             }
@@ -191,6 +194,9 @@ public class TParserTokenManager extends TParserBase implements TParserConstants
             return getSpecial(kind, '&', '=');
         } else if (eqOR(kind, OR)) {      // | 后面只能接 | 或 =
             return getSpecial(kind, '|', '=');
+        } else if (eqOR(kind, EOF)) {
+            jjmatchedKind = EOF;
+            return 1;
         }
         return 0;
     }
@@ -298,8 +304,6 @@ public class TParserTokenManager extends TParserBase implements TParserConstants
                     flag = jjStartNfaWithStates_0(SPACE);
                 } else if (curChar == '\r') {
                     flag = jjStartNfaWithStates_0(ENTER);
-                } else if (curChar == '\n') {
-                    flag = jjStartNfaWithStates_0(NEXT_LINE);
                 } else if (curChar == '\n') {
                     flag = jjStartNfaWithStates_0(NEXT_LINE);
                 } else if ((curChar >= 48 && curChar <= 57) || (curChar >= 65 && curChar <= 90) || (curChar >= 97 && curChar <= 122)) {

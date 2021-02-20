@@ -29,7 +29,7 @@ package bsh;
 
 class BSHPrimaryExpression extends SimpleNode {
     BSHPrimaryExpression(int id) {
-        super(id);
+        super(id + "");
     }
 
     /**

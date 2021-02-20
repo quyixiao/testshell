@@ -32,7 +32,7 @@ import java.lang.reflect.InvocationTargetException;
 
 class BSHMethodInvocation extends SimpleNode {
     BSHMethodInvocation(int id) {
-        super(id);
+        super(id + "");
     }
 
     BSHAmbiguousName getNameNode() {

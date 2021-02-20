@@ -29,7 +29,7 @@ package bsh;
 
 class BSHThrowStatement extends SimpleNode {
     BSHThrowStatement(int id) {
-        super(id);
+        super(id + "");
     }
 
     public Object eval(CallStack callstack, Interpreter interpreter)

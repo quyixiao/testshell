@@ -34,7 +34,7 @@ class BSHImportDeclaration extends SimpleNode {
     public boolean superImport;
 
     BSHImportDeclaration(int id) {
-        super(id);
+        super(id + "");
     }
 
     public Object eval(CallStack callstack, Interpreter interpreter)

@@ -48,7 +48,7 @@ class BSHMethodDeclaration extends SimpleNode {
     int numThrows = 0;
 
     BSHMethodDeclaration(int id) {
-        super(id);
+        super(id + "");
     }
 
     /**

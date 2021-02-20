@@ -3,6 +3,7 @@ package test;
 import bsh.*;
 import com.alibaba.fastjson.JSON;
 import org.junit.Test;
+import tsh.TParser;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -30,11 +31,12 @@ public class PaserTest {
     @Test
     public void testa() throws Exception{
         Reader in = new FileReader("/Users/quyixiao/project/testshell/src/main/resources/ab.bsh");
-        Parser parser = new Parser(in);
+        TParser parser = new TParser(in);
         parser.setRetainComments(true);
         while (!parser.Line()/*eof*/) {
             Node node = parser.popNode();
             System.out.println(JSON.toJSONString(node));
+            break;
         }
     }
 

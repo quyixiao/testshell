@@ -1,6 +1,10 @@
-package bsh;
+package tsh;
 
+import bsh.*;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class TParser extends TParserBase implements TParserConstants, TParserTreeConstants {
@@ -64,9 +68,9 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
     private boolean jj_rescan = false;
     private int jj_gc = 0;
     private java.util.Vector jj_expentries = new java.util.Vector();
-    private int[] jj_expentry;
+    private String[] jj_expentry;
     private String jj_kind = "-1";
-    private int[] jj_lasttokens = new int[100];
+    private String[] jj_lasttokens = new String[100];
     private int jj_endpos;
 
     boolean retainComments = false;
@@ -98,6 +102,11 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
     private static void jj_la1_4() {
         jj_la1_4 = new int[]{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x3f, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,};
     }
+
+    static private final class LookaheadSuccess extends java.lang.Error {
+    }
+
+    final private TParser.LookaheadSuccess jj_ls = new TParser.LookaheadSuccess();
 
 
     public void setRetainComments(boolean b) {
@@ -200,58 +209,160 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
         throw new Exception();
     }
 
+    final private boolean jj_scan_token(String kind) {
+        if (jj_scanpos == jj_lastpos) {
+            if (jj_scanpos.next == null) {
+                jj_lastpos = jj_scanpos = jj_scanpos.next = token_source.getNextToken();
+            } else {
+                jj_lastpos = jj_scanpos = jj_scanpos.next;
+            }
+        } else {
+            jj_scanpos = jj_scanpos.next;
+        }
+        if (!eq(jj_scanpos.tKind , kind)) return true;
+        return false;
+    }
+
+    private void jj_add_error_token(String kind, int pos) {
+        if (pos >= 100) return;
+        if (pos == jj_endpos + 1) {
+            jj_lasttokens[jj_endpos++] = kind;
+        } else if (jj_endpos != 0) {
+            jj_expentry = new String[jj_endpos];
+            for (int i = 0; i < jj_endpos; i++) {
+                jj_expentry[i] = jj_lasttokens[i];
+            }
+            boolean exists = false;
+            for (java.util.Enumeration e = jj_expentries.elements(); e.hasMoreElements(); ) {
+                String[] oldentry = (String[]) (e.nextElement());
+                if (oldentry.length == jj_expentry.length) {
+                    exists = true;
+                    for (int i = 0; i < jj_expentry.length; i++) {
+                        if (oldentry[i] != jj_expentry[i]) {
+                            exists = false;
+                            break;
+                        }
+                    }
+                    if (exists) break;
+                }
+            }
+            if (!exists) jj_expentries.addElement(jj_expentry);
+            if (pos != 0) jj_lasttokens[(jj_endpos = pos) - 1] = kind;
+        }
+    }
 
     final public void BlockStatement() throws ParseException {
-        switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
-            case VAR:
-                VariableDeclaration();
-                break;
-            case METHOD:
-                break;
-            default:
-                Statement();
-        }
-
+       if(isMethod()){
+           MethodDeclaration();
+       }
     }
 
 
     private void VariableDeclaration() {
-        /*@bgen(jjtree) VariableDeclarator */
-        BSHVariableDeclarator jjtn000 = new BSHVariableDeclarator(getId(T_VariableDeclarator));
+
+
+    }
+
+    private void MethodDeclaration()   throws ParseException{
+        /*@bgen(jjtree) MethodDeclaration */
+        TSHMethodDeclaration jjtn000 = new TSHMethodDeclaration(T_MethodDeclaration);
         boolean jjtc000 = true;
         jjtree.openNodeScope(jjtn000);
         jjtreeOpenNodeScope(jjtn000);
-        Token t;
+        Token t = null;
         try {
-            t = jj_consume_token(VAR);
-            switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
-                case ASSIGN:
-                    jj_consume_token(ASSIGN);
-                    VariableInitializer();
-                    break;
-                default:
-                    jj_la1[12] = jj_gen;
-                    ;
+            jj_consume_token(DEF);
+            t = jj_consume_token(LITERAL);
+            jjtn000.methodName = t.image;
+            FormalParameters();
+        } catch (Throwable jjte000) {
+            if (jjtc000) {
+                jjtree.clearNodeScope(jjtn000);
+                jjtc000 = false;
+            } else {
+                jjtree.popNode();
             }
-            jjtree.closeNodeScope(jjtn000, true);
-            jjtc000 = false;
-            jjtreeCloseNodeScope(jjtn000);
-            jjtn000.name = t.image;
-        } catch (Exception e) {
-            e.printStackTrace();
+            if (jjte000 instanceof RuntimeException) {
+                {
+                    if (true) throw (RuntimeException) jjte000;
+                }
+            }
+            if (jjte000 instanceof ParseException) {
+                {
+                    if (true) throw (ParseException) jjte000;
+                }
+            }
+            {
+                if (true) throw (Error) jjte000;
+            }
         } finally {
             if (jjtc000) {
                 jjtree.closeNodeScope(jjtn000, true);
                 jjtreeCloseNodeScope(jjtn000);
             }
         }
-
-
+        System.out.println(jjtn000);
     }
 
-    private void MethodDeclaration() {
 
+    final public void FormalParameters() throws ParseException {
+        TSHFormalParameters jjtn000 = new TSHFormalParameters(T_FormalParameters);
+        boolean jjtc000 = true;
+        jjtree.openNodeScope(jjtn000);
+        jjtreeOpenNodeScope(jjtn000);
+        try {
+            List<String> paramterNames = new ArrayList<>();
+            jj_consume_token(LPAREN);
+            Token t;
+            label_3:
+            while(true){
+                switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
+                    case LITERAL:
+                        t = jj_consume_token(LITERAL);
+                        paramterNames.add(t.image);
+                        break;
+                    case RPAREN:
+                        break label_3;
+                    case COMMA:
+                        jj_consume_token(COMMA);
+                        break ;
+                    default:
+                        jj_la1[17] = jj_gen;
+                        ;
+                }
+            }
+            jj_consume_token(RPAREN);
+
+            jjtn000.numArgs = paramterNames.size();
+            jjtn000.paramNames = paramterNames.toArray(new String[paramterNames.size()]);
+        } catch (Throwable jjte000) {
+            if (jjtc000) {
+                jjtree.clearNodeScope(jjtn000);
+                jjtc000 = false;
+            } else {
+                jjtree.popNode();
+            }
+            if (jjte000 instanceof RuntimeException) {
+                {
+                    if (true) throw (RuntimeException) jjte000;
+                }
+            }
+            if (jjte000 instanceof ParseException) {
+                {
+                    if (true) throw (ParseException) jjte000;
+                }
+            }
+            {
+                if (true) throw (Error) jjte000;
+            }
+        } finally {
+            if (jjtc000) {
+                jjtree.closeNodeScope(jjtn000, true);
+                jjtreeCloseNodeScope(jjtn000);
+            }
+        }
     }
+
 
     private void Statement() {
 
@@ -302,4 +413,30 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
         }
         throw new Error("Missing return statement in function");
     }
+
+
+    final private boolean isMethod() {
+        jj_lastpos = jj_scanpos = token;
+        try {
+            return !notDef();
+        } catch (TParser.LookaheadSuccess ls) {
+            return true;
+        } finally {
+
+        }
+    }
+
+
+
+    final private boolean notDef() {
+        Token xsp;
+        xsp = jj_scanpos;
+        if (jj_scan_token(DEF)) {
+            jj_scanpos = xsp;
+        }
+        return false;
+    }
+
+
+
 }

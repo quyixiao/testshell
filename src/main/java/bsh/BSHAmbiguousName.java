@@ -32,7 +32,7 @@ class BSHAmbiguousName extends SimpleNode {
     public String text;
 
     BSHAmbiguousName(int id) {
-        super(id);
+        super(id + "");
     }
 
     public Name getName(NameSpace namespace) {

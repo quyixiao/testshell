@@ -31,7 +31,7 @@ class BSHSwitchLabel extends SimpleNode {
     boolean isDefault;
 
     public BSHSwitchLabel(int id) {
-        super(id);
+        super(id + "");
     }
 
     public Object eval(

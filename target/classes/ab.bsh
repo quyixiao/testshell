@@ -1,1 +1,3 @@
-public
+def a (a ,b ){
+    println(a,b)
+}

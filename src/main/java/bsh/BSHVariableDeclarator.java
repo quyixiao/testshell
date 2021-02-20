@@ -36,7 +36,7 @@ class BSHVariableDeclarator extends SimpleNode {
     public String name;
 
     BSHVariableDeclarator(int id) {
-        super(id);
+        super(id + "");
     }
 
     /**

@@ -29,7 +29,7 @@ package bsh;
 
 class BSHStatementExpressionList extends SimpleNode {
     BSHStatementExpressionList(int id) {
-        super(id);
+        super(id + "");
     }
 
     public Object eval(CallStack callstack, Interpreter interpreter)

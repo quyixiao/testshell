@@ -31,7 +31,7 @@ class BSHAssignment extends SimpleNode implements ParserConstants {
     public int operator;
 
     BSHAssignment(int id) {
-        super(id);
+        super(id + "");
     }
 
     public Object eval(

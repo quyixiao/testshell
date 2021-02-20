@@ -38,7 +38,7 @@ package bsh;
 class BSHCastExpression extends SimpleNode {
 
     public BSHCastExpression(int id) {
-        super(id);
+        super(id + "");
     }
 
     /**

@@ -1,4 +1,4 @@
-package bsh;
+package tsh;
 
 public class TParserBase {
 

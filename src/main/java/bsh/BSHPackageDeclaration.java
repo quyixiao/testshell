@@ -31,7 +31,7 @@ package bsh;
 public class BSHPackageDeclaration extends SimpleNode {
 
     public BSHPackageDeclaration(int id) {
-        super(id);
+        super(id + "");
     }
 
     public Object eval(CallStack callstack, Interpreter interpreter)

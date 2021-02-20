@@ -36,7 +36,7 @@ import java.lang.reflect.InvocationTargetException;
  */
 class BSHAllocationExpression extends SimpleNode {
     BSHAllocationExpression(int id) {
-        super(id);
+        super(id +"");
     }
 
     private static int innerClassCount = 0;

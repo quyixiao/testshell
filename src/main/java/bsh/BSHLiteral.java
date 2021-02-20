@@ -31,7 +31,7 @@ class BSHLiteral extends SimpleNode {
     public Object value;
 
     BSHLiteral(int id) {
-        super(id);
+        super(id + "");
     }
 
     public Object eval(CallStack callstack, Interpreter interpreter)

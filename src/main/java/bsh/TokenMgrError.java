@@ -34,7 +34,7 @@ public class TokenMgrError extends Error {
     /**
      * Lexical error occured.
      */
-    static final int LEXICAL_ERROR = 0;
+    public static final int LEXICAL_ERROR = 0;
 
     /**
      * An attempt wass made to create a second instance of a static token manager.

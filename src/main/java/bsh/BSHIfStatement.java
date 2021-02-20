@@ -29,7 +29,7 @@ package bsh;
 
 class BSHIfStatement extends SimpleNode {
     BSHIfStatement(int id) {
-        super(id);
+        super(id + "");
     }
 
     public Object eval(CallStack callstack, Interpreter interpreter)

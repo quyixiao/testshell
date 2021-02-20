@@ -38,7 +38,7 @@ class BSHFormalParameters extends SimpleNode {
     String[] typeDescriptors;
 
     BSHFormalParameters(int id) {
-        super(id);
+        super(id + "");
     }
 
     void insureParsed() {

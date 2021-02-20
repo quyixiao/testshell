@@ -43,7 +43,7 @@ class BSHForStatement extends SimpleNode implements ParserConstants {
     private boolean parsed;
 
     BSHForStatement(int id) {
-        super(id);
+        super(id +"");
     }
 
     public Object eval(CallStack callstack, Interpreter interpreter)

@@ -43,7 +43,7 @@ class BSHPrimarySuffix extends SimpleNode {
     public String field;
 
     BSHPrimarySuffix(int id) {
-        super(id);
+        super(id + "");
     }
 
     /*

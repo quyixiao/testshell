@@ -32,7 +32,7 @@ import java.util.Vector;
 
 class BSHTryStatement extends SimpleNode {
     BSHTryStatement(int id) {
-        super(id);
+        super(id + "");
     }
 
     public Object eval(CallStack callstack, Interpreter interpreter)

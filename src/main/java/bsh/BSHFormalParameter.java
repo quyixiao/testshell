@@ -38,7 +38,7 @@ class BSHFormalParameter extends SimpleNode {
     public Class type;
 
     BSHFormalParameter(int id) {
-        super(id);
+        super(id + "");
     }
 
     public String getTypeDescriptor(

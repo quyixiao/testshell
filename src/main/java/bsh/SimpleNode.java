@@ -45,7 +45,7 @@ package bsh;
 */
 public class SimpleNode implements Node {
     public static SimpleNode JAVACODE =
-            new SimpleNode(-1) {
+            new SimpleNode("-1") {
                 public String getSourceFile() {
                     return "<Called from Java Code>";
                 }
@@ -61,7 +61,7 @@ public class SimpleNode implements Node {
 
     protected Node parent;
     protected Node[] children;
-    protected int id;
+    protected String id;
     public Token firstToken, lastToken;
 
     /**
@@ -69,8 +69,8 @@ public class SimpleNode implements Node {
      */
     String sourceFile;
 
-    public SimpleNode(int i) {
-        id = i;
+    public SimpleNode(String id) {
+        this.id = id;
     }
 
     public void jjtOpen() {
@@ -120,7 +120,7 @@ public class SimpleNode implements Node {
         you need to do.
     */
     public String toString() {
-        return ParserTreeConstants.jjtNodeName[id];
+        return id;
     }
 
     public String toString(String prefix) {

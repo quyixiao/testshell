@@ -32,7 +32,7 @@ class BSHUnaryExpression extends SimpleNode implements ParserConstants {
     public boolean postfix = false;
 
     BSHUnaryExpression(int id) {
-        super(id);
+        super(id + "");
     }
 
     public Object eval(CallStack callstack, Interpreter interpreter)

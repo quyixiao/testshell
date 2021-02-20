@@ -32,7 +32,7 @@ class BSHTypedVariableDeclaration extends SimpleNode {
     public Modifiers modifiers;
 
     BSHTypedVariableDeclaration(int id) {
-        super(id);
+        super(id + "");
     }
 
     private BSHType getTypeNode() {

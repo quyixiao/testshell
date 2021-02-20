@@ -29,7 +29,7 @@ package bsh;
 
 class BSHArguments extends SimpleNode {
     BSHArguments(int id) {
-        super(id);
+        super(id + "");
     }
 
     /**

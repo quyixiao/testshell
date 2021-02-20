@@ -42,7 +42,7 @@ class BSHEnhancedForStatement extends SimpleNode implements ParserConstants {
 
 
     BSHEnhancedForStatement(int id) {
-        super(id);
+        super(id + "");
     }
 
 

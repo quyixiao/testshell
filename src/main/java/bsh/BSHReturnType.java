@@ -31,7 +31,7 @@ class BSHReturnType extends SimpleNode {
     public boolean isVoid;
 
     BSHReturnType(int id) {
-        super(id);
+        super(id + "");
     }
 
     BSHType getTypeNode() {
