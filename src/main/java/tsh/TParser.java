@@ -12,6 +12,9 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
 
     public static final Map<String, Integer> idMap = new HashMap<>();
 
+
+
+
     static {
         idMap.put(T_MethodDeclaration, 1);
         idMap.put(T_VariableDeclarator, 2);
@@ -82,6 +85,10 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
         jj_la1_3();
         jj_la1_4();
     }
+
+
+
+
 
     private static void jj_la1_0() {
         jj_la1_0 = new int[]{0x1, 0x8000400, 0x8000400, 0x2000, 0x2000000, 0x0, 0x20424800, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x24424800, 0x24424800, 0x0, 0x0, 0x20424800, 0x0, 0x20424800, 0x20424800, 0x20424800, 0x0, 0x24424800, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x24424800, 0x0, 0x0, 0x24424800, 0x4000000, 0x0, 0x0, 0x24424800, 0x0, 0x0, 0x4000000, 0x0, 0x0, 0x0, 0x4000000, 0x4000000, 0x24424800, 0x0, 0x0, 0x0, 0x0, 0x0, 0x24624800, 0x40081000, 0x0, 0x0, 0x108000, 0x108000, 0x800000, 0x2c424c00, 0x24424800, 0x24424800, 0x40000000, 0x24424800, 0x0, 0x0, 0x0, 0x0, 0x24424800, 0x10000, 0x10000000,};
@@ -275,6 +282,18 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
             t = jj_consume_token(LITERAL);
             jjtn000.methodName = t.image;
             FormalParameters();
+
+
+            switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
+                case LBRACE:
+                    Block();
+                    break;
+                default:
+                    jj_la1[8] = jj_gen;
+                    jj_consume_token(default_1);
+                    throw new ParseException();
+            }
+
         } catch (Throwable jjte000) {
             if (jjtc000) {
                 jjtree.clearNodeScope(jjtn000);
@@ -301,7 +320,56 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
                 jjtreeCloseNodeScope(jjtn000);
             }
         }
-        System.out.println(jjtn000);
+    }
+
+
+    final public void Block() throws ParseException {
+        TSHBlock jjtn000 = new TSHBlock(T_Block);
+        boolean jjtc000 = true;
+        jjtree.openNodeScope(jjtn000);
+        jjtreeOpenNodeScope(jjtn000);
+        Token s = null;
+        try {
+            jj_consume_token(LBRACE);
+            label_22:
+            while (true) {
+                if (jj_2_23(1)) {
+                    ;
+                } else {
+                    break label_22;
+                }
+                BlockStatement();
+            }
+            jj_consume_token(RBRACE);
+            jjtree.closeNodeScope(jjtn000, true);
+            jjtc000 = false;
+            jjtreeCloseNodeScope(jjtn000);
+        } catch (Throwable jjte000) {
+            if (jjtc000) {
+                jjtree.clearNodeScope(jjtn000);
+                jjtc000 = false;
+            } else {
+                jjtree.popNode();
+            }
+            if (jjte000 instanceof RuntimeException) {
+                {
+                    if (true) throw (RuntimeException) jjte000;
+                }
+            }
+            if (jjte000 instanceof ParseException) {
+                {
+                    if (true) throw (ParseException) jjte000;
+                }
+            }
+            {
+                if (true) throw (Error) jjte000;
+            }
+        } finally {
+            if (jjtc000) {
+                jjtree.closeNodeScope(jjtn000, true);
+                jjtreeCloseNodeScope(jjtn000);
+            }
+        }
     }
 
 
@@ -335,6 +403,8 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
 
             jjtn000.numArgs = paramterNames.size();
             jjtn000.paramNames = paramterNames.toArray(new String[paramterNames.size()]);
+
+
         } catch (Throwable jjte000) {
             if (jjtc000) {
                 jjtree.clearNodeScope(jjtn000);
@@ -437,6 +507,80 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
         return false;
     }
 
+
+
+    final private boolean jj_2_23(int xla) {
+        jj_la = xla;
+        jj_lastpos = jj_scanpos = token;
+        try {
+            return !jj_3R_28();
+        } catch (TParser.LookaheadSuccess ls) {
+            return true;
+        } finally {
+            jj_save(22, xla);
+        }
+    }
+
+
+    final private boolean jj_3R_28() {
+        Token xsp;
+        xsp = jj_scanpos;
+        if (jjMethod()) {                       // method
+            jj_scanpos = xsp;
+            /*if (jj_3R_49()) {               // 定义一个数组类型
+                jj_scanpos = xsp;
+                if (jj_3_28()) {  // do while ,while ,for , static {}, synchronized (){} 等
+                    jj_scanpos = xsp;
+                    if (jj_3R_50()) {               // import *   ; import
+                        jj_scanpos = xsp;
+                        if (jj_3R_51()) {               // package com.lz;
+                            jj_scanpos = xsp;
+                            if (jj_3R_52()) return true;        // formal_comment
+                        }
+                    }
+                }
+            }*/
+        }
+        return false;
+    }
+
+    final private boolean jjMethod() {
+        Token xsp;
+        xsp = jj_scanpos;
+        /*if (jj_3R_126()) {              // 不是文本
+            jj_scanpos = xsp;
+            if (jj_3R_127()) return true;       // 表明是一个方法
+        }
+        if (jj_3R_43()) return true;        // 方法 （ 类型 变量， 类型 变量, ... )
+        xsp = jj_scanpos;
+        if (jj_3R_174()) jj_scanpos = xsp;          // 方法是否 throws 异常
+        xsp = jj_scanpos;
+        if (jj_3R_175()) {              //          方法参数的 { ,body ,}
+            jj_scanpos = xsp;
+            if (jj_scan_token(78)) return true;     //如果 没有 {,body,} ,则方法一定有; 表明是一个抽象方法
+        }*/
+        return false;
+    }
+
+
+    final private boolean jj_3R_126() {
+        if (jj_scan_token(LITERAL)) return true;
+        return false;
+    }
+
+    final private void jj_save(int index, int xla) {
+        TParser.JJCalls p = jj_2_rtns[index];
+        while (p.gen > jj_gen) {
+            if (p.next == null) {
+                p = p.next = new TParser.JJCalls();
+                break;
+            }
+            p = p.next;
+        }
+        p.gen = jj_gen + xla - jj_la;
+        p.first = token;
+        p.arg = xla;
+    }
 
 
 }

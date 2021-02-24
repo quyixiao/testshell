@@ -17,9 +17,9 @@ public class PaserTest {
         Reader in = new FileReader("/Users/quyixiao/project/testshell/src/main/resources/for.bsh");
         Parser parser = new Parser(in);
         parser.setRetainComments(true);
-        while (!parser.Line()/*eof*/) {
-            Node node = parser.popNode();
-            System.out.println(JSON.toJSONString(node));
+        for(int i = 0 ; i < 30 ;i ++){
+            Token token = parser.token_source.getNextToken();
+            System.out.println(token.image + "          :           " + token.kind);
         }
 
     }
@@ -33,6 +33,7 @@ public class PaserTest {
         Reader in = new FileReader("/Users/quyixiao/project/testshell/src/main/resources/ab.bsh");
         TParser parser = new TParser(in);
         parser.setRetainComments(true);
+
         while (!parser.Line()/*eof*/) {
             Node node = parser.popNode();
             System.out.println(JSON.toJSONString(node));
@@ -77,12 +78,14 @@ public class PaserTest {
 
     @Test
     public void test3() throws Exception{
-        Reader in = new FileReader("/Users/quyixiao/project/testshell/src/main/resources/abcd.bsh");
+
+
+        Reader in = new FileReader("/Users/quyixiao/project/testshell/src/main/resources/for.bsh");
         TParser parser = new TParser(in);
         parser.setRetainComments(true);
         for(int i = 0 ; i < 30 ;i ++){
             Token token = parser.token_source.getNextToken();
-            System.out.println(token.image + "          :           " + token.tKind);
+            System.out.println(token.image + "          :           " +( token.tKind == "\n" ? "\\n" : token.tKind) );
         }
     }
 

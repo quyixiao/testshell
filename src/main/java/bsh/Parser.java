@@ -102,7 +102,7 @@ public class Parser/*@bgen(jjtree)*/ implements ParserTreeConstants, ParserConst
      * Lookahead for the enhanced for statement.
      * Expect "for" "(" and then see whether we hit ":" or a ";" first.
      */
-    boolean isRegularForStatement() {
+    boolean isRegularForStatement() {                // 是 for(i  = 0 ; i < 10;i ++ ) 而不是 for ( i : list)
         int curTok = 1;
         Token tok;
         tok = getToken(curTok++);
@@ -4330,11 +4330,11 @@ void VariableDeclaratorId() #VariableDeclaratorId :
     final private boolean jj_3R_159() {
         Token xsp;
         xsp = jj_scanpos;
-        if (jj_scan_token(96)) {
+        if (jj_scan_token(96)) {                                // ||
             jj_scanpos = xsp;
-            if (jj_scan_token(97)) return true;
+            if (jj_scan_token(97)) return true;                 //  or
         }
-        if (jj_3R_148()) return true;
+        if (jj_3R_148()) return true;                           // && and
         return false;
     }
 
@@ -4361,12 +4361,12 @@ void VariableDeclaratorId() #VariableDeclaratorId :
         return false;
     }
 
-    final private boolean jj_3R_82() {
+    final private boolean jj_3R_82() {          //    // do while()表达式
         if (jj_3R_116()) return true;
         return false;
     }
 
-    final private boolean jj_3R_81() {
+    final private boolean jj_3R_81() {        //  while 表达式
         if (jj_3R_115()) return true;
         return false;
     }
@@ -4375,23 +4375,23 @@ void VariableDeclaratorId() #VariableDeclaratorId :
         if (jj_3R_135()) return true;
         Token xsp;
         xsp = jj_scanpos;
-        if (jj_3R_156()) jj_scanpos = xsp;
+        if (jj_3R_156()) jj_scanpos = xsp;                  // ? : xxx
         return false;
     }
 
-    final private boolean jj_3R_80() {
+    final private boolean jj_3R_80() { //  if 表达式
         if (jj_3R_114()) return true;
         return false;
     }
 
-    final private boolean jj_3R_79() {
+    final private boolean jj_3R_79() {      // switch 表达式
         if (jj_3R_113()) return true;
         return false;
     }
 
     final private boolean jj_3R_78() {
         if (jj_3R_112()) return true;
-        if (jj_scan_token(SEMICOLON)) return true;
+        if (jj_scan_token(SEMICOLON)) return true; //    ;
         return false;
     }
 
@@ -4460,38 +4460,38 @@ void VariableDeclaratorId() #VariableDeclaratorId :
         xsp = jj_scanpos;
         if (jj_3_22()) {
             jj_scanpos = xsp;
-            if (jj_3R_77()) {
+            if (jj_3R_77()) {               // static {}  静态代码块
                 jj_scanpos = xsp;
-                if (jj_scan_token(78)) {
+                if (jj_scan_token(78)) {        // ;
                     jj_scanpos = xsp;
-                    if (jj_3R_78()) {
+                    if (jj_3R_78()) {                   // 大概三目运算符 ? xxx: bbb ;
                         jj_scanpos = xsp;
-                        if (jj_3R_79()) {
+                        if (jj_3R_79()) {                   // switch 表达式
                             jj_scanpos = xsp;
-                            if (jj_3R_80()) {
+                            if (jj_3R_80()) {                       // if 表达式
                                 jj_scanpos = xsp;
-                                if (jj_3R_81()) {
+                                if (jj_3R_81()) {                   //  while 表达式
                                     jj_scanpos = xsp;
-                                    if (jj_3R_82()) {
+                                    if (jj_3R_82()) {                   // do while()表达式
                                         jj_scanpos = xsp;
                                         lookingAhead = true;
-                                        jj_semLA = isRegularForStatement();
+                                        jj_semLA = isRegularForStatement();     // 是 for(i  = 0 ; i < 10;i ++ ) 而不是 for ( i : list)
                                         lookingAhead = false;
                                         if (!jj_semLA || jj_3R_83()) {
                                             jj_scanpos = xsp;
-                                            if (jj_3R_84()) {
+                                            if (jj_3R_84()) {                   // for (i : list )
                                                 jj_scanpos = xsp;
-                                                if (jj_3R_85()) {
+                                                if (jj_3R_85()) {                   // break; 或 break label_1 ;
                                                     jj_scanpos = xsp;
-                                                    if (jj_3R_86()) {
+                                                    if (jj_3R_86()) {                   // continue 或 continue label_1;
                                                         jj_scanpos = xsp;
-                                                        if (jj_3R_87()) {
+                                                        if (jj_3R_87()) {               // return 表达式;
                                                             jj_scanpos = xsp;
-                                                            if (jj_3R_88()) {
+                                                            if (jj_3R_88()) {   // 或 synchronized {}
                                                                 jj_scanpos = xsp;
-                                                                if (jj_3R_89()) {
+                                                                if (jj_3R_89()) {             // 或 throw
                                                                     jj_scanpos = xsp;
-                                                                    if (jj_3R_90()) return true;
+                                                                    if (jj_3R_90()) return true;         //或 try catch
                                                                 }
                                                             }
                                                         }
@@ -4557,7 +4557,7 @@ void VariableDeclaratorId() #VariableDeclaratorId :
 
     final private boolean jj_3R_107() {
         if (jj_3R_33()) return true;
-        if (jj_3R_34()) return true;
+        if (jj_3R_34()) return true;            // += <<< 等
         if (jj_3R_39()) return true;
         return false;
     }
@@ -4703,7 +4703,7 @@ void VariableDeclaratorId() #VariableDeclaratorId :
     }
 
     final private boolean jj_3R_69() {
-        if (jj_scan_token(LPAREN)) return true;
+        if (jj_scan_token(LPAREN)) return true;  // .xx(
         Token xsp;
         xsp = jj_scanpos;
         if (jj_3R_106()) jj_scanpos = xsp;
@@ -4843,8 +4843,8 @@ void VariableDeclaratorId() #VariableDeclaratorId :
     }
 
     final private boolean jj_3_6() {
-        if (jj_scan_token(LBRACKET)) return true;
-        if (jj_scan_token(RBRACKET)) return true;
+        if (jj_scan_token(LBRACKET)) return true;       // [
+        if (jj_scan_token(RBRACKET)) return true;       // ]
         return false;
     }
 
@@ -4865,7 +4865,7 @@ void VariableDeclaratorId() #VariableDeclaratorId :
 
     final private boolean jj_3R_110() {
         if (jj_scan_token(COMMA)) return true;
-        if (jj_3R_109()) return true;
+        if (jj_3R_109()) return true;                   // int a, 或 int   [] a ,或 User a[]
         return false;
     }
 
@@ -4883,13 +4883,13 @@ void VariableDeclaratorId() #VariableDeclaratorId :
     final private boolean jj_3R_32() {
         Token xsp;
         xsp = jj_scanpos;
-        if (jj_3R_55()) {
+        if (jj_3R_55()) { // char,boolean 基本数据类型
             jj_scanpos = xsp;
-            if (jj_3R_56()) return true;
+            if (jj_3R_56()) return true; // 表明是一个类
         }
         while (true) {
             xsp = jj_scanpos;
-            if (jj_3_6()) {
+            if (jj_3_6()) { // 表明是一个数组 []
                 jj_scanpos = xsp;
                 break;
             }
@@ -4949,7 +4949,7 @@ void VariableDeclaratorId() #VariableDeclaratorId :
         Token xsp;
         while (true) {
             xsp = jj_scanpos;
-            if (jj_3R_110()) {
+            if (jj_3R_110()) {                  //定义方法参数
                 jj_scanpos = xsp;
                 break;
             }
@@ -4960,19 +4960,19 @@ void VariableDeclaratorId() #VariableDeclaratorId :
     final private boolean jj_3R_109() {
         Token xsp;
         xsp = jj_scanpos;
-        if (jj_3_5()) {
+        if (jj_3_5()) {                                 // int [] a 或 int a ,或 User a ,或 User [] a
             jj_scanpos = xsp;
-            if (jj_3R_136()) return true;
+            if (jj_3R_136()) return true;           // 一个 IDENTIFIER
         }
         return false;
     }
 
     final private boolean jj_3R_43() {
-        if (jj_scan_token(LPAREN)) return true;
+        if (jj_scan_token(LPAREN)) return true; // (
         Token xsp;
         xsp = jj_scanpos;
-        if (jj_3R_75()) jj_scanpos = xsp;
-        if (jj_scan_token(RPAREN)) return true;
+        if (jj_3R_75()) jj_scanpos = xsp; // 方法中的参数较验
+        if (jj_scan_token(RPAREN)) return true; //)
         return false;
     }
 
@@ -5133,10 +5133,10 @@ void VariableDeclaratorId() #VariableDeclaratorId :
     }
 
     final private boolean jj_3R_176() {
-        if (jj_scan_token(IDENTIFIER)) return true;
+        if (jj_scan_token(IDENTIFIER)) return true;                 // 变量名称
         Token xsp;
         xsp = jj_scanpos;
-        if (jj_3R_180()) jj_scanpos = xsp;
+        if (jj_3R_180()) jj_scanpos = xsp;                  // =
         return false;
     }
 
@@ -5163,10 +5163,11 @@ void VariableDeclaratorId() #VariableDeclaratorId :
         return false;
     }
 
+
     final private boolean jj_3R_93() {
-        if (jj_3R_41()) return true;
-        if (jj_3R_32()) return true;
-        if (jj_3R_176()) return true;
+        if (jj_3R_41()) return true;        // public ,protected  修饰符
+        if (jj_3R_32()) return true;        // 在基本数据类型或类类型 之前或后有[] 表明是一个数组
+        if (jj_3R_176()) return true;      // 数组变量名称或 =
         Token xsp;
         while (true) {
             xsp = jj_scanpos;
@@ -5194,7 +5195,7 @@ void VariableDeclaratorId() #VariableDeclaratorId :
 
     final private boolean jj_3R_132() {
         if (jj_scan_token(DOT)) return true;
-        if (jj_scan_token(IDENTIFIER)) return true;
+        if (jj_scan_token(IDENTIFIER)) return true;     // .xxx
         Token xsp;
         xsp = jj_scanpos;
         if (jj_3R_146()) jj_scanpos = xsp;
@@ -5205,8 +5206,8 @@ void VariableDeclaratorId() #VariableDeclaratorId :
         if (jj_scan_token(IMPORT)) return true;
         Token xsp;
         xsp = jj_scanpos;
-        if (jj_scan_token(48)) jj_scanpos = xsp;
-        if (jj_3R_29()) return true;
+        if (jj_scan_token(48)) jj_scanpos = xsp;            // 表示 static
+        if (jj_3R_29()) return true;                                    //表示的是一个类
         xsp = jj_scanpos;
         if (jj_3R_30()) jj_scanpos = xsp;
         if (jj_scan_token(SEMICOLON)) return true;
@@ -5224,9 +5225,9 @@ void VariableDeclaratorId() #VariableDeclaratorId :
     }
 
     final private boolean jj_3R_131() {
-        if (jj_scan_token(LBRACKET)) return true;
+        if (jj_scan_token(LBRACKET)) return true;           // [
         if (jj_3R_39()) return true;
-        if (jj_scan_token(RBRACKET)) return true;
+        if (jj_scan_token(RBRACKET)) return true;           // ]
         return false;
     }
 
@@ -5263,7 +5264,7 @@ void VariableDeclaratorId() #VariableDeclaratorId :
     final private boolean jj_3R_104() {
         Token xsp;
         xsp = jj_scanpos;
-        if (jj_3_16()) {
+        if (jj_3_16()) {                            // .class
             jj_scanpos = xsp;
             if (jj_3R_131()) {
                 jj_scanpos = xsp;
@@ -5320,26 +5321,26 @@ void VariableDeclaratorId() #VariableDeclaratorId :
     }
 
     final private boolean jj_3R_127() {
-        if (jj_3R_42()) return true;
-        if (jj_scan_token(IDENTIFIER)) return true;
+        if (jj_3R_42()) return true;            // void 或 boolean ,char ,int ,float ,double 或 类 类型
+        if (jj_scan_token(IDENTIFIER)) return true;     // 表明是一个常量
         return false;
     }
 
     final private boolean jj_3R_92() {
-        if (jj_3R_41()) return true;
+        if (jj_3R_41()) return true;                // public
         Token xsp;
         xsp = jj_scanpos;
-        if (jj_3R_126()) {
+        if (jj_3R_126()) {              // 不是文本
             jj_scanpos = xsp;
-            if (jj_3R_127()) return true;
+            if (jj_3R_127()) return true;       // 表明是一个方法
         }
-        if (jj_3R_43()) return true;
+        if (jj_3R_43()) return true;        // 方法 （ 类型 变量， 类型 变量, ... )
         xsp = jj_scanpos;
-        if (jj_3R_174()) jj_scanpos = xsp;
+        if (jj_3R_174()) jj_scanpos = xsp;          // 方法是否 throws 异常
         xsp = jj_scanpos;
-        if (jj_3R_175()) {
+        if (jj_3R_175()) {              //          方法参数的 { ,body ,}
             jj_scanpos = xsp;
-            if (jj_scan_token(78)) return true;
+            if (jj_scan_token(78)) return true;     //如果 没有 {,body,} ,则方法一定有; 表明是一个抽象方法
         }
         return false;
     }
@@ -5424,9 +5425,9 @@ void VariableDeclaratorId() #VariableDeclaratorId :
     }
 
     final private boolean jj_3R_99() {
-        if (jj_scan_token(LPAREN)) return true;
+        if (jj_scan_token(LPAREN)) return true; // (
         if (jj_3R_39()) return true;
-        if (jj_scan_token(RPAREN)) return true;
+        if (jj_scan_token(RPAREN)) return true; // )
         return false;
     }
 
@@ -5444,9 +5445,9 @@ void VariableDeclaratorId() #VariableDeclaratorId :
     final private boolean jj_3R_57() {
         Token xsp;
         xsp = jj_scanpos;
-        if (jj_3R_98()) {
+        if (jj_3R_98()) {                       // int float
             jj_scanpos = xsp;
-            if (jj_3R_99()) {
+            if (jj_3R_99()) {                   //
                 jj_scanpos = xsp;
                 if (jj_3R_100()) {
                     jj_scanpos = xsp;
@@ -5481,18 +5482,18 @@ void VariableDeclaratorId() #VariableDeclaratorId :
     }
 
     final private boolean jj_3R_91() {
-        if (jj_3R_41()) return true;
+        if (jj_3R_41()) return true;//public  abstract
         Token xsp;
         xsp = jj_scanpos;
-        if (jj_scan_token(13)) {
+        if (jj_scan_token(13)) {        //类
             jj_scanpos = xsp;
-            if (jj_3R_125()) return true;
+            if (jj_3R_125()) return true;       //接口
         }
-        if (jj_scan_token(IDENTIFIER)) return true;
+        if (jj_scan_token(IDENTIFIER)) return true;//如果不是类名或接口名，返回 true
         xsp = jj_scanpos;
-        if (jj_3R_172()) jj_scanpos = xsp;
+        if (jj_3R_172()) jj_scanpos = xsp;      //  看是否有继承 extends 验证
         xsp = jj_scanpos;
-        if (jj_3R_173()) jj_scanpos = xsp;
+        if (jj_3R_173()) jj_scanpos = xsp;              // 看是否有 implements
         if (jj_3R_38()) return true;
         return false;
     }
@@ -5553,9 +5554,9 @@ void VariableDeclaratorId() #VariableDeclaratorId :
     }
 
     final private boolean jj_3R_216() {
-        if (jj_scan_token(LPAREN)) return true;
+        if (jj_scan_token(LPAREN)) return true; // (
         if (jj_3R_32()) return true;
-        if (jj_scan_token(RPAREN)) return true;
+        if (jj_scan_token(RPAREN)) return true;     // )
         if (jj_3R_191()) return true;
         return false;
     }
@@ -5801,7 +5802,7 @@ void VariableDeclaratorId() #VariableDeclaratorId :
         Token xsp;
         while (true) {
             xsp = jj_scanpos;
-            if (jj_3R_183()) {
+            if (jj_3R_183()) {              // case 表达式: break;
                 jj_scanpos = xsp;
                 break;
             }
@@ -5813,7 +5814,7 @@ void VariableDeclaratorId() #VariableDeclaratorId :
     final private boolean jj_3R_211() {
         Token xsp;
         xsp = jj_scanpos;
-        if (jj_scan_token(87)) {
+        if (jj_scan_token(87)) {            // ~ !
             jj_scanpos = xsp;
             if (jj_scan_token(86)) return true;
         }
@@ -5824,7 +5825,7 @@ void VariableDeclaratorId() #VariableDeclaratorId :
     final private boolean jj_3R_208() {
         Token xsp;
         xsp = jj_scanpos;
-        if (jj_3R_211()) {
+        if (jj_3R_211()) {                              // ! ~
             jj_scanpos = xsp;
             if (jj_3R_212()) {
                 jj_scanpos = xsp;
@@ -5905,11 +5906,11 @@ void VariableDeclaratorId() #VariableDeclaratorId :
     final private boolean jj_3R_191() {
         Token xsp;
         xsp = jj_scanpos;
-        if (jj_3R_196()) {
+        if (jj_3R_196()) {           // + -
             jj_scanpos = xsp;
-            if (jj_3R_197()) {
+            if (jj_3R_197()) {      // ++
                 jj_scanpos = xsp;
-                if (jj_3R_198()) {
+                if (jj_3R_198()) {      // --
                     jj_scanpos = xsp;
                     if (jj_3R_199()) return true;
                 }
@@ -6053,21 +6054,21 @@ void VariableDeclaratorId() #VariableDeclaratorId :
     final private boolean jj_3R_182() {
         Token xsp;
         xsp = jj_scanpos;
-        if (jj_scan_token(84)) {
+        if (jj_scan_token(84)) {                    // <
             jj_scanpos = xsp;
-            if (jj_scan_token(85)) {
+            if (jj_scan_token(85)) {            // @lt
                 jj_scanpos = xsp;
-                if (jj_scan_token(82)) {
+                if (jj_scan_token(82)) {            // >
                     jj_scanpos = xsp;
-                    if (jj_scan_token(83)) {
+                    if (jj_scan_token(83)) {            // @gt
                         jj_scanpos = xsp;
-                        if (jj_scan_token(91)) {
+                        if (jj_scan_token(91)) {                    //
                             jj_scanpos = xsp;
-                            if (jj_scan_token(92)) {
+                            if (jj_scan_token(92)) {    //  @lteq
                                 jj_scanpos = xsp;
-                                if (jj_scan_token(93)) {
+                                if (jj_scan_token(  93)) {  // >=
                                     jj_scanpos = xsp;
-                                    if (jj_scan_token(94)) return true;
+                                    if (jj_scan_token(94)) return true; // @gteq
                                 }
                             }
                         }
@@ -6089,7 +6090,7 @@ void VariableDeclaratorId() #VariableDeclaratorId :
 
     final private boolean jj_3R_49() {
         if (jj_3R_93()) return true;
-        if (jj_scan_token(SEMICOLON)) return true;
+        if (jj_scan_token(SEMICOLON)) return true;      // ;
         return false;
     }
 
@@ -6155,13 +6156,13 @@ void VariableDeclaratorId() #VariableDeclaratorId :
     final private boolean jj_3R_28() {
         Token xsp;
         xsp = jj_scanpos;
-        if (jj_3R_46()) {
+        if (jj_3R_46()) {                           // class
             jj_scanpos = xsp;
-            if (jj_3R_47()) {
+            if (jj_3R_47()) {                       // method
                 jj_scanpos = xsp;
-                if (jj_3R_48()) {
+                if (jj_3R_48()) {                   // method
                     jj_scanpos = xsp;
-                    if (jj_3R_49()) {
+                    if (jj_3R_49()) {               // 定义一个数组类型
                         jj_scanpos = xsp;
                         if (jj_3_28()) {
                             jj_scanpos = xsp;

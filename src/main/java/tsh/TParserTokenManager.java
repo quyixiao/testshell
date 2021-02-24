@@ -4,6 +4,8 @@ import bsh.JavaCharStream;
 import bsh.StringUtil;
 import bsh.Token;
 import bsh.TokenMgrError;
+import tsh.t.TSHTuple;
+import tsh.t.Tuple2;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,7 +36,7 @@ public class TParserTokenManager extends TParserBase implements TParserConstants
         mapChar.put((int) ',', COMMA);
         mapChar.put((int) '-', MINUS);
         mapChar.put((int) '.', DOT);
-        mapChar.put((int) '/', BANG);
+        mapChar.put((int) '/', SLASH);
         mapChar.put((int) ':', COLON);
         mapChar.put((int) ';', SEMICOLON);
         mapChar.put((int) '<', LT);
@@ -65,6 +67,8 @@ public class TParserTokenManager extends TParserBase implements TParserConstants
     int jjround;
     int jjmatchedPos;
     String jjmatchedKind;
+    private boolean continueReader = false;
+    private String curKind = "";
 
 
     public TParserTokenManager(JavaCharStream stream) {
@@ -85,6 +89,13 @@ public class TParserTokenManager extends TParserBase implements TParserConstants
         Token t = new Token();
         t.tKind = jjmatchedKind;
         t.image = input_stream.GetImage().trim();
+        if (jjmatchedKind.equals(EOF) && StringUtil.isNotBlank(t.image)) {
+            if (TRUE.equals(t.image.trim())) {
+                t.tKind = TRUE;
+            } else if (FALSE.equals(t.image.trim())) {
+                t.tKind = FALSE;
+            }
+        }
         t.beginLine = input_stream.getBeginLine();
         t.beginColumn = input_stream.getBeginColumn();
         t.endLine = input_stream.getEndLine();
@@ -117,9 +128,12 @@ public class TParserTokenManager extends TParserBase implements TParserConstants
             jjmatchedKind = default_jjmatchedKind;            // 2147483647
             jjmatchedPos = 0;
             curPos = jjMoveStringLiteralDfa0_0();
+            if(curPos == -1){
+                continue ;
+            }
             if (jjmatchedKind != default_jjmatchedKind) {
                 if (eqOR(jjmatchedKind, EOF)) {
-                    return jjFillTokenEof();
+                    return jjFillToken();
                 }
                 if (jjmatchedPos + 1 < curPos) {
                     input_stream.backup(curPos - jjmatchedPos - 1);
@@ -168,32 +182,103 @@ public class TParserTokenManager extends TParserBase implements TParserConstants
     }
 
     private final int jjStartNfaWithStates_0(String kind) {
-        if (eqOR(kind, TAB, SPACE, ENTER, NEXT_LINE)) {               //如果遇到 tab ,空格， 和逗号
+        if (!continueReader && eqOR(kind, TAB, SPACE)) {               //如果遇到 tab ,空格， 和逗号
             return getCommon();
-        } else if (eqOR(kind, LPAREN, RPAREN, LBRACE, RBRACE, LBRACKET, RBRACKET, SEMICOLON, COMMA, DOT)) {
+        } else if (!continueReader && eqOR(kind, ENTER, NEXT_LINE)) {
+            String image = input_stream.GetImage().trim();
+            if (image.length() > 0) {
+                input_stream.backup(1);
+            } else {
+                jjmatchedPos = input_stream.bufpos;
+                jjmatchedKind = NEXT_LINE;
+                return 1;   //
+            }
+            return getCommon();
+        } else if (!continueReader && eqOR(kind, CONTINUE_LINE)) {
+            char c = readChar();
+            if (c > 0) {
+                input_stream.backup(1);
+            }
+            String temp = c + "";
+            if (c == 0 || StringUtil.isBlank(temp)) {
+                String image = input_stream.GetImage().trim();
+                if (image.length() > 1) {
+                    input_stream.backup(1);
+                    return getCommon();
+                } else {
+                    Tuple2<Boolean,Integer> line = readUtilChar('\n').getData();
+                    int i =  line.getSecond() + input_stream.GetImage().length() -1  ;
+                    input_stream.tokenBegin += i;
+                    return -1;
+                }
+            }
+        } else if (!continueReader && eqOR(kind, LPAREN, RPAREN, LBRACE, RBRACE, LBRACKET, RBRACKET, SEMICOLON, COMMA, DOT)) {
             String image = input_stream.GetImage().trim();
             if (eqOR(image, SEMICOLON)) {                            //如果是; ，略过
                 input_stream.tokenBegin += 1;
-                return 0;
+                return -1;
             }
             if (image.length() > 1) {
                 input_stream.backup(1);
             }
             return getCommon();
-        } else if (eqOR(kind, LT)) { //如果是小于号，可能是<=，<<=,<< 三种情况
+        } else if (!continueReader && eqOR(kind, LT)) { //如果是小于号，可能是<=，<<=,<< 三种情况
             return getSpecial(kind, '<', '=');
-        } else if (eqOR(kind, GT)) {//可能会出现的情况>=，>>，>>>，>>=，>>>=
+        } else if (!continueReader && eqOR(kind, GT)) {//可能会出现的情况>=，>>，>>>，>>=，>>>=
             return getSpecial(kind, '=', '>');
-        } else if (eqOR(kind, ASSIGN, BANG, STAR, SLASH, XOR, MOD)) {     // = ,! ,* ,/ ,^,% ,后面只能接 =
+        } else if (!continueReader && eqOR(kind, SLASH)) {     // / 号后面只能接 = 但是，如果 //,/**... */ 表示注释,下面主要是对注释处理
+            char c = readChar();
+            input_stream.backup(1);
+            if (c == '/') {       //表示注释
+                Tuple2<Boolean, Integer> line = readUtilChar('\n').getData();
+                if (line.getFirst()) {
+                    input_stream.backup(1);
+                }
+                int i = line.getSecond() + input_stream.GetImage().length() - 1;
+                input_stream.tokenBegin += i;
+                return -1;                                  //返回-1 表示略过 所解析的字符  , //表示注释
+            } else if (c == '*') {                        // /* .... */ 也表示注释
+                readChar();         //读取当前 *
+                int i = input_stream.GetImage().length() - 1;
+                while(true){
+                    Tuple2<Boolean, Integer> line = readUtilChar('*').getData();
+                    i += line.getSecond();
+                    char temp = readChar();
+                    if(temp == '/'){
+                        i = i + 1 ;
+                        break;
+                    }
+                }
+                input_stream.tokenBegin += i;
+                return -1;
+            }
             return getSpecial(kind, '=');
-        } else if (eqOR(kind, PLUS)) {            // + 号后面能接 +,=
+        } else if (!continueReader && eqOR(kind, ASSIGN, BANG, STAR, XOR, MOD)) {     // = ,! ,* ,/ ,^,% ,后面只能接 =
+            return getSpecial(kind, '=');
+        } else if (!continueReader && eqOR(kind, PLUS)) {            // + 号后面能接 +,=
             return getSpecial(kind, '+', '=');
-        } else if (eqOR(kind, MINUS)) {           // - 号后面 只能接 - 或 = ，组成 -= 或--
+        } else if (!continueReader && eqOR(kind, MINUS)) {           // - 号后面 只能接 - 或 = ，组成 -= 或--
             return getSpecial(kind, '-', '=');
-        } else if (eqOR(kind, AND)) {     // & 后面只能接 & 或 =
+        } else if (!continueReader && eqOR(kind, AND)) {     // & 后面只能接 & 或 =
             return getSpecial(kind, '&', '=');
-        } else if (eqOR(kind, OR)) {      // | 后面只能接 | 或 =
+        } else if (!continueReader && eqOR(kind, OR)) {      // | 后面只能接 | 或 =
             return getSpecial(kind, '|', '=');
+        } else if (eqOR(kind, DOUBLE_QUOT, SINGLE_QUOT)) {      // " 双引号处理,' 单引号处理
+            if (continueReader && eqOR(kind, curKind)) {
+                input_stream.backup(2);
+                char c = readChar();
+                readChar();
+                if (c == '\\') {//表示继续
+                    return 0;
+                }
+                continueReader = !continueReader;
+                curKind = "";
+                return getCommon();
+            }
+            if (!continueReader) {
+                continueReader = !continueReader;
+                curKind = kind;
+            }
         } else if (eqOR(kind, EOF)) {
             jjmatchedKind = EOF;
             return 1;
@@ -210,7 +295,11 @@ public class TParserTokenManager extends TParserBase implements TParserConstants
             return getCommon();
         } else {
             char c = readChar();
-            input_stream.backup(1);
+            if (c > 0) {
+                input_stream.backup(1);
+            } else {
+                return getCommon();
+            }
             boolean flag = true;
             for (char m : matches) {
                 if (c == m) {
@@ -229,9 +318,25 @@ public class TParserTokenManager extends TParserBase implements TParserConstants
         try {
             return input_stream.readChar();
         } catch (IOException e) {
-            e.printStackTrace();
+
         }
         return 0;
+    }
+
+
+    public TSHTuple readUtilChar(char compare) {
+        int i = 0;
+        while (true) {
+            try {
+                char c = input_stream.readChar();
+                ++i;
+                if (c == compare) {
+                    return new TSHTuple(true,i);
+                }
+            } catch (IOException e) {
+                return new TSHTuple(false,i);
+            }
+        }
     }
 
     public int getCommon() {
@@ -248,6 +353,7 @@ public class TParserTokenManager extends TParserBase implements TParserConstants
         }
         return 0;
     }
+
 
     public static String matchs(char[] buffer) {
         List<Integer> locations = new ArrayList<>();
@@ -311,8 +417,11 @@ public class TParserTokenManager extends TParserBase implements TParserConstants
                 } else {
                     flag = jjStartNfaWithStates_0(mapChar.get(new Integer(curChar)));
                 }
-                if (flag > 0) {
+                if (flag > 0 ) {
                     return input_stream.bufpos + 1;
+                }
+                if( flag == -1){
+                    return -1;
                 }
                 curChar = input_stream.readChar();
             } catch (IOException e) {

@@ -1,3 +1,4 @@
-def a (a ,b ){
-    println(a,b)
+def sum(a,b){
+    return a + b
 }
+println(sum(1,2))

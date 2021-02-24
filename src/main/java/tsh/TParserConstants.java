@@ -36,7 +36,16 @@ public interface TParserConstants {
     String METHOD = "method";                            //方法
     String VAR = "var";                            //变量
     String EXPORT = "export";                            // 变量导出
+
     String LITERAL = "literal";                            // 字符字面量
+    String BOOL = "bool";                            // bool 数据类型
+    String STR = "str";                            // 字符串数据类型
+    String NUMBER = "number";                            // 数字类型
+    String LIST = "list";                            // 列表类型
+    String SET = "set";                            // set 数据类型
+    String MAP = "map";                              // map 类型
+    String TUPLE = "tuple";                          //元组类型
+
 
     String LPAREN = "(";                        //  (
     String RPAREN = ")";                        //  )
