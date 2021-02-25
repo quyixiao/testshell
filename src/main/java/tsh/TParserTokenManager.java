@@ -273,7 +273,9 @@ public class TParserTokenManager extends TParserBase implements TParserConstants
                 }
                 continueReader = !continueReader;
                 curKind = "";
-                return getCommon();
+                int position = getCommon();
+                jjmatchedKind = STR;
+                return position;
             }
             if (!continueReader) {
                 continueReader = !continueReader;
@@ -347,7 +349,7 @@ public class TParserTokenManager extends TParserBase implements TParserConstants
             if (StringUtil.isNotBlank(match)) {
                 jjmatchedKind = match;
             } else {
-                jjmatchedKind = LITERAL;
+                jjmatchedKind = IDENTIFIER;
             }
             return 2;
         }
@@ -413,7 +415,7 @@ public class TParserTokenManager extends TParserBase implements TParserConstants
                 } else if (curChar == '\n') {
                     flag = jjStartNfaWithStates_0(NEXT_LINE);
                 } else if ((curChar >= 48 && curChar <= 57) || (curChar >= 65 && curChar <= 90) || (curChar >= 97 && curChar <= 122)) {
-                    flag = jjStartNfaWithStates_0(LITERAL);
+                    flag = jjStartNfaWithStates_0(IDENTIFIER);
                 } else {
                     flag = jjStartNfaWithStates_0(mapChar.get(new Integer(curChar)));
                 }

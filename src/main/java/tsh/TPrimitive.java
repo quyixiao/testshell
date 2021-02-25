@@ -25,9 +25,9 @@
  *****************************************************************************/
 
 
-package bsh;
+package tsh;
 
-import tsh.entity.TBigDecimal;
+import bsh.*;
 
 import java.util.Hashtable;
 
@@ -40,7 +40,7 @@ import java.util.Hashtable;
  * @author Pat Niemeyer
  * @author Daniel Leuck
  */
-public final class Primitive implements ParserConstants, java.io.Serializable {
+public final class TPrimitive implements ParserConstants, java.io.Serializable {
 	/*
 	Note: this class is final because we may test == Primitive.class in places.
 	If we need to change that search for those tests.
@@ -106,20 +106,20 @@ public final class Primitive implements ParserConstants, java.io.Serializable {
         NULL means "no value".
         This ia a placeholder for primitive null value.
     */
-    public static final Primitive NULL = new Primitive(Special.NULL_VALUE);
+    public static final TPrimitive NULL = new TPrimitive(Special.NULL_VALUE);
 
-    public static Primitive TRUE = new Primitive(true);
-    public static Primitive FALSE = new Primitive(false);
+    public static TPrimitive TRUE = new TPrimitive(true);
+    public static TPrimitive FALSE = new TPrimitive(false);
 
     /**
      * VOID means "no type".
      * Strictly speaking, this makes no sense here.  But for practical
      * reasons we'll consider the lack of a type to be a special value.
      */
-    public static final Primitive VOID = new Primitive(Special.VOID_TYPE);
+    public static final TPrimitive VOID = new TPrimitive(Special.VOID_TYPE);
 
     // private to prevent invocation with param that isn't a primitive-wrapper
-    public Primitive(Object value) {
+    public TPrimitive(Object value) {
         if (value == null)
             throw new InterpreterError(
                     "Use Primitve.NULL instead of Primitive(null)");
@@ -133,37 +133,37 @@ public final class Primitive implements ParserConstants, java.io.Serializable {
         this.value = value;
     }
 
-    public Primitive(boolean value) {
+    public TPrimitive(boolean value) {
         this(value ? Boolean.TRUE : Boolean.FALSE);
     }
 
 
 
-    public Primitive(byte value) {
+    public TPrimitive(byte value) {
         this(new Byte(value));
     }
 
-    public Primitive(short value) {
+    public TPrimitive(short value) {
         this(new Short(value));
     }
 
-    public Primitive(char value) {
+    public TPrimitive(char value) {
         this(new Character(value));
     }
 
-    public Primitive(int value) {
+    public TPrimitive(int value) {
         this(new Integer(value));
     }
 
-    public Primitive(long value) {
+    public TPrimitive(long value) {
         this(new Long(value));
     }
 
-    public Primitive(float value) {
+    public TPrimitive(float value) {
         this(new Float(value));
     }
 
-    public Primitive(double value) {
+    public TPrimitive(double value) {
         this(new Double(value));
     }
 
@@ -195,12 +195,12 @@ public final class Primitive implements ParserConstants, java.io.Serializable {
      * Primitive.VOID or null value for type of Primitive.NULL
      */
     public Class getType() {
-        if (this == Primitive.VOID)
+        if (this == TPrimitive.VOID)
             return Void.TYPE;
 
         // NULL return null as type... we currently use null type to indicate
         // loose typing throughout bsh.
-        if (this == Primitive.NULL)
+        if (this == TPrimitive.NULL)
             return null;
 
         return unboxType(value.getClass());
@@ -229,10 +229,10 @@ public final class Primitive implements ParserConstants, java.io.Serializable {
         Class rhsOrgType = obj2.getClass();
 
         // Unwrap primitives
-        if (obj1 instanceof Primitive)
-            obj1 = ((Primitive) obj1).getValue();
-        if (obj2 instanceof Primitive)
-            obj2 = ((Primitive) obj2).getValue();
+        if (obj1 instanceof TPrimitive)
+            obj1 = ((TPrimitive) obj1).getValue();
+        if (obj2 instanceof TPrimitive)
+            obj2 = ((TPrimitive) obj2).getValue();
 
         Object[] operands = promotePrimitives(obj1, obj2);
         Object lhs = operands[0];
@@ -251,13 +251,13 @@ public final class Primitive implements ParserConstants, java.io.Serializable {
 
 
         if (result instanceof Boolean)
-            return ((Boolean) result).booleanValue() ? Primitive.TRUE :
-                    Primitive.FALSE;
+            return ((Boolean) result).booleanValue() ? TPrimitive.TRUE :
+                    TPrimitive.FALSE;
             // If both original args were Primitives return a Primitive result
             // else it was mixed (wrapper/primitive) return the wrapper type
             // Exception is for boolean result, return the primitive
-        else if ((lhsOrgType == Primitive.class && rhsOrgType == Primitive.class))
-            return new Primitive(result);
+        else if ((lhsOrgType == TPrimitive.class && rhsOrgType == TPrimitive.class))
+            return new TPrimitive(result);
         else
             return result;
     }
@@ -621,7 +621,7 @@ public final class Primitive implements ParserConstants, java.io.Serializable {
         return new Object[]{lhs, rhs};
     }
 
-    public static Primitive unaryOperation(Primitive val, int kind)
+    public static TPrimitive unaryOperation(TPrimitive val, int kind)
             throws UtilEvalError {
         if (val == NULL)
             throw new UtilEvalError(
@@ -635,27 +635,27 @@ public final class Primitive implements ParserConstants, java.io.Serializable {
 
         if (operand instanceof Boolean)
             return booleanUnaryOperation((Boolean) operand, kind)
-                    ? Primitive.TRUE : Primitive.FALSE;
+                    ? TPrimitive.TRUE : TPrimitive.FALSE;
         else if (operand instanceof Integer) {
             int result = intUnaryOperation((Integer) operand, kind);
 
             // ++ and -- must be cast back the original type
             if (kind == INCR || kind == DECR) {
                 if (operandType == Byte.TYPE)
-                    return new Primitive((byte) result);
+                    return new TPrimitive((byte) result);
                 if (operandType == Short.TYPE)
-                    return new Primitive((short) result);
+                    return new TPrimitive((short) result);
                 if (operandType == Character.TYPE)
-                    return new Primitive((char) result);
+                    return new TPrimitive((char) result);
             }
 
-            return new Primitive(result);
+            return new TPrimitive(result);
         } else if (operand instanceof Long)
-            return new Primitive(longUnaryOperation((Long) operand, kind));
+            return new TPrimitive(longUnaryOperation((Long) operand, kind));
         else if (operand instanceof Float)
-            return new Primitive(floatUnaryOperation((Float) operand, kind));
+            return new TPrimitive(floatUnaryOperation((Float) operand, kind));
         else if (operand instanceof Double)
-            return new Primitive(doubleUnaryOperation((Double) operand, kind));
+            return new TPrimitive(doubleUnaryOperation((Double) operand, kind));
         else
             throw new InterpreterError(
                     "An error occurred.  Please call technical support.");
@@ -777,8 +777,8 @@ public final class Primitive implements ParserConstants, java.io.Serializable {
      * wrapped value.
      */
     public boolean equals(Object obj) {
-        if (obj instanceof Primitive)
-            return ((Primitive) obj).value.equals(this.value);
+        if (obj instanceof TPrimitive)
+            return ((TPrimitive) obj).value.equals(this.value);
         else
             return false;
     }
@@ -801,12 +801,12 @@ public final class Primitive implements ParserConstants, java.io.Serializable {
      */
     public static Object unwrap(Object obj) {
         // map voids to nulls for the outside world
-        if (obj == Primitive.VOID)
+        if (obj == TPrimitive.VOID)
             return null;
 
         // unwrap primitives
-        if (obj instanceof Primitive)
-            return ((Primitive) obj).getValue();
+        if (obj instanceof TPrimitive)
+            return ((TPrimitive) obj).getValue();
         else
             return obj;
     }
@@ -846,38 +846,22 @@ public final class Primitive implements ParserConstants, java.io.Serializable {
     public static Object wrap(
             Object value, Class type) {
         if (type == Void.TYPE)
-            return Primitive.VOID;
+            return TPrimitive.VOID;
 
         if (value == null)
-            return Primitive.NULL;
+            return TPrimitive.NULL;
 
         if (value instanceof Boolean)
-            return ((Boolean) value).booleanValue() ? Primitive.TRUE :
-                    Primitive.FALSE;
+            return ((Boolean) value).booleanValue() ? TPrimitive.TRUE :
+                    TPrimitive.FALSE;
 
         if (type.isPrimitive() && isWrapperType(value.getClass()))
-            return new Primitive(value);
+            return new TPrimitive(value);
 
         return value;
     }
 
 
-    /**
-     * Get the appropriate default value per JLS 4.5.4
-     */
-    public static Primitive getDefaultValue(Class type) {
-        if (type == null || !type.isPrimitive())
-            return Primitive.NULL;
-        if (type == Boolean.TYPE)
-            return Primitive.FALSE;
-
-        // non boolean primitive, get appropriate flavor of zero
-        try {
-            return new Primitive((int) 0).castToType(type, Types.CAST);
-        } catch (UtilEvalError e) {
-            throw new InterpreterError("bad cast");
-        }
-    }
 
     /**
      * Get the corresponding java.lang wrapper class for the primitive TYPE
@@ -905,123 +889,7 @@ public final class Primitive implements ParserConstants, java.io.Serializable {
                 "Not a primitive wrapper type: " + wrapperType);
     }
 
-    /**
-     * Cast this bsh.Primitive value to a new bsh.Primitive value
-     * This is usually a numeric type cast.  Other cases include:
-     * A boolean can be cast to boolen
-     * null can be cast to any object type and remains null
-     * Attempting to cast a void causes an exception
-     *
-     * @param toType is the java object or primitive TYPE class
-     */
-    public Primitive castToType(Class toType, int operation)
-            throws UtilEvalError {
-        return castPrimitive(
-                toType, getType()/*fromType*/, this/*fromValue*/,
-                false/*checkOnly*/, operation);
-    }
 
-    /*
-        Cast or check a cast of a primitive type to another type.
-        Normally both types are primitive (e.g. numeric), but a null value
-        (no type) may be cast to any type.
-        <p/>
-
-        @param toType is the target type of the cast.  It is normally a
-        java primitive TYPE, but in the case of a null cast can be any object
-        type.
-
-        @param fromType is the java primitive TYPE type of the primitive to be
-        cast or null, to indicate that the fromValue was null or void.
-
-        @param fromValue is, optionally, the value to be converted.  If
-        checkOnly is true fromValue must be null.  If checkOnly is false,
-        fromValue must be non-null (Primitive.NULL is of course valid).
-    */
-    static Primitive castPrimitive(
-            Class toType, Class fromType, Primitive fromValue,
-            boolean checkOnly, int operation)
-            throws UtilEvalError {
-		/*
-			Lots of preconditions checked here...
-			Once things are running smoothly we might comment these out
-			(That's what assertions are for).
-		*/
-        if (checkOnly && fromValue != null)
-            throw new InterpreterError("bad cast param 1");
-        if (!checkOnly && fromValue == null)
-            throw new InterpreterError("bad cast param 2");
-        if (fromType != null && !fromType.isPrimitive())
-            throw new InterpreterError("bad fromType:" + fromType);
-        if (fromValue == Primitive.NULL && fromType != null)
-            throw new InterpreterError("inconsistent args 1");
-        if (fromValue == Primitive.VOID && fromType != Void.TYPE)
-            throw new InterpreterError("inconsistent args 2");
-
-        // can't cast void to anything
-        if (fromType == Void.TYPE)
-            if (checkOnly)
-                return Types.INVALID_CAST;
-            else
-                throw Types.castError(Reflect.normalizeClassName(toType),
-                        "void value", operation);
-
-        // unwrap Primitive fromValue to its wrapper value, etc.
-        Object value = null;
-        if (fromValue != null)
-            value = fromValue.getValue();
-
-        if (toType.isPrimitive()) {
-            // Trying to cast null to primitive type?
-            if (fromType == null)
-                if (checkOnly)
-                    return Types.INVALID_CAST;
-                else
-                    throw Types.castError(
-                            "primitive type:" + toType, "Null value", operation);
-
-            // fall through
-        } else {
-            // Trying to cast primitive to an object type
-            // Primitive.NULL can be cast to any object type
-            if (fromType == null)
-                return checkOnly ? Types.VALID_CAST :
-                        Primitive.NULL;
-
-            if (checkOnly)
-                return Types.INVALID_CAST;
-            else
-                throw Types.castError(
-                        "object type:" + toType, "primitive value", operation);
-        }
-
-        // can only cast boolean to boolean
-        if (fromType == Boolean.TYPE) {
-            if (toType != Boolean.TYPE)
-                if (checkOnly)
-                    return Types.INVALID_CAST;
-                else
-                    throw Types.castError(toType, fromType, operation);
-
-            return checkOnly ? Types.VALID_CAST :
-                    fromValue;
-        }
-
-        // Do numeric cast
-
-        // Only allow legal Java assignment unless we're a CAST operation
-        if (operation == Types.ASSIGNMENT
-                && !Types.isJavaAssignable(toType, fromType)
-        ) {
-            if (checkOnly)
-                return Types.INVALID_CAST;
-            else
-                throw Types.castError(toType, fromType, operation);
-        }
-
-        return checkOnly ? Types.VALID_CAST :
-                new Primitive(castWrapper(toType, value));
-    }
 
     public static boolean isWrapperType(Class type) {
         return wrapperMap.get(type) != null && !type.isPrimitive();

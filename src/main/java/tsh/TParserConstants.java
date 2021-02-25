@@ -37,7 +37,7 @@ public interface TParserConstants {
     String VAR = "var";                            //变量
     String EXPORT = "export";                            // 变量导出
 
-    String LITERAL = "literal";                            // 字符字面量
+    String IDENTIFIER = "identifier";                            // 字符字面量
     String BOOL = "bool";                            // bool 数据类型
     String STR = "str";                            // 字符串数据类型
     String NUMBER = "number";                            // 数字类型
@@ -87,8 +87,8 @@ public interface TParserConstants {
     String NE = "!=";                            //  !=
     String INCR = "++";                         //  ++
     String DECR = "--";                         //  --
-    String BIT_AND = "&&";                      //  &&
-    String BIT_OR = "||";                       //  ||
+    String BOOL_AND = "&&";                      //  &&
+    String BOOL_OR = "||";                       //  ||
     String LSHIFT = "<<";                       //  <<
     String RSIGNEDSHIFT = ">>";                 //  >>
     String RUNSIGNEDSHIFT = ">>>";               //  >>>
@@ -137,7 +137,7 @@ public interface TParserConstants {
             DOT,
 
             ASSIGN, GT, LT, BANG, OR, AND, PLUS, MINUS, STAR, SLASH, XOR, MOD,
-            EQ, LE, GE, NE, INCR, DECR, BIT_AND, BIT_OR, LSHIFT, RSIGNEDSHIFT, RUNSIGNEDSHIFT, PLUSASSIGN, MINUSASSIGN,
+            EQ, LE, GE, NE, INCR, DECR, BOOL_AND, BOOL_OR, LSHIFT, RSIGNEDSHIFT, RUNSIGNEDSHIFT, PLUSASSIGN, MINUSASSIGN,
             STARASSIGN, SLASHASSIGN, ANDASSIGN, ORASSIGN, XORASSIGN, MODASSIGN, LSHIFTASSIGN, RSIGNEDSHIFTASSIGN, RUNSIGNEDSHIFTASSIGN,
     });
 

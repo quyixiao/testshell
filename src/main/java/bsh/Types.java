@@ -32,7 +32,7 @@ package bsh;
  * <p>
  * The following are notes on type comparison and conversion in BeanShell.
  */
-class Types {
+public class Types {
     /*
         Type conversion identifiers.  An ASSIGNMENT allows conversions that would
         normally happen on assignment.  A CAST performs numeric conversions to smaller
