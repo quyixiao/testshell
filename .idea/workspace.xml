@@ -2,30 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="bf17aaba-8d77-4716-bfb7-937d90bf1bb7" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/tsh/TPrimitive.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/tsh/TSHAmbiguousName.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/tsh/TSHArguments.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/tsh/TSHAssignment.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/tsh/TSHBinaryExpression.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/tsh/TSHFormalParameter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/tsh/TSHLiteral.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/tsh/TSHMethodInvocation.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/tsh/TSHPrimaryExpression.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/tsh/TSHPrimarySuffix.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/tsh/TSHTernaryExpression.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/tsh/TSHUnaryExpression.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/tsh/entity/TBigDecimal.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/tsh/util/BigDecimalUtil.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/tsh/util/NumberUtil.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/tsh/TSHForStatement.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/tsh/TSHIfStatement.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/tsh/TSHReturnStatement.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/tsh/TSHSwitchLabel.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/tsh/TSHSwitchStatement.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/tsh/TSHWhileStatement.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/bsh/Primitive.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bsh/Primitive.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/bsh/StringUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bsh/StringUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/bsh/Types.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bsh/Types.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/tsh/TParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tsh/TParser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tsh/TParserConstants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tsh/TParserConstants.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tsh/TParserTokenManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tsh/TParserTokenManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/bsh/StringUtil.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/for.bsh" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/for.bsh" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -262,7 +246,7 @@
       <workItem from="1614129992282" duration="20296000" />
       <workItem from="1614174767261" duration="4000" />
       <workItem from="1614175344631" duration="1885000" />
-      <workItem from="1614215558106" duration="10634000" />
+      <workItem from="1614215558106" duration="12516000" />
     </task>
     <servers />
   </component>
@@ -274,11 +258,11 @@
       <screen x="46" y="0" width="1394" height="900" />
     </state>
     <state x="697" y="0" key="#com.intellij.fileTypes.FileTypeChooser/46.0.1394.900/-1080.-1954.1080.1920/0.-1080.1920.1080@0.-1080.1920.1080" timestamp="1613610741067" />
-    <state x="1001" y="0" key="#com.intellij.ide.util.MemberChooser" timestamp="1614224757604">
+    <state x="1001" y="0" key="#com.intellij.ide.util.MemberChooser" timestamp="1614229869843">
       <screen x="49" y="0" width="1391" height="900" />
     </state>
     <state x="773" y="0" key="#com.intellij.ide.util.MemberChooser/47.0.1393.900/-1080.-1954.1080.1920/0.-1080.1920.1080@0.-1080.1920.1080" timestamp="1613787536522" />
-    <state x="1001" y="0" key="#com.intellij.ide.util.MemberChooser/49.0.1391.900/-1080.-1954.1080.1920/0.-1080.1920.1080@0.-1080.1920.1080" timestamp="1614224757604" />
+    <state x="1001" y="0" key="#com.intellij.ide.util.MemberChooser/49.0.1391.900/-1080.-1954.1080.1920/0.-1080.1920.1080@0.-1080.1920.1080" timestamp="1614229869843" />
     <state x="633" y="0" key="#com.intellij.refactoring.move.MoveHandler.SelectRefactoringDialog" timestamp="1612774573771">
       <screen x="51" y="0" width="1389" height="900" />
     </state>
@@ -684,14 +668,15 @@
       <screen x="49" y="0" width="1391" height="900" />
     </state>
     <state x="49" y="0" key="SettingsEditor/49.0.1391.900/-1920.-1080.1920.1080@-1920.-1080.1920.1080" timestamp="1612925544899" />
-    <state x="548" y="233" width="544" height="437" key="StructurePopup" timestamp="1614176683563">
-      <screen x="47" y="0" width="1393" height="900" />
+    <state x="691" y="-800" width="750" height="525" key="StructurePopup" timestamp="1614229013476">
+      <screen x="0" y="-1080" width="1920" height="1080" />
     </state>
     <state x="690" y="-801" width="543" height="524" key="StructurePopup/39.0.1401.900/-1080.-1954.1080.1920/0.-1080.1920.1080@0.-1080.1920.1080" timestamp="1613702087000" />
     <state x="690" y="-801" width="543" height="524" key="StructurePopup/40.0.1400.900/-1080.-1954.1080.1920/0.-1080.1920.1080@0.-1080.1920.1080" timestamp="1613705739902" />
     <state x="690" y="-801" width="543" height="524" key="StructurePopup/41.0.1399.900/-1080.-1954.1080.1920/0.-1080.1920.1080@0.-1080.1920.1080" timestamp="1613643509220" />
     <state x="690" y="-801" width="543" height="524" key="StructurePopup/46.0.1394.900/-1080.-1954.1080.1920/0.-1080.1920.1080@0.-1080.1920.1080" timestamp="1613815804905" />
     <state x="548" y="233" width="544" height="437" key="StructurePopup/47.0.1393.900@47.0.1393.900" timestamp="1614176683563" />
+    <state x="691" y="-800" width="750" height="525" key="StructurePopup/49.0.1391.900/-1080.-1954.1080.1920/0.-1080.1920.1080@0.-1080.1920.1080" timestamp="1614229013476" />
     <state x="549" y="233" width="543" height="437" key="StructurePopup/49.0.1391.900@49.0.1391.900" timestamp="1613833455512" />
     <state x="691" y="-800" width="750" height="525" key="StructurePopup/51.0.1389.900/-1080.-1954.1080.1920/0.-1080.1920.1080@0.-1080.1920.1080" timestamp="1614060868684" />
     <state x="597" y="-912" width="963" height="868" key="find.popup" timestamp="1614224842803">
