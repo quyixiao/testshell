@@ -2236,7 +2236,6 @@ public class TParser extends Utils implements TParserConstants, TParserTreeConst
     }
 
     final public void MethodInvocation() throws ParseException {
-        /*@bgen(jjtree) MethodInvocation */
         TSHMethodInvocation jjtn000 = new TSHMethodInvocation(T_MethodInvocation);
         boolean jjtc000 = true;
         jjtree.openNodeScope(jjtn000);
@@ -2329,7 +2328,7 @@ public class TParser extends Utils implements TParserConstants, TParserTreeConst
                     tBigDecimal.setValue(NumberUtil.objToBigDecimalDefault(literal, BigDecimal.ZERO));
                     tBigDecimal.setPrecision(NumberUtil.getPrecision(literal));
                     try {
-                        jjtn000.value = new Primitive(tBigDecimal);
+                        jjtn000.value = tBigDecimal;
                     } catch (NumberFormatException e) {
                         {
                             if (true) throw createParseException(

@@ -20,6 +20,11 @@ public class TSHPrimaryExpression extends SimpleNode {
         }
     }
 
+    public Object eval(CallStack callstack, Interpreter interpreter)
+            throws EvalError {
+        return eval(false, callstack, interpreter);
+    }
+
 
     private Object eval(boolean toLHS, CallStack callstack, Interpreter interpreter)throws EvalError {
         Object obj = jjtGetChild(0);

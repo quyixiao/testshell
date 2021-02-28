@@ -29,12 +29,16 @@ package tsh.expression;
 
 import tsh.Types;
 import tsh.constant.TParserConstants;
+import tsh.entity.TBigDecimal;
 import tsh.exception.InterpreterError;
 import tsh.exception.UtilEvalError;
 import tsh.exception.UtilTargetError;
+import tsh.util.NumberUtil;
 import tsh.util.Reflect;
+import tsh.util.StringUtil;
 import tsh.util.Utils;
 
+import java.math.BigDecimal;
 import java.util.Hashtable;
 
 /**
@@ -67,6 +71,7 @@ public final class Primitive implements TParserConstants, java.io.Serializable {
         wrapperMap.put(Long.class, Long.TYPE);
         wrapperMap.put(Float.class, Float.TYPE);
         wrapperMap.put(Double.class, Double.TYPE);
+        wrapperMap.put(TBigDecimal.class, TBigDecimal.class);
     }
 
     /**
@@ -212,9 +217,8 @@ public final class Primitive implements TParserConstants, java.io.Serializable {
         if (obj2 instanceof Primitive)
             obj2 = ((Primitive) obj2).getValue();
 
-        Object[] operands = promotePrimitives(obj1, obj2);
-        Object lhs = operands[0];
-        Object rhs = operands[1];
+        Object lhs = obj1;
+        Object rhs = obj2;
 
         if (lhs.getClass() != rhs.getClass())
             throw new UtilEvalError("Type mismatch in operator.  "
@@ -229,11 +233,7 @@ public final class Primitive implements TParserConstants, java.io.Serializable {
 
 
         if (result instanceof Boolean)
-            return ((Boolean) result).booleanValue() ? Primitive.TRUE :
-                    Primitive.FALSE;
-            // If both original args were Primitives return a Primitive result
-            // else it was mixed (wrapper/primitive) return the wrapper type
-            // Exception is for boolean result, return the primitive
+            return ((Boolean) result).booleanValue() ? Primitive.TRUE : Primitive.FALSE;
         else if ((lhsOrgType == Primitive.class && rhsOrgType == Primitive.class))
             return new Primitive(result);
         else
@@ -244,16 +244,20 @@ public final class Primitive implements TParserConstants, java.io.Serializable {
             throws UtilEvalError {
         if (lhs instanceof Boolean)
             return booleanBinaryOperation((Boolean) lhs, (Boolean) rhs, kind);
-        else if (lhs instanceof Integer)
-            return intBinaryOperation((Integer) lhs, (Integer) rhs, kind);
-        else if (lhs instanceof Long)
-            return longBinaryOperation((Long) lhs, (Long) rhs, kind);
-        else if (lhs instanceof Float)
-            return floatBinaryOperation((Float) lhs, (Float) rhs, kind);
-        else if (lhs instanceof Double)
-            return doubleBinaryOperation((Double) lhs, (Double) rhs, kind);
-        else
+        else if (lhs instanceof TBigDecimal && rhs instanceof  TBigDecimal){
+            int lp = ((TBigDecimal) lhs).getPrecision();
+            int rp = ((TBigDecimal) lhs).getPrecision();
+            if(lp == 0 && rp == 0 ){
+                Integer result = (Integer) intBinaryOperation(((TBigDecimal) lhs).getValue().intValue(), ((TBigDecimal) rhs).getValue().intValue(), kind);
+                return new TBigDecimal(new BigDecimal(result),0);
+            }else{
+                Double d = (Double) bigdecimalBinaryOperation(((TBigDecimal) lhs).getValue(),  ((TBigDecimal) rhs).getValue(), kind);
+                return new TBigDecimal(new BigDecimal(d), NumberUtil.getPrecision(d + ""));
+            }
+        }else {
             throw new UtilEvalError("Invalid types in binary operator");
+        }
+
     }
 
     static Boolean booleanBinaryOperation(Boolean B1, Boolean B2, String kind) {
@@ -278,71 +282,6 @@ public final class Primitive implements TParserConstants, java.io.Serializable {
         }
     }
 
-    // returns Object covering both Long and Boolean return types
-    static Object longBinaryOperation(Long L1, Long L2, String kind) {
-        long lhs = L1.longValue();
-        long rhs = L2.longValue();
-
-        switch (kind) {
-            // boolean
-            case LT:
-                return lhs < rhs ? Boolean.TRUE : Boolean.FALSE;
-
-            case GT:
-                return lhs > rhs ? Boolean.TRUE : Boolean.FALSE;
-
-            case EQ:
-                return lhs == rhs ? Boolean.TRUE : Boolean.FALSE;
-
-            case LE:
-                return lhs <= rhs ? Boolean.TRUE : Boolean.FALSE;
-
-            case GE:
-                return lhs >= rhs ? Boolean.TRUE : Boolean.FALSE;
-
-            case NE:
-                return lhs != rhs ? Boolean.TRUE : Boolean.FALSE;
-
-            // arithmetic
-            case PLUS:
-                return new Long(lhs + rhs);
-
-            case MINUS:
-                return new Long(lhs - rhs);
-
-            case STAR:
-                return new Long(lhs * rhs);
-
-            case SLASH:
-                return new Long(lhs / rhs);
-
-            case MOD:
-                return new Long(lhs % rhs);
-
-            // bitwise
-            case LSHIFT:
-                return new Long(lhs << rhs);
-
-            case RSIGNEDSHIFT:
-                return new Long(lhs >> rhs);
-
-            case RUNSIGNEDSHIFT:
-                return new Long(lhs >>> rhs);
-
-            case AND:
-                return new Long(lhs & rhs);
-
-            case OR:
-                return new Long(lhs | rhs);
-
-            case XOR:
-                return new Long(lhs ^ rhs);
-
-            default:
-                throw new InterpreterError(
-                        "Unimplemented binary long operator");
-        }
-    }
 
     // returns Object covering both Integer and Boolean return types
     static Object intBinaryOperation(Integer I1, Integer I2, String kind) {
@@ -410,9 +349,7 @@ public final class Primitive implements TParserConstants, java.io.Serializable {
         }
     }
 
-    // returns Object covering both Double and Boolean return types
-    static Object doubleBinaryOperation(Double D1, Double D2, String kind)
-            throws UtilEvalError {
+    static Object bigdecimalBinaryOperation(BigDecimal D1, BigDecimal D2, String kind) throws UtilEvalError {
         double lhs = D1.doubleValue();
         double rhs = D2.doubleValue();
 
@@ -436,7 +373,6 @@ public final class Primitive implements TParserConstants, java.io.Serializable {
             case NE:
                 return lhs != rhs ? Boolean.TRUE : Boolean.FALSE;
 
-            // arithmetic
             case PLUS:
                 return new Double(lhs + rhs);
 
@@ -452,7 +388,6 @@ public final class Primitive implements TParserConstants, java.io.Serializable {
             case MOD:
                 return new Double(lhs % rhs);
 
-            // can't shift floating-point values
             case LSHIFT:
             case RSIGNEDSHIFT:
             case RUNSIGNEDSHIFT:
@@ -464,62 +399,7 @@ public final class Primitive implements TParserConstants, java.io.Serializable {
         }
     }
 
-    // returns Object covering both Long and Boolean return types
-    static Object floatBinaryOperation(Float F1, Float F2, String kind)
-            throws UtilEvalError {
-        float lhs = F1.floatValue();
-        float rhs = F2.floatValue();
 
-        switch (kind) {
-            // boolean
-            case LT:
-                return lhs < rhs ? Boolean.TRUE : Boolean.FALSE;
-
-            case GT:
-                return lhs > rhs ? Boolean.TRUE : Boolean.FALSE;
-
-            case EQ:
-                return lhs == rhs ? Boolean.TRUE : Boolean.FALSE;
-
-            case LE:
-                return lhs <= rhs ? Boolean.TRUE : Boolean.FALSE;
-
-            case GE:
-                return lhs >= rhs ? Boolean.TRUE : Boolean.FALSE;
-
-            case NE:
-                return lhs != rhs ? Boolean.TRUE : Boolean.FALSE;
-
-            case PLUS:
-                return new Float(lhs + rhs);
-
-            case MINUS:
-                return new Float(lhs - rhs);
-
-            case STAR:
-                return new Float(lhs * rhs);
-
-            case SLASH:
-                return new Float(lhs / rhs);
-
-            case MOD:
-                return new Float(lhs % rhs);
-
-            // can't shift floats
-            case LSHIFT:
-            case RSIGNEDSHIFT:
-            case RUNSIGNEDSHIFT:
-                throw new UtilEvalError("Can't shift floats ");
-
-            default:
-                throw new InterpreterError(
-                        "Unimplemented binary float operator");
-        }
-    }
-
-    /**
-     * Promote primitive wrapper type to to Integer wrapper type
-     */
     static Object promoteToInteger(Object wrapper) {
         if (wrapper instanceof Character)
             return new Integer(((Character) wrapper).charValue());
@@ -529,40 +409,6 @@ public final class Primitive implements TParserConstants, java.io.Serializable {
         return wrapper;
     }
 
-    /**
-     * Promote the pair of primitives to the maximum type of the two.
-     * e.g. [int,long]->[long,long]
-     */
-    static Object[] promotePrimitives(Object lhs, Object rhs) {
-        lhs = promoteToInteger(lhs);
-        rhs = promoteToInteger(rhs);
-
-        if ((lhs instanceof Number) && (rhs instanceof Number)) {
-            Number lnum = (Number) lhs;
-            Number rnum = (Number) rhs;
-
-            boolean b;
-
-            if ((b = (lnum instanceof Double)) || (rnum instanceof Double)) {
-                if (b)
-                    rhs = new Double(rnum.doubleValue());
-                else
-                    lhs = new Double(lnum.doubleValue());
-            } else if ((b = (lnum instanceof Float)) || (rnum instanceof Float)) {
-                if (b)
-                    rhs = new Float(rnum.floatValue());
-                else
-                    lhs = new Float(lnum.floatValue());
-            } else if ((b = (lnum instanceof Long)) || (rnum instanceof Long)) {
-                if (b)
-                    rhs = new Long(rnum.longValue());
-                else
-                    lhs = new Long(lnum.longValue());
-            }
-        }
-
-        return new Object[]{lhs, rhs};
-    }
 
     public static Primitive unaryOperation(Primitive val, String kind)
             throws UtilEvalError {

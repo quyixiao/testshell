@@ -8,6 +8,15 @@ public class TBigDecimal {
 
     private int precision;  //精度
 
+
+    public TBigDecimal() {
+    }
+
+    public TBigDecimal(BigDecimal value, int precision) {
+        this.value = value;
+        this.precision = precision;
+    }
+
     public BigDecimal getValue() {
         return value;
     }
@@ -22,5 +31,14 @@ public class TBigDecimal {
 
     public void setPrecision(int precision) {
         this.precision = precision;
+    }
+
+
+    @Override
+    public String toString() {
+        return "TBigDecimal{" +
+                "value=" + value +
+                ", precision=" + precision +
+                '}';
     }
 }

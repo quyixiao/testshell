@@ -1,6 +1,9 @@
 package tsh.expression;
 
-import tsh.*;
+import tsh.CallStack;
+import tsh.Interpreter;
+import tsh.LHS;
+import tsh.SimpleNode;
 import tsh.constant.TParserConstants;
 import tsh.exception.EvalError;
 import tsh.exception.InterpreterError;
@@ -31,7 +34,7 @@ public class TSHAssignment extends SimpleNode implements TParserConstants {
         // the rhs.  This is correct Java behavior for postfix operations
         // e.g. i=1; i+=i++; // should be 2 not 3
         Object lhsValue = null;
-        if (operator != ASSIGN) // assign doesn't need the pre-value
+        if (Utils.notEq(operator, ASSIGN)) // assign doesn't need the pre-value
             try {
                 lhsValue = lhs.getValue();
             } catch (UtilEvalError e) {

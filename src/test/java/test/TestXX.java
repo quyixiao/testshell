@@ -21,6 +21,11 @@ public class TestXX {
 
 
 
+    @Test
+    public void a (){
+        double a = 1  / 0.5;
+        System.out.println(a);
+    }
 
 
 }
