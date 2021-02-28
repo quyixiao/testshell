@@ -1,35 +1,19 @@
 package test;
 
-import bsh.*;
 import com.alibaba.fastjson.JSON;
 import org.junit.Test;
+import tsh.Node;
 import tsh.TParser;
+import tsh.Token;
 
 import java.io.FileReader;
-import java.io.IOException;
 import java.io.Reader;
 
 public class PaserTest {
 
 
-
-    public static void main(String[] args) throws IOException, ParseException {
-        Reader in = new FileReader("/Users/quyixiao/project/testshell/src/main/resources/for.bsh");
-        Parser parser = new Parser(in);
-        parser.setRetainComments(true);
-        for(int i = 0 ; i < 30 ;i ++){
-            Token token = parser.token_source.getNextToken();
-            System.out.println(token.image + "          :           " + token.kind);
-        }
-
-    }
-
-
-
-
-
     @Test
-    public void testa() throws Exception{
+    public void testa() throws Exception {
         Reader in = new FileReader("/Users/quyixiao/project/testshell/src/main/resources/ab.bsh");
         TParser parser = new TParser(in);
         parser.setRetainComments(true);
@@ -42,10 +26,8 @@ public class PaserTest {
     }
 
 
-
-
     @Test
-    public void test() throws Exception{
+    public void test() throws Exception {
         Reader in = new FileReader("/Users/quyixiao/project/testshell/src/main/resources/tab.tsh");
         TParser parser = new TParser(in);
         parser.setRetainComments(true);
@@ -59,33 +41,28 @@ public class PaserTest {
     }
 
 
-
-
     @Test
-    public void test2() throws Exception{
+    public void test2() throws Exception {
         Reader in = new FileReader("/Users/quyixiao/project/testshell/src/main/resources/abcd.bsh");
         TParser parser = new TParser(in);
         parser.setRetainComments(true);
-        for(int i = 0 ; i < 30 ;i ++){
+        for (int i = 0; i < 30; i++) {
             Token token = parser.token_source.getNextToken();
-            System.out.println(token.image + " " + token.tKind);
+            System.out.println(token.image + " " + token.kind);
         }
     }
 
 
-
-
-
     @Test
-    public void test3() throws Exception{
+    public void test3() throws Exception {
 
 
         Reader in = new FileReader("/Users/quyixiao/project/testshell/src/main/resources/for.bsh");
         TParser parser = new TParser(in);
         parser.setRetainComments(true);
-        for(int i = 0 ; i < 30 ;i ++){
+        for (int i = 0; i < 30; i++) {
             Token token = parser.token_source.getNextToken();
-            System.out.println(token.image + "          :           " +( token.tKind == "\n" ? "\\n" : token.tKind) );
+            System.out.println(token.image + "          :           " + (token.kind == "\n" ? "\\n" : token.kind));
         }
     }
 

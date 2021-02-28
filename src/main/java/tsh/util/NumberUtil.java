@@ -1,6 +1,6 @@
 package tsh.util;
 
-import bsh.StringUtil;
+
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -427,12 +427,15 @@ public class NumberUtil {
 
     public static int getPrecision(String literal) {
         int a = literal.indexOf(".");
+        if(a == -1 ){
+            return 0;
+        }
         return literal.length() - a -1 ;
     }
 
     public static void main(String[] args) {
 
-        System.out.println(getPrecision("123.1"));
+        System.out.println(getPrecision("1"));
     }
 
 }

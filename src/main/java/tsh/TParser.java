@@ -1,14 +1,21 @@
 package tsh;
 
-import bsh.*;
+import tsh.constant.TParserConstants;
+import tsh.constant.TParserTreeConstants;
 import tsh.entity.TBigDecimal;
+import tsh.exception.ParseException;
+import tsh.expression.*;
+import tsh.util.JavaCharStream;
 import tsh.util.NumberUtil;
+import tsh.util.TParserTokenManager;
+import tsh.util.Utils;
 
+import java.io.Reader;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TParser extends TParserBase implements TParserConstants, TParserTreeConstants {
+public class TParser extends Utils implements TParserConstants, TParserTreeConstants {
 
 
     public static final Map<String, Integer> idMap = new HashMap<>();
@@ -48,9 +55,9 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
     }
 
 
-    protected JJTParserState jjtree = new JJTParserState();
+    public JJTParserState jjtree = new JJTParserState();
     public TParserTokenManager token_source;
-    JavaCharStream jj_input_stream;
+    public JavaCharStream jj_input_stream;
     public Token token, jj_nt;
     private String jj_ntk;
     private Token jj_scanpos, jj_lastpos;
@@ -139,6 +146,32 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
         ((SimpleNode) n).lastToken = getToken(0);
     }
 
+    public void reInitInput(Reader in) {
+        ReInit(in);
+    }
+
+    public void ReInit(java.io.Reader stream) {
+        jj_input_stream.ReInit(stream, 1, 1);
+        token_source.ReInit(jj_input_stream);
+        token = new Token();
+        jj_ntk = default_1;
+        jjtree.reset();
+        jj_gen = 0;
+        for (int i = 0; i < 88; i++) {
+            jj_la1[i] = -1;
+        }
+        for (int i = 0; i < jj_2_rtns.length; i++) {
+            jj_2_rtns[i] = new TParser.JJCalls();
+        }
+    }
+
+
+    public void reInitTokenInput(Reader in) {
+        jj_input_stream.ReInit(in,
+                jj_input_stream.getEndLine(),
+                jj_input_stream.getEndColumn());
+    }
+
 
     final public Token getToken(int index) {
         Token t = lookingAhead ? jj_scanpos : token;
@@ -169,9 +202,9 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
 
     final private String jj_ntk() {
         if ((jj_nt = token.next) == null) {
-            return (jj_ntk = (token.next = token_source.getNextToken()).tKind);
+            return (jj_ntk = (token.next = token_source.getNextToken()).kind);
         } else {
-            return (jj_ntk = jj_nt.tKind);
+            return (jj_ntk = jj_nt.kind);
         }
     }
 
@@ -191,7 +224,7 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
             token = token.next = token_source.getNextToken();
         }
         jj_ntk = default_1;
-        if (eq(token.tKind, kind)) {
+        if (eq(token.kind, kind)) {
             jj_gen++;
             if (++jj_gc > 100) {
                 jj_gc = 0;
@@ -223,9 +256,9 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
         return token;
     }
 
-
     final private boolean jj_scan_token(String kind) {
         if (jj_scanpos == jj_lastpos) {
+            jj_la--;
             if (jj_scanpos.next == null) {
                 jj_lastpos = jj_scanpos = jj_scanpos.next = token_source.getNextToken();
             } else {
@@ -234,8 +267,67 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
         } else {
             jj_scanpos = jj_scanpos.next;
         }
-        if (!eq(jj_scanpos.tKind, kind)) return true;
+        if (jj_rescan) {
+            int i = 0;
+            Token tok = token;
+            while (tok != null && tok != jj_scanpos) {
+                i++;
+                tok = tok.next;
+            }
+            if (tok != null) jj_add_error_token(kind, i);
+        }
+        if (!eq(jj_scanpos.kind, kind)) return true;
+        if (jj_la == 0 && jj_scanpos == jj_lastpos) throw jj_ls;
         return false;
+    }
+
+    //没有匹配到返回 true ，匹配到了返回 false
+    final private boolean jj_scan_token_util(String kind) {
+        while (true) {
+            if (jj_scanpos == jj_lastpos) {
+                if (jj_scanpos.next == null) {
+                    jj_lastpos = jj_scanpos = jj_scanpos.next = token_source.getNextToken();
+                } else {
+                    jj_lastpos = jj_scanpos = jj_scanpos.next;
+                }
+            } else {
+                jj_scanpos = jj_scanpos.next;
+            }
+            if (eq(jj_scanpos.kind, kind)) {
+                return false;
+            }
+            if (eqOR(jj_scanpos.kind, NEXT_LINE)) {
+                return true;
+            }
+        }
+    }
+
+    //匹配到了，返回 false,没有匹配到，返回 true
+    final private boolean jj_scan_token_util(String match, String kind) {
+        int flag = 0;
+        while (true) {
+            if (jj_scanpos == jj_lastpos) {
+                if (jj_scanpos.next == null) {
+                    jj_lastpos = jj_scanpos = jj_scanpos.next = token_source.getNextToken();
+                } else {
+                    jj_lastpos = jj_scanpos = jj_scanpos.next;
+                }
+            } else {
+                jj_scanpos = jj_scanpos.next;
+            }
+            if (eq(jj_scanpos.kind, match)) {
+                flag++;
+                continue;
+            }
+            if (flag == 0 && eq(jj_scanpos.kind, kind)) {
+                return false;
+            } else {
+                flag--;
+            }
+            if (eqOR(jj_scanpos.kind, NEXT_LINE)) {
+                return true;
+            }
+        }
     }
 
     private void jj_add_error_token(String kind, int pos) {
@@ -269,14 +361,11 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
     final public void BlockStatement() throws ParseException {
         if (isMethod()) {
             MethodDeclaration();
+        } else {
+            Statement();
         }
     }
 
-
-    private void VariableDeclaration() {
-
-
-    }
 
     private void MethodDeclaration() throws ParseException {
         TSHMethodDeclaration jjtn000 = new TSHMethodDeclaration(T_MethodDeclaration);
@@ -442,7 +531,7 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
             jjtreeCloseNodeScope(jjtn000);
             jjtn000.name = t.image;
             t = getNextToken();
-            if (eq(t.tKind, ASSIGN)) { //如果是等于号
+            if (eq(t.kind, ASSIGN)) { //如果是等于号
                 Expression();
             }
         } catch (Throwable jjte000) {
@@ -478,8 +567,8 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
      * Statement syntax follows.
      */
     final public void Statement() throws ParseException {
-        if (jj_2_22(2)) {
-            LabeledStatement();
+        if (jj_3_40(3)) {
+            LabeledStatement();                         // break lable_;的情况
         } else {
             switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
                 case LBRACE:
@@ -515,7 +604,7 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
                     jj_la1[69] = jj_gen;
                     switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
                         case FOR:
-                            EnhancedForStatement();
+                            ForStatement();
                             break;
                         case BREAK:
                             BreakStatement();
@@ -697,7 +786,6 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
     }
 
 
-
     final public void SwitchLabel() throws ParseException {
         TSHSwitchLabel jjtn000 = new TSHSwitchLabel(T_SwitchLabel);
         boolean jjtc000 = true;
@@ -801,7 +889,7 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
     }
 
 
-    final public void EnhancedForStatement() throws ParseException {
+    final public void ForStatement() throws ParseException {
         TSHForStatement jjtn000 = new TSHForStatement(T_ForStatement);
         boolean jjtc000 = true;
         jjtree.openNodeScope(jjtn000);
@@ -811,7 +899,7 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
             jj_consume_token(FOR);                  // for
             jj_consume_token(LPAREN);               // (
             t = jj_consume_token(IDENTIFIER);       // i
-            jj_consume_token(COLON);                // :
+            jj_consume_token(IN);                // in
             Expression();                           // range(1,10)
             jj_consume_token(RPAREN);               // )
             Statement();                            // {}
@@ -905,7 +993,6 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
     }
 
     final public void ReturnStatement() throws ParseException {     // return 表达式 ;
-        /*@bgen(jjtree) ReturnStatement */
         TSHReturnStatement jjtn000 = new TSHReturnStatement(T_ReturnStatement);
         boolean jjtc000 = true;
         jjtree.openNodeScope(jjtn000);
@@ -966,14 +1053,25 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
 
     final public void VariableInitializer() throws Exception {
         switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
+            case LBRACKET:
+                ListInitializer();
+                break;
             case LBRACE:
-                //ArrayInitializer();
+                MapInitializer();
+                break;
+            case LPAREN:
+                if (isTuple(2147483647)) { //如果是元组
+                    TupleInitializer();
+                } else {
+                    Expression();
+                }
                 break;
             case FALSE:
             case NULL:
             case TRUE:
+            case STR:
+            case NUMBER:
             case IDENTIFIER:
-            case LPAREN:
             case BANG:
             case TILDE:
             case INCR:
@@ -1001,6 +1099,8 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
                 case IDENTIFIER:
                 case LPAREN:
                 case BANG:
+                case STR:
+                case NUMBER:
                 case TILDE:
                 case INCR:
                 case DECR:
@@ -1012,6 +1112,235 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
                     jj_la1[23] = jj_gen;
                     jj_consume_token(default_1);
                     throw new ParseException();
+            }
+        }
+    }
+
+
+    final public void ListInitializer() throws ParseException {
+        TSHListInitializer jjtn000 = new TSHListInitializer(T_ListInitializer);
+        boolean jjtc000 = true;
+        jjtree.openNodeScope(jjtn000);
+        jjtreeOpenNodeScope(jjtn000);
+        try {
+            jj_consume_token(LBRACKET);
+            switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
+                case NUMBER:
+                case FALSE:
+                case NULL:
+                case TRUE:
+                case STR:
+                case IDENTIFIER:
+                case LPAREN:
+                case LBRACE:
+                case BANG:
+                case TILDE:
+                case INCR:
+                case DECR:
+                case PLUS:
+                case MINUS:
+                    VariableInitializer();
+                    label_2:
+                    while (true) {
+                        if (jj_scan_token(COMMA)) {
+                            ;
+                        } else {
+                            break label_2;
+                        }
+                        jj_consume_token(COMMA);
+                        VariableInitializer();
+                    }
+                    break;
+                default:
+                    jj_la1[14] = jj_gen;
+            }
+            switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
+                case COMMA:
+                    jj_consume_token(COMMA);
+                    break;
+                default:
+                    jj_la1[15] = jj_gen;
+                    ;
+            }
+            jj_consume_token(RBRACKET);
+        } catch (Throwable jjte000) {
+            if (jjtc000) {
+                jjtree.clearNodeScope(jjtn000);
+                jjtc000 = false;
+            } else {
+                jjtree.popNode();
+            }
+            if (jjte000 instanceof RuntimeException) {
+                {
+                    if (true) throw (RuntimeException) jjte000;
+                }
+            }
+            if (jjte000 instanceof ParseException) {
+                {
+                    if (true) throw (ParseException) jjte000;
+                }
+            }
+            {
+                if (true) throw (Error) jjte000;
+            }
+        } finally {
+            if (jjtc000) {
+                jjtree.closeNodeScope(jjtn000, true);
+                jjtreeCloseNodeScope(jjtn000);
+            }
+        }
+    }
+
+    /*  { 'abc': 123, 98.6: 37 }   写法 */
+    final public void MapInitializer() throws ParseException {
+        TSHMapInitializer jjtn000 = new TSHMapInitializer(T_MapInitializer);
+        boolean jjtc000 = true;
+        jjtree.openNodeScope(jjtn000);
+        jjtreeOpenNodeScope(jjtn000);
+        try {
+            jj_consume_token(LBRACE);
+            switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
+                case NUMBER:
+                case FALSE:
+                case NULL:
+                case TRUE:
+                case STR:
+                case IDENTIFIER:
+                case LPAREN:
+                case LBRACE:
+                case BANG:
+                case TILDE:
+                case INCR:
+                case DECR:
+                case PLUS:
+                case MINUS:
+                    VariableInitializer();
+                    jj_consume_token(COLON);
+                    VariableInitializer();
+                    label_2:
+                    while (true) {
+                        if (jj_2_4(2)) {
+                            ;
+                        } else {
+                            break label_2;
+                        }
+                        jj_consume_token(COMMA);
+                        VariableInitializer();
+                        jj_consume_token(COLON);
+                        VariableInitializer();
+                    }
+                    break;
+                default:
+                    jj_la1[14] = jj_gen;
+            }
+            switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
+                case COMMA:
+                    jj_consume_token(COMMA);
+                    break;
+                default:
+                    jj_la1[15] = jj_gen;
+                    ;
+            }
+            jj_consume_token(RBRACKET);
+        } catch (Throwable jjte000) {
+            if (jjtc000) {
+                jjtree.clearNodeScope(jjtn000);
+                jjtc000 = false;
+            } else {
+                jjtree.popNode();
+            }
+            if (jjte000 instanceof RuntimeException) {
+                {
+                    if (true) throw (RuntimeException) jjte000;
+                }
+            }
+            if (jjte000 instanceof ParseException) {
+                {
+                    if (true) throw (ParseException) jjte000;
+                }
+            }
+            {
+                if (true) throw (Error) jjte000;
+            }
+        } finally {
+            if (jjtc000) {
+                jjtree.closeNodeScope(jjtn000, true);
+                jjtreeCloseNodeScope(jjtn000);
+            }
+        }
+    }
+
+
+    final public void TupleInitializer() throws ParseException {
+        TSHMapInitializer jjtn000 = new TSHMapInitializer(T_TupleInitializer);
+        boolean jjtc000 = true;
+        jjtree.openNodeScope(jjtn000);
+        jjtreeOpenNodeScope(jjtn000);
+        try {
+            jj_consume_token(LPAREN);
+            switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
+                case NUMBER:
+                case FALSE:
+                case NULL:
+                case TRUE:
+                case STR:
+                case IDENTIFIER:
+                case LPAREN:
+                case LBRACE:
+                case BANG:
+                case TILDE:
+                case INCR:
+                case DECR:
+                case PLUS:
+                case MINUS:
+                    VariableInitializer();
+                    label_2:
+                    while (true) {
+                        if (jj_2_4(2)) {
+                            ;
+                        } else {
+                            break label_2;
+                        }
+                        jj_consume_token(COMMA);
+                        VariableInitializer();
+                    }
+                    break;
+                default:
+                    jj_la1[14] = jj_gen;
+            }
+            switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
+                case COMMA:
+                    jj_consume_token(COMMA);
+                    break;
+                default:
+                    jj_la1[15] = jj_gen;
+                    ;
+            }
+            jj_consume_token(RPAREN);
+        } catch (Throwable jjte000) {
+            if (jjtc000) {
+                jjtree.clearNodeScope(jjtn000);
+                jjtc000 = false;
+            } else {
+                jjtree.popNode();
+            }
+            if (jjte000 instanceof RuntimeException) {
+                {
+                    if (true) throw (RuntimeException) jjte000;
+                }
+            }
+            if (jjte000 instanceof ParseException) {
+                {
+                    if (true) throw (ParseException) jjte000;
+                }
+            }
+            {
+                if (true) throw (Error) jjte000;
+            }
+        } finally {
+            if (jjtc000) {
+                jjtree.closeNodeScope(jjtn000, true);
+                jjtreeCloseNodeScope(jjtn000);
             }
         }
     }
@@ -1105,7 +1434,7 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
         t = getToken(0);
         {
             if (true) {
-                return t.tKind;
+                return t.kind;
             }
         }
         throw new Error("Missing return statement in function");
@@ -1193,7 +1522,7 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
                 jjtree.closeNodeScope(jjtn001, 2);
                 jjtc001 = false;
                 jjtreeCloseNodeScope(jjtn001);
-                jjtn001.kind = t.tKind;
+                jjtn001.kind = t.kind;
             } finally {
                 if (jjtc001) {
                     jjtree.closeNodeScope(jjtn001, 2);
@@ -1234,7 +1563,7 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
                 jjtree.closeNodeScope(jjtn001, 2);
                 jjtc001 = false;
                 jjtreeCloseNodeScope(jjtn001);
-                jjtn001.kind = t.tKind;
+                jjtn001.kind = t.kind;
             } finally {
                 if (jjtc001) {
                     jjtree.closeNodeScope(jjtn001, 2);
@@ -1276,7 +1605,7 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
                 jjtree.closeNodeScope(jjtn001, 2);
                 jjtc001 = false;
                 jjtreeCloseNodeScope(jjtn001);
-                jjtn001.kind = t.tKind;
+                jjtn001.kind = t.kind;
             } finally {
                 if (jjtc001) {
                     jjtree.closeNodeScope(jjtn001, 2);
@@ -1310,7 +1639,7 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
                 jjtree.closeNodeScope(jjtn001, 2);
                 jjtc001 = false;
                 jjtreeCloseNodeScope(jjtn001);
-                jjtn001.kind = t.tKind;
+                jjtn001.kind = t.kind;
             } finally {
                 if (jjtc001) {
                     jjtree.closeNodeScope(jjtn001, 2);
@@ -1351,7 +1680,7 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
                 jjtree.closeNodeScope(jjtn001, 2);
                 jjtc001 = false;
                 jjtreeCloseNodeScope(jjtn001);
-                jjtn001.kind = t.tKind;
+                jjtn001.kind = t.kind;
             } finally {
                 if (jjtc001) {
                     jjtree.closeNodeScope(jjtn001, 2);
@@ -1397,7 +1726,7 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
                 jjtree.closeNodeScope(jjtn001, 2);
                 jjtc001 = false;
                 jjtreeCloseNodeScope(jjtn001);
-                jjtn001.kind = t.tKind;
+                jjtn001.kind = t.kind;
             } finally {
                 if (jjtc001) {
                     jjtree.closeNodeScope(jjtn001, 2);
@@ -1451,7 +1780,7 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
                 jjtree.closeNodeScope(jjtn001, 2);
                 jjtc001 = false;
                 jjtreeCloseNodeScope(jjtn001);
-                jjtn001.kind = t.tKind;
+                jjtn001.kind = t.kind;
             } finally {
                 if (jjtc001) {
                     jjtree.closeNodeScope(jjtn001, 2);
@@ -1500,7 +1829,7 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
                 jjtree.closeNodeScope(jjtn001, 2);
                 jjtc001 = false;
                 jjtreeCloseNodeScope(jjtn001);
-                jjtn001.kind = t.tKind;
+                jjtn001.kind = t.kind;
             } finally {
                 if (jjtc001) {
                     jjtree.closeNodeScope(jjtn001, 2);
@@ -1549,7 +1878,7 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
                 jjtree.closeNodeScope(jjtn001, 2);
                 jjtc001 = false;
                 jjtreeCloseNodeScope(jjtn001);
-                jjtn001.kind = t.tKind;
+                jjtn001.kind = t.kind;
             } finally {
                 if (jjtc001) {
                     jjtree.closeNodeScope(jjtn001, 2);
@@ -1602,7 +1931,7 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
                 jjtree.closeNodeScope(jjtn001, 2);
                 jjtc001 = false;
                 jjtreeCloseNodeScope(jjtn001);
-                jjtn001.kind = t.tKind;
+                jjtn001.kind = t.kind;
             } finally {
                 if (jjtc001) {
                     jjtree.closeNodeScope(jjtn001, 2);
@@ -1639,7 +1968,7 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
                     jjtree.closeNodeScope(jjtn001, 1);
                     jjtc001 = false;
                     jjtreeCloseNodeScope(jjtn001);
-                    jjtn001.kind = t.tKind;
+                    jjtn001.kind = t.kind;
                 } finally {
                     if (jjtc001) {
                         jjtree.closeNodeScope(jjtn001, 1);
@@ -1658,6 +1987,8 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
             case NULL:
             case TRUE:
             case IDENTIFIER:
+            case STR:
+            case NUMBER:
             case LPAREN:
             case BANG:
             case TILDE:
@@ -1684,7 +2015,7 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
             jjtree.closeNodeScope(jjtn001, 1);
             jjtc001 = false;
             jjtreeCloseNodeScope(jjtn001);
-            jjtn001.kind = t.tKind;
+            jjtn001.kind = t.kind;
         } finally {
             if (jjtc001) {
                 jjtree.closeNodeScope(jjtn001, 1);
@@ -1706,7 +2037,7 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
             jjtree.closeNodeScope(jjtn001, 1);
             jjtc001 = false;
             jjtreeCloseNodeScope(jjtn001);
-            jjtn001.kind = t.tKind;
+            jjtn001.kind = t.kind;
         } finally {
             if (jjtc001) {
                 jjtree.closeNodeScope(jjtn001, 1);
@@ -1742,7 +2073,7 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
                     jjtree.closeNodeScope(jjtn001, 1);
                     jjtc001 = false;
                     jjtreeCloseNodeScope(jjtn001);
-                    jjtn001.kind = t.tKind;
+                    jjtn001.kind = t.kind;
                 } finally {
                     if (jjtc001) {
                         jjtree.closeNodeScope(jjtn001, 1);
@@ -1758,6 +2089,7 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
                     case TRUE:
                     case STR:
                     case IDENTIFIER:
+                    case NUMBER:
                     case LPAREN:
                         PostfixExpression();
                         break;
@@ -1794,7 +2126,7 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
                 jjtree.closeNodeScope(jjtn001, 1);
                 jjtc001 = false;
                 jjtreeCloseNodeScope(jjtn001);
-                jjtn001.kind = t.tKind;
+                jjtn001.kind = t.kind;
                 jjtn001.postfix = true;
             } finally {
                 if (jjtc001) {
@@ -1808,6 +2140,7 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
                 case NULL:
                 case TRUE:
                 case STR:
+                case NUMBER:
                 case IDENTIFIER:
                 case LPAREN:
                     PrimaryExpression();
@@ -1822,7 +2155,6 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
 
 
     final public void PrimaryExpression() throws ParseException {
-        /*@bgen(jjtree) PrimaryExpression */
         TSHPrimaryExpression jjtn000 = new TSHPrimaryExpression(T_PrimaryExpression);
         boolean jjtc000 = true;
         jjtree.openNodeScope(jjtn000);
@@ -2246,7 +2578,7 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
         }
     }
 
-    final public boolean Line() throws Exception {
+    final public boolean Line() throws ParseException {
         switch ((jj_ntk == default_jjmatchedKind) ? jj_ntk() : jj_ntk) {
             case DEFAULT:
                 jj_consume_token("0");
@@ -2281,12 +2613,37 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
         xsp = jj_scanpos;
         if (jj_scan_token(DEF)) {
             jj_scanpos = xsp;
+            return true;
         }
         return false;
     }
 
+    final private boolean jj_3_22() {
+        if (jj_3R_40()) return true;
+        return false;
+    }
 
-    final private boolean jj_2_23(int xla) {
+
+    final private boolean jj_3_40(int xla) {
+        jj_la = xla;
+        jj_lastpos = jj_scanpos = token;
+        try {
+            return !jj_3R_40();
+        } catch (TParser.LookaheadSuccess ls) {
+            return true;
+        } finally {
+            jj_save(28, xla);
+        }
+    }
+
+    final private boolean jj_3R_40() {
+        if (jj_scan_token(IDENTIFIER)) return true;         //  identifier
+        if (jj_scan_token(COLON)) return true;              //  :
+        return false;
+    }
+
+
+    final private boolean jj_2_29(int xla) {
         jj_la = xla;
         jj_lastpos = jj_scanpos = token;
         try {
@@ -2294,8 +2651,75 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
         } catch (TParser.LookaheadSuccess ls) {
             return true;
         } finally {
-            jj_save(22, xla);
+            jj_save(28, xla);
         }
+    }
+
+
+    final private boolean jj_3R_45() {
+        Token xsp;
+        xsp = jj_scanpos;
+        if (jj_3_22()) {
+            jj_scanpos = xsp;
+            if (jj_3R_38()) {               // {}  静态代码块
+                jj_scanpos = xsp;
+                if (jj_3R_78()) {                   // 大概三目运算符 ? xxx: bbb ;
+                    jj_scanpos = xsp;
+                    if (jj_scan_token(SWITCH)) {                   // switch 表达式
+                        jj_scanpos = xsp;
+                        if (jj_scan_token(IF)) {                       // if 表达式
+                            jj_scanpos = xsp;
+                            if (jj_scan_token(WHILE)) {                   //  while 表达式
+                                jj_scanpos = xsp;
+                                if (jj_scan_token(DO)) {                   // do while()表达式
+                                    jj_scanpos = xsp;
+                                    if (jj_scan_token(FOR)) {                   // for (i in list )
+                                        jj_scanpos = xsp;
+                                        if (jj_scan_token(BREAK)) {                   // break; 或 break label_1 ;
+                                            jj_scanpos = xsp;
+                                            if (jj_scan_token(CONTINUE)) {                   // continue 或 continue label_1;
+                                                jj_scanpos = xsp;
+                                                if (jj_scan_token(RETURN)) {               // return 表达式;
+                                                    return true;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+
+    final private boolean jj_3R_78() {
+        if (jj_3R_39()) return true;
+        if (jj_scan_token(NEXT_LINE)) return true; //
+        return false;
+    }
+
+
+    final private boolean jj_3R_38() {
+        Token xsp;
+        if (jj_scan_token(LBRACE)) return true; // {
+        while (true) {
+            xsp = jj_scanpos;
+            if (jj_3_23()) {
+                jj_scanpos = xsp;
+                break;
+            }
+        }
+        if (jj_scan_token(RBRACE)) return true;         //  }
+        return false;
+    }
+
+    final private boolean jj_3_23() {
+        if (jj_3R_28()) return true;
+        return false;
     }
 
 
@@ -2304,46 +2728,802 @@ public class TParser extends TParserBase implements TParserConstants, TParserTre
         xsp = jj_scanpos;
         if (jjMethod()) {                       // method
             jj_scanpos = xsp;
-            /*if (jj_3R_49()) {               // 定义一个数组类型
+            if (jj_3R_49()) {               // 定义一个list
                 jj_scanpos = xsp;
-                if (jj_3_28()) {  // do while ,while ,for , static {}, synchronized (){} 等
+                if (jj_3R_45()) {  // do while ,while ,for ,  {}等
                     jj_scanpos = xsp;
-                    if (jj_3R_50()) {               // import *   ; import
+                }
+            }
+        }
+        return false;
+    }
+
+
+    final private boolean jj_3R_49() {
+        if (jj_3R_93()) return true;
+        if (jj_scan_token(NEXT_LINE)) return true;      // ;
+        return false;
+    }
+
+
+    final private boolean jj_3R_93() {
+        if (jj_3R_176()) return true;      // 数组变量名称或 =
+        Token xsp;
+        while (true) {
+            xsp = jj_scanpos;
+            if (jj_3R_177()) {
+                jj_scanpos = xsp;
+                break;
+            }
+        }
+        return false;
+    }
+
+    final private boolean jj_3R_177() {
+        if (jj_scan_token(COMMA)) return true;
+        if (jj_3R_176()) return true;
+        return false;
+    }
+
+
+    final private boolean jj_3R_176() {
+        if (jj_scan_token(IDENTIFIER)) return true;                 // 变量名称
+        Token xsp;
+        xsp = jj_scanpos;
+        if (jj_3R_180()) jj_scanpos = xsp;                  // =
+        return false;
+    }
+
+    final private boolean jj_3R_180() {
+        if (jj_scan_token(ASSIGN)) return true;
+        if (jj_3R_31()) return true;
+        return false;
+    }
+
+
+    final private boolean jj_3R_31() {
+        Token xsp;
+        xsp = jj_scanpos;
+        if (jj_3R_97()) {
+            jj_scanpos = xsp;
+            if (jj_3R_39()) return true;
+        }
+        return false;
+    }
+
+    final private boolean jj_3R_97() {
+        if (jj_scan_token(LBRACE)) return true;         // {
+        Token xsp;
+        xsp = jj_scanpos;
+        if (jj_3R_163()) jj_scanpos = xsp;                  //
+        xsp = jj_scanpos;
+        if (jj_scan_token(COMMA)) jj_scanpos = xsp;                // ,
+        if (jj_scan_token(RBRACE)) return true;                     // }
+        return false;
+    }
+
+    final private boolean jj_3R_39() {
+        Token xsp;
+        xsp = jj_scanpos;
+        if (jj_3R_107()) {
+            jj_scanpos = xsp;
+            if (jj_3R_108()) return true;
+        }
+        return false;
+    }
+
+    final private boolean jj_3R_107() {
+        if (jj_3R_33()) return true;
+        if (jj_3R_34()) return true;            // += <<< ...
+        if (jj_3R_39()) return true;
+        return false;
+    }
+
+    final private boolean jj_3R_33() {
+        Token xsp;
+        while (true) {
+            xsp = jj_scanpos;
+            if (jj_3R_104()) {
+                jj_scanpos = xsp;
+                break;
+            }
+        }
+        return false;
+    }
+
+
+    final private boolean jj_3R_104() {
+        Token xsp;
+        xsp = jj_scanpos;
+        if (jj_3R_131()) {                  //表示一个 list 类型
+            jj_scanpos = xsp;
+            if (jj_3R_132()) {
+                jj_scanpos = xsp;
+                if (jj_3R_133()) return true;
+            }
+        }
+        return false;
+    }
+
+    final private boolean jj_3R_133() {
+        if (jj_scan_token(LBRACE)) return true;
+        if (jj_3R_39()) return true;
+        if (jj_scan_token(RBRACE)) return true;
+        return false;
+    }
+
+
+    final private boolean jj_3R_108() {
+        if (jj_3R_135()) return true;
+        Token xsp;
+        xsp = jj_scanpos;
+        if (jj_3R_156()) jj_scanpos = xsp;                  // ? : xxx
+        return false;
+    }
+
+    final private boolean jj_3R_156() {
+        if (jj_scan_token(HOOK)) return true;
+        if (jj_3R_39()) return true;
+        if (jj_scan_token(COLON)) return true;
+        if (jj_3R_108()) return true;
+        return false;
+    }
+
+    final private boolean jj_3R_135() {
+        if (jj_3R_148()) return true;
+        Token xsp;
+        while (true) {
+            xsp = jj_scanpos;
+            if (jj_3R_159()) {
+                jj_scanpos = xsp;
+                break;
+            }
+        }
+        return false;
+    }
+
+
+    final private boolean jj_3R_148() {
+        if (jj_3R_153()) return true;
+        Token xsp;
+        while (true) {
+            xsp = jj_scanpos;
+            if (jj_3R_162()) {
+                jj_scanpos = xsp;
+                break;
+            }
+        }
+        return false;
+    }
+
+
+    final private boolean jj_3R_153() {
+        if (jj_3R_158()) return true;
+        Token xsp;
+        while (true) {
+            xsp = jj_scanpos;
+            if (jj_3R_165()) {
+                jj_scanpos = xsp;
+                break;
+            }
+        }
+        return false;
+    }
+
+    final private boolean jj_3R_165() {
+        Token xsp;
+        if (jj_scan_token(OR)) {
+            return true;
+        }
+        if (jj_3R_158()) return true;
+        return false;
+    }
+
+    final private boolean jj_3R_159() {
+        Token xsp;
+        if (jj_scan_token(BOOL_OR)) {                                // ||
+            return true;
+        }
+        if (jj_3R_148()) return true;                           // && and
+        return false;
+    }
+
+    final private boolean jj_3R_162() {
+        Token xsp;
+        if (jj_scan_token(BOOL_AND)) {
+            return true;
+        }
+        if (jj_3R_153()) return true;
+        return false;
+    }
+
+    final private boolean jj_2_12(int xla) {
+        jj_la = xla;
+        jj_lastpos = jj_scanpos = token;
+        try {
+            return !jj_3_12();
+        } catch (TParser.LookaheadSuccess ls) {
+            return true;
+        } finally {
+            jj_save(11, xla);
+        }
+    }
+
+
+    final private boolean jj_3_12() {
+        if (jj_3R_33()) return true;
+        Token xsp;
+        xsp = jj_scanpos;
+        if (jj_scan_token(INCR)) {
+            jj_scanpos = xsp;
+            if (jj_scan_token(DECR)) return true;
+        }
+        return false;
+    }
+
+    final private boolean jj_3R_158() {
+        if (jj_3R_161()) return true;
+        Token xsp;
+        while (true) {
+            xsp = jj_scanpos;
+            if (jj_3R_167()) {
+                jj_scanpos = xsp;
+                break;
+            }
+        }
+        return false;
+    }
+
+
+    final private boolean jj_3R_161() {
+        if (jj_3R_164()) return true;
+        Token xsp;
+        while (true) {
+            xsp = jj_scanpos;
+            if (jj_3R_169()) {
+                jj_scanpos = xsp;
+                break;
+            }
+        }
+        return false;
+    }
+
+
+    final private boolean jj_3R_164() {
+        if (jj_3R_166()) return true;
+        Token xsp;
+        while (true) {
+            xsp = jj_scanpos;
+            if (jj_3R_171()) {
+                jj_scanpos = xsp;
+                break;
+            }
+        }
+        return false;
+    }
+
+
+    final private boolean jj_3R_166() {
+        if (jj_3R_168()) return true;
+        return false;
+    }
+
+    final private boolean jj_3R_167() {
+        if (jj_scan_token(XOR)) return true;
+        if (jj_3R_161()) return true;
+        return false;
+    }
+
+
+    final private boolean jj_3R_168() {
+        if (jj_3R_170()) return true;
+        Token xsp;
+        while (true) {
+            xsp = jj_scanpos;
+            if (jj_3R_182()) {
+                jj_scanpos = xsp;
+                break;
+            }
+        }
+        return false;
+    }
+
+    final private boolean jj_3R_169() {
+        Token xsp;
+        if (jj_scan_token(AND)) {                                   // &
+            return true;
+        }
+        if (jj_3R_164()) return true;
+        return false;
+    }
+
+
+    final private boolean jj_3R_170() {
+        if (jj_3R_178()) return true;
+        Token xsp;
+        while (true) {
+            xsp = jj_scanpos;
+            if (jj_3R_192()) {
+                jj_scanpos = xsp;
+                break;
+            }
+        }
+        return false;
+    }
+
+    final private boolean jj_3R_171() {
+        Token xsp;
+        xsp = jj_scanpos;
+        if (jj_scan_token(EQ)) {                // ==
+            jj_scanpos = xsp;
+            if (jj_scan_token(NE)) return true;                 // !=
+        }
+        if (jj_3R_166()) return true;
+        return false;
+    }
+
+
+    final private boolean jj_3R_178() {
+        if (jj_3R_181()) return true;
+        Token xsp;
+        while (true) {
+            xsp = jj_scanpos;
+            if (jj_3R_200()) {
+                jj_scanpos = xsp;
+                break;
+            }
+        }
+        return false;
+    }
+
+    final private boolean jj_3R_200() {
+        Token xsp;
+        xsp = jj_scanpos;
+        if (jj_scan_token(PLUS)) {           // +
+            jj_scanpos = xsp;
+            if (jj_scan_token(MINUS)) return true; // -
+        }
+        if (jj_3R_181()) return true;
+        return false;
+    }
+
+
+    final private boolean jj_3R_181() {
+        if (jj_3R_191()) return true;
+        Token xsp;
+        while (true) {
+            xsp = jj_scanpos;
+            if (jj_3R_209()) {
+                jj_scanpos = xsp;
+                break;
+            }
+        }
+        return false;
+    }
+
+    final private boolean jj_3R_209() {
+        Token xsp;
+        xsp = jj_scanpos;
+        if (jj_scan_token(STAR)) {           // *
+            jj_scanpos = xsp;
+            if (jj_scan_token(SLASH)) {           //      /
+                jj_scanpos = xsp;
+                if (jj_scan_token(MOD)) return true;                // %
+            }
+        }
+        if (jj_3R_191()) return true;
+        return false;
+    }
+
+    final private boolean jj_3R_182() {
+        Token xsp;
+        xsp = jj_scanpos;
+        if (jj_scan_token(LT)) {                    // <
+            jj_scanpos = xsp;
+            if (jj_scan_token(GT)) {            // >
+                jj_scanpos = xsp;
+                if (jj_scan_token(LE)) {         // <=
+                    jj_scanpos = xsp;
+                    if (jj_scan_token(GE)) {  // >=
+                        return true;
+                    }
+                }
+            }
+        }
+        if (jj_3R_170()) return true;
+        return false;
+    }
+
+    final private boolean jj_3R_191() {
+        Token xsp;
+        xsp = jj_scanpos;
+        if (jj_3R_196()) {           // + -
+            jj_scanpos = xsp;
+            if (jj_3R_206()) {      // ++
+                jj_scanpos = xsp;
+                if (jj_3R_207()) {      // --
+                    jj_scanpos = xsp;
+                    if (jj_3R_208()) return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
+    final private boolean jj_3R_192() {
+        Token xsp;
+        xsp = jj_scanpos;
+        if (jj_scan_token(LSHIFT)) {                           // <<
+            jj_scanpos = xsp;
+            if (jj_scan_token(RSIGNEDSHIFT)) {               // >>
+                jj_scanpos = xsp;
+                if (jj_scan_token(RUNSIGNEDSHIFT)) {               // >>>
+                    return true;        // @right_unsigned_shift
+                }
+            }
+        }
+        if (jj_3R_178()) return true;
+        return false;
+    }
+
+
+    final private boolean jj_3R_206() {
+        if (jj_scan_token(INCR)) return true;
+        if (jj_3R_33()) return true;
+        return false;
+    }
+
+
+    final private boolean jj_3R_207() {
+        if (jj_scan_token(DECR)) return true;       //  --
+        if (jj_3R_33()) return true;        //
+        return false;
+    }
+
+    final private boolean jj_3R_208() {
+        Token xsp;
+        xsp = jj_scanpos;
+        if (jj_3R_211()) {                              // ! ~
+            jj_scanpos = xsp;
+            if (jj_3R_215()) return true;
+        }
+        return false;
+    }
+
+
+    final private boolean jj_3R_215() {
+        Token xsp;
+        xsp = jj_scanpos;
+        if (jj_3R_218()) {
+            jj_scanpos = xsp;
+            if (jj_3R_33()) return true;
+        }
+        return false;
+    }
+
+
+    final private boolean jj_3R_218() {
+        if (jj_3R_33()) return true;
+        Token xsp;
+        xsp = jj_scanpos;
+        if (jj_scan_token(INCR)) {
+            jj_scanpos = xsp;
+            if (jj_scan_token(DECR)) return true;
+        }
+        return false;
+    }
+
+
+    final private boolean jj_3R_211() {
+        Token xsp;
+        xsp = jj_scanpos;
+        if (jj_scan_token(TILDE)) {            // ~ !
+            jj_scanpos = xsp;
+            if (jj_scan_token(BANG)) return true;
+        }
+        if (jj_3R_191()) return true;
+        return false;
+    }
+
+    final private boolean jj_3R_196() {
+        Token xsp;
+        xsp = jj_scanpos;
+        if (jj_scan_token(PLUS)) {   //  +
+            jj_scanpos = xsp;
+            if (jj_scan_token(MINUS)) return true;    // -
+        }
+        if (jj_3R_191()) return true;
+        return false;
+    }
+
+    final private boolean jj_3R_132() {
+        if (jj_scan_token(DOT)) return true;
+        if (jj_scan_token(IDENTIFIER)) return true;     // .xxx
+        Token xsp;
+        xsp = jj_scanpos;
+        if (jj_3R_69()) jj_scanpos = xsp;
+        return false;
+    }
+
+    final private boolean jj_3R_69() {
+        if (jj_scan_token(LPAREN)) return true;
+        if (jj_scan_token_util(LPAREN, RPAREN)) return true;
+        return false;
+    }
+
+    final private boolean jj_3R_134() {
+        if (jj_3R_39()) return true;
+        Token xsp;
+        while (true) {
+            xsp = jj_scanpos;
+            if (jj_3R_147()) {
+                jj_scanpos = xsp;
+                break;
+            }
+        }
+        return false;
+    }
+
+
+    final private boolean jj_3R_147() {
+        if (jj_scan_token(COMMA)) return true;
+        if (jj_3R_39()) return true;
+        return false;
+    }
+
+
+    final private boolean jj_3R_131() {
+        if (jj_scan_token(LBRACKET)) return true;           // [
+        if (jj_3R_39()) return true;
+        if (jj_scan_token(RBRACKET)) return true;           // ]
+        return false;
+    }
+
+    final private boolean jj_3R_34() {
+        Token xsp;
+        xsp = jj_scanpos;
+        if (jj_scan_token(ASSIGN)) {        //  =
+            jj_scanpos = xsp;
+            if (jj_scan_token(STARASSIGN)) {       //  *=
+                jj_scanpos = xsp;
+                if (jj_scan_token(SLASHASSIGN)) {       // /=
+                    jj_scanpos = xsp;
+                    if (jj_scan_token(MODASSIGN)) {       //  %=
                         jj_scanpos = xsp;
-                        if (jj_3R_51()) {               // package com.lz;
+                        if (jj_scan_token(PLUSASSIGN)) {       //  +=
                             jj_scanpos = xsp;
-                            if (jj_3R_52()) return true;        // formal_comment
+                            if (jj_scan_token(MINUSASSIGN)) {       //   -=
+                                jj_scanpos = xsp;
+                                if (jj_scan_token(ANDASSIGN)) {       //  &=
+                                    jj_scanpos = xsp;
+                                    if (jj_scan_token(XORASSIGN)) {       //  ^=
+                                        jj_scanpos = xsp;
+                                        if (jj_scan_token(ORASSIGN)) {       //  |=
+                                            jj_scanpos = xsp;
+                                            if (jj_scan_token(LSHIFTASSIGN)) {           //  <<=
+                                                jj_scanpos = xsp;
+                                                if (jj_scan_token(RSIGNEDSHIFTASSIGN)) {       //  >>=
+                                                    jj_scanpos = xsp;
+                                                    if (jj_scan_token(RUNSIGNEDSHIFTASSIGN)) {       //  >>>=
+                                                        return true;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
-            }*/
+            }
         }
         return false;
     }
 
-    final private boolean jjMethod() {
+
+    final private boolean jj_2_8(int xla) {
+        jj_la = xla;
+        jj_lastpos = jj_scanpos = token;
+        try {
+            return !jj_3_8();
+        } catch (TParser.LookaheadSuccess ls) {
+            return true;
+        } finally {
+            jj_save(7, xla);
+        }
+    }
+
+    final private boolean jj_3_8() {
+        if (jj_scan_token(IDENTIFIER)) return true;
         Token xsp;
         xsp = jj_scanpos;
-        /*if (jj_3R_126()) {              // 不是文本
+        if (jj_3R_34()) {
             jj_scanpos = xsp;
-            if (jj_3R_127()) return true;       // 表明是一个方法
+            while (true) {
+                xsp = jj_scanpos;
+                if (jj_scan_token(COMMA)) {
+                    jj_scanpos = xsp;
+                    break;
+                }
+                xsp = jj_scanpos;
+                if (jj_scan_token(IDENTIFIER)) {
+                    jj_scanpos = xsp;
+                    break;
+                }
+                xsp = jj_scanpos;
+                if (jj_scan_token(NEXT_LINE)) {
+                    jj_scanpos = xsp;
+                } else {
+                    return true;
+                }
+            }
+            if (jj_3R_34()) return true;
         }
-        if (jj_3R_43()) return true;        // 方法 （ 类型 变量， 类型 变量, ... )
-        xsp = jj_scanpos;
-        if (jj_3R_174()) jj_scanpos = xsp;          // 方法是否 throws 异常
-        xsp = jj_scanpos;
-        if (jj_3R_175()) {              //          方法参数的 { ,body ,}
-            jj_scanpos = xsp;
-            if (jj_scan_token(78)) return true;     //如果 没有 {,body,} ,则方法一定有; 表明是一个抽象方法
-        }*/
         return false;
     }
 
 
-    final private boolean jj_3R_126() {
+    final private boolean jj_3R_163() {
+        if (jj_3R_31()) return true;
+        Token xsp;
+        while (true) {
+            xsp = jj_scanpos;
+            if (jj_3_4()) {
+                jj_scanpos = xsp;
+                break;
+            }
+        }
+        return false;
+    }
+
+    final private boolean jj_2_14(int xla) {
+        jj_la = xla;
+        jj_lastpos = jj_scanpos = token;
+        try {
+            return !jj_3R_37();
+        } catch (TParser.LookaheadSuccess ls) {
+            return true;
+        } finally {
+            jj_save(13, xla);
+        }
+    }
+
+    final private boolean jj_3R_37() {
+        if (jj_3R_29()) return true;
+        if (jj_3R_69()) return true;
+        return false;
+    }
+
+    final private boolean jj_3R_29() {
+        if (jj_scan_token(IDENTIFIER)) return true;
+        Token xsp;
+        while (true) {
+            xsp = jj_scanpos;
+            if (jj_3_7()) {
+                jj_scanpos = xsp;
+                break;
+            }
+        }
+        return false;
+    }
+
+
+    final private boolean jj_3_7() {
+        if (jj_scan_token(DOT)) return true;
         if (jj_scan_token(IDENTIFIER)) return true;
         return false;
     }
+
+
+    final private boolean jj_3_4() {
+        if (jj_scan_token(COMMA)) return true;
+        if (jj_3R_31()) return true;
+        return false;
+    }
+
+    final private boolean jj_2_4(int xla) {
+        jj_la = xla;
+        jj_lastpos = jj_scanpos = token;
+        try {
+            return !jj_3_4();
+        } catch (TParser.LookaheadSuccess ls) {
+            return true;
+        } finally {
+            jj_save(3, xla);
+        }
+    }
+
+    final private boolean jjMethod() {
+        if (jj_scan_token(DEF)) return true;
+        return false;
+    }
+
+    final private boolean jj_2_23(int xla) {
+        jj_la = xla;
+        jj_lastpos = jj_scanpos = token;
+        try {
+            return !jj_3_23();
+        } catch (TParser.LookaheadSuccess ls) {
+            return true;
+        } finally {
+            jj_save(22, xla);
+        }
+    }
+
+
+    final private boolean jj_3_27(int xla) {
+        jj_la = xla;
+        jj_lastpos = jj_scanpos = token;
+        try {
+            return !jj_3_28();
+        } catch (TParser.LookaheadSuccess ls) {
+            return true;
+        } finally {
+            jj_save(27, xla);
+        }
+    }
+
+
+    // 变量的定义可能是 a = 或 a,b,c =
+    final private boolean jj_3_28() {
+        if (jj_scan_token(IDENTIFIER)) return true;         //
+        return false;
+    }
+
+
+    final private boolean jj_2_7(int xla) {
+        jj_la = xla;
+        jj_lastpos = jj_scanpos = token;
+        try {
+            return !jj_3_7();
+        } catch (TParser.LookaheadSuccess ls) {
+            return true;
+        } finally {
+            jj_save(6, xla);
+        }
+    }
+
+    final private boolean isTuple(int xla) {
+        jj_la = xla;
+        jj_lastpos = jj_scanpos = token;
+        try {
+            return !jj_3_9();
+        } catch (TParser.LookaheadSuccess ls) {
+            return true;
+        } finally {
+            jj_save(8, xla);
+        }
+    }
+
+
+    final private boolean jj_3_9() {
+        Token xsp = jj_scanpos;
+        if (jj_scan_token(IDENTIFIER)) {
+            if (jj_scan_token(STR)) {
+                jj_scanpos = xsp;
+                if (jj_scan_token(NUMBER)) {
+                    jj_scanpos = xsp;
+                    if (jj_scan_token(TRUE)) {
+                        jj_scanpos = xsp;
+                        if (jj_scan_token(FALSE)) {
+                            jj_scanpos = xsp;
+                            if (jj_3_9()) {        //如果不是 tuple 调用
+                                jj_scanpos = xsp;
+                                if (jj_3R_37()) {      //是方法调用
+                                    jj_scanpos = xsp;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (jj_scan_token(COMMA)) return true;
+        return false;
+    }
+
 
     final private void jj_save(int index, int xla) {
         TParser.JJCalls p = jj_2_rtns[index];
