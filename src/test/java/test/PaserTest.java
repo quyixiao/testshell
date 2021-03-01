@@ -3,11 +3,13 @@ package test;
 import com.alibaba.fastjson.JSON;
 import org.junit.Test;
 import tsh.Node;
-import tsh.TParser;
+import tsh.Parser;
 import tsh.Token;
+import tsh.util.ClassUtils;
 
 import java.io.FileReader;
 import java.io.Reader;
+import java.lang.reflect.Method;
 
 public class PaserTest {
 
@@ -15,7 +17,7 @@ public class PaserTest {
     @Test
     public void testa() throws Exception {
         Reader in = new FileReader("/Users/quyixiao/project/testshell/src/main/resources/ab.bsh");
-        TParser parser = new TParser(in);
+        Parser parser = new Parser(in);
         parser.setRetainComments(true);
 
         while (!parser.Line()/*eof*/) {
@@ -29,7 +31,7 @@ public class PaserTest {
     @Test
     public void test() throws Exception {
         Reader in = new FileReader("/Users/quyixiao/project/testshell/src/main/resources/tab.tsh");
-        TParser parser = new TParser(in);
+        Parser parser = new Parser(in);
         parser.setRetainComments(true);
         int forabc = 0;
         while (!parser.Line()/*eof*/) {
@@ -44,7 +46,7 @@ public class PaserTest {
     @Test
     public void test2() throws Exception {
         Reader in = new FileReader("/Users/quyixiao/project/testshell/src/main/resources/abcd.bsh");
-        TParser parser = new TParser(in);
+        Parser parser = new Parser(in);
         parser.setRetainComments(true);
         for (int i = 0; i < 30; i++) {
             Token token = parser.token_source.getNextToken();
@@ -55,15 +57,21 @@ public class PaserTest {
 
     @Test
     public void test3() throws Exception {
-
-
-        Reader in = new FileReader("/Users/quyixiao/project/testshell/src/main/resources/for.bsh");
-        TParser parser = new TParser(in);
+        Reader in = new FileReader("/Users/quyixiao/project/testshell/src/main/resources/run.tsh");
+        Parser parser = new Parser(in);
         parser.setRetainComments(true);
         for (int i = 0; i < 30; i++) {
             Token token = parser.token_source.getNextToken();
             System.out.println(token.image + "          :           " + (token.kind == "\n" ? "\\n" : token.kind));
         }
+    }
+
+    @Test
+    public void test4() throws Exception{
+        Method mt  =  ClassUtils.getMethod("println");
+        Class clazz = mt.getDeclaringClass();
+        System.out.println(clazz.getName());
+        mt.invoke(clazz.newInstance(),new Object[]{new Object[]{"1",1,1.2}});
     }
 
 

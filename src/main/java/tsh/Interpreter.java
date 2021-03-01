@@ -76,7 +76,7 @@ public class Interpreter
 
     /* --- Instance data --- */
 
-    transient TParser parser;
+    transient Parser parser;
     NameSpace globalNameSpace;
     transient Reader in;
     transient PrintStream out;
@@ -128,7 +128,7 @@ public class Interpreter
             boolean interactive, NameSpace namespace,
             Interpreter parent, String sourceFileInfo) {
         //System.out.println("New Interpreter: "+this +", sourcefile = "+sourceFileInfo );
-        parser = new TParser(in);
+        parser = new Parser(in);
         long t1 = System.currentTimeMillis();
         this.in = in;
         this.out = out;
@@ -151,9 +151,9 @@ public class Interpreter
         //globalNameSpace.loadDefaultImports();
 
 		/* 
-			Create the root "bsh" system object if it doesn't exist.
+			Create the root "tsh" system object if it doesn't exist.
 		*/
-        if (!(getu("bsh") instanceof This))
+        if (!(getu("tsh") instanceof This))
             initRootSystemObject();
 
         if (interactive)
@@ -223,7 +223,7 @@ public class Interpreter
     private void initRootSystemObject() {
         BshClassManager bcm = getClassManager();
         // bsh
-        setu("bsh", new NameSpace(bcm, "Bsh Object").getThis(this));
+        setu("tsh", new NameSpace(bcm, "Bsh Object").getThis(this));
 
         // init the static shared sharedObject if it's not there yet
         if (sharedObject == null)

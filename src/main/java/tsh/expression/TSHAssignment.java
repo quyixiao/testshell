@@ -94,7 +94,7 @@ public class TSHAssignment extends SimpleNode implements TParserConstants {
 
                 default:
                     throw new InterpreterError(
-                            "unimplemented operator in assignment BSH");
+                            "unimplemented operator in assignment TSH");
             }
         } catch (UtilEvalError e) {
             throw e.toEvalError(this, callstack);

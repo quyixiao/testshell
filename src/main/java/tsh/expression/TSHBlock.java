@@ -28,48 +28,63 @@
 package tsh.expression;
 
 
-import tsh.CallStack;
-import tsh.Interpreter;
-import tsh.SimpleNode;
+import tsh.*;
 import tsh.exception.EvalError;
 
 public class TSHBlock extends SimpleNode {
     public boolean isSynchronized = false;
-    public boolean isStatic = false;
 
     public TSHBlock(String id) {
         super(id);
     }
 
 
-
-
-
-
-
-
-    public Object eval(
-            CallStack callstack, Interpreter interpreter,
-            boolean overrideNamespace)
+    public Object eval(CallStack callstack, Interpreter interpreter)
             throws EvalError {
-        Object syncValue = null;
-        if (isSynchronized) {
-            // First node is the expression on which to sync
-            SimpleNode exp = ((SimpleNode) jjtGetChild(0));
-            syncValue = exp.eval(callstack, interpreter);
+        return eval(callstack, interpreter, false);
+    }
+
+    public Object eval( CallStack callstack, Interpreter interpreter,boolean overrideNamespace)throws EvalError {
+        return evalBlock(callstack, interpreter, overrideNamespace, null/*filter*/);
+    }
+
+
+    Object evalBlock(CallStack callstack, Interpreter interpreter,boolean overrideNamespace, NodeFilter nodeFilter)
+            throws EvalError {
+        Object ret = Primitive.VOID;
+        NameSpace enclosingNameSpace = null;
+        if (!overrideNamespace) {
+            enclosingNameSpace = callstack.top();
+            BlockNameSpace bodyNameSpace = new BlockNameSpace(enclosingNameSpace);
+            callstack.swap(bodyNameSpace);
         }
 
-        Object ret = null;
-   /*     if (isSynchronized) // Do the actual synchronization
-            synchronized (syncValue) {
-                ret = evalBlock(
-                        callstack, interpreter, overrideNamespace, null*//*filter*//*);
+        int startChild = isSynchronized ? 1 : 0;
+        int numChildren = jjtGetNumChildren();
+
+        try {
+            for (int i = startChild; i < numChildren; i++) {
+                SimpleNode node = ((SimpleNode) jjtGetChild(i));
+
+                // filter nodes
+                if (nodeFilter != null && !nodeFilter.isVisible(node))
+                    continue;
+
+                ret = node.eval(callstack, interpreter);
+                // statement or embedded block evaluated a return statement
+                if (ret instanceof ReturnControl)
+                    break;
             }
-        else
-            ret = evalBlock(
-                    callstack, interpreter, overrideNamespace, null*//*filter*//*);
-*/
+        } finally {
+            // make sure we put the namespace back when we leave.
+            if (!overrideNamespace)
+                callstack.swap(enclosingNameSpace);
+        }
         return ret;
+    }
+
+    public interface NodeFilter {
+        public boolean isVisible(SimpleNode node);
     }
 
 

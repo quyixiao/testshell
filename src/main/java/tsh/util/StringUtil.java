@@ -27,6 +27,8 @@
 
 package tsh.util;
 
+import java.io.File;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -148,9 +150,7 @@ public class StringUtil {
     }
 
 
-    public static void main(String[] args) {
-        System.out.println(isBlank("\n"));
-    }
+
 
     public static boolean isNumber(String str) {
         if (str.length() == 0) {
@@ -250,7 +250,6 @@ public class StringUtil {
         // found digit it to make sure weird stuff like '.' and '1E-' doesn't pass
         return !allowSigns && foundDigit;
     }
-
 
 
 }

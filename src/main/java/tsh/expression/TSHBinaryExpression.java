@@ -8,6 +8,7 @@ import tsh.constant.TParserConstants;
 import tsh.entity.TBigDecimal;
 import tsh.exception.EvalError;
 import tsh.exception.UtilEvalError;
+import tsh.util.StringUtil;
 import tsh.util.Utils;
 
 public class TSHBinaryExpression extends SimpleNode implements TParserConstants {
@@ -60,10 +61,22 @@ public class TSHBinaryExpression extends SimpleNode implements TParserConstants 
                 return (lhs == rhs) ? Primitive.TRUE : Primitive.FALSE;
             case NE:
                 return (lhs != rhs) ? Primitive.TRUE : Primitive.FALSE;
-
             case PLUS:
                 if (lhs instanceof String || rhs instanceof String)
                     return lhs.toString() + rhs.toString();
+            case STAR:
+                StringBuilder sb = new StringBuilder();
+                if(lhs instanceof TBigDecimal){
+                    for(int i =0;i < ((TBigDecimal) lhs).getValue().intValue(); i ++){
+                        sb.append(rhs.toString());
+                    }
+                }
+                if(rhs instanceof  TBigDecimal){
+                    for(int i = 0 ;i < ((TBigDecimal) rhs).getValue().intValue();i ++){
+                        sb.append(lhs.toString());
+                    }
+                }
+                return sb.toString();
             default:
                 if (lhs instanceof Primitive || rhs instanceof Primitive)
                     if (lhs == Primitive.VOID || rhs == Primitive.VOID)

@@ -36,9 +36,6 @@ public class TBigDecimal {
 
     @Override
     public String toString() {
-        return "TBigDecimal{" +
-                "value=" + value +
-                ", precision=" + precision +
-                '}';
+        return value.setScale(precision, BigDecimal.ROUND_HALF_UP) + "";
     }
 }

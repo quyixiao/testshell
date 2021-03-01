@@ -34,6 +34,7 @@ import tsh.exception.UtilEvalError;
 import tsh.expression.Primitive;
 import tsh.expression.TshMethod;
 import tsh.util.BshClassManager;
+import tsh.util.ClassUtils;
 import tsh.util.Reflect;
 
 import java.io.IOException;
@@ -122,9 +123,9 @@ public class NameSpace implements java.io.Serializable, BshClassManager.Listener
 		Note: We can move this class related behavior out to a subclass of 
 		NameSpace, but we'll start here.
 	*/
-    boolean isClass;
-    Class classStatic;
-    Object classInstance;
+    public boolean isClass;
+    public Class classStatic;
+    public Object classInstance;
 
     void setClassStatic(Class clas) {
         this.classStatic = clas;
@@ -937,6 +938,19 @@ public class NameSpace implements java.io.Serializable, BshClassManager.Listener
         if (!declaredOnly && (method == null) && (parent != null))
             return parent.getMethod(name, sig);
 
+
+        if(method == null){
+            try {
+                Method mt  =  ClassUtils.getMethod(name);
+                if(mt !=null){
+                    method = new TshMethod(mt,mt.getDeclaringClass().newInstance());
+                }
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
         return method;
     }
 
@@ -1035,9 +1049,9 @@ public class NameSpace implements java.io.Serializable, BshClassManager.Listener
 
                 String scriptPath;
                 if (path.equals("/"))
-                    scriptPath = path + name + ".bsh";
+                    scriptPath = path + name + ".tsh";
                 else
-                    scriptPath = path + "/" + name + ".bsh";
+                    scriptPath = path + "/" + name + ".tsh";
 
                 Interpreter.debug("searching for script: " + scriptPath);
 

@@ -5,17 +5,14 @@ import tsh.constant.TParserTreeConstants;
 import tsh.entity.TBigDecimal;
 import tsh.exception.ParseException;
 import tsh.expression.*;
-import tsh.util.JavaCharStream;
-import tsh.util.NumberUtil;
-import tsh.util.TParserTokenManager;
-import tsh.util.Utils;
+import tsh.util.*;
 
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TParser extends Utils implements TParserConstants, TParserTreeConstants {
+public class Parser extends Utils implements TParserConstants, TParserTreeConstants {
 
 
     public static final Map<String, Integer> idMap = new HashMap<>();
@@ -116,7 +113,7 @@ public class TParser extends Utils implements TParserConstants, TParserTreeConst
     static private final class LookaheadSuccess extends java.lang.Error {
     }
 
-    final private TParser.LookaheadSuccess jj_ls = new TParser.LookaheadSuccess();
+    final private Parser.LookaheadSuccess jj_ls = new Parser.LookaheadSuccess();
 
 
     public void setRetainComments(boolean b) {
@@ -161,7 +158,7 @@ public class TParser extends Utils implements TParserConstants, TParserTreeConst
             jj_la1[i] = -1;
         }
         for (int i = 0; i < jj_2_rtns.length; i++) {
-            jj_2_rtns[i] = new TParser.JJCalls();
+            jj_2_rtns[i] = new Parser.JJCalls();
         }
     }
 
@@ -186,11 +183,11 @@ public class TParser extends Utils implements TParserConstants, TParserTreeConst
     }
 
 
-    public TParser(java.io.Reader stream) {
+    public Parser(java.io.Reader stream) {
         jj_input_stream = new JavaCharStream(stream, 1, 1);
         token_source = new TParserTokenManager(jj_input_stream);
         token = new Token();
-        jj_ntk = default_jjmatchedKind;
+        jj_ntk = default_1;
         jj_gen = 0;
         for (int i = 0; i < 88; i++) {
             jj_la1[i] = -1;
@@ -243,6 +240,36 @@ public class TParser extends Utils implements TParserConstants, TParserTreeConst
         token = oldToken;
         jj_kind = kind;
         throw new ParseException();
+    }
+
+
+
+    final private Token jj_consume_token_util(String kind) throws ParseException {
+        Token oldToken;
+        while(true){
+            if ((oldToken = token).next != null) {
+                token = token.next;
+            } else {
+                token = token.next = token_source.getNextToken();
+            }
+            jj_ntk = default_1;
+            if (eq(token.kind, kind)) {
+                jj_gen++;
+                if (++jj_gc > 100) {
+                    jj_gc = 0;
+                    for (int i = 0; i < jj_2_rtns.length; i++) {
+                        JJCalls c = jj_2_rtns[i];
+                        while (c != null) {
+                            if (c.gen < jj_gen) {
+                                c.first = null;
+                            }
+                            c = c.next;
+                        }
+                    }
+                }
+                return token;
+            }
+        }
     }
 
     final public Token getNextToken() {
@@ -302,6 +329,21 @@ public class TParser extends Utils implements TParserConstants, TParserTreeConst
         }
     }
 
+
+
+    final private Token jj_scan_token_next() {
+        if (jj_scanpos == jj_lastpos) {
+            if (jj_scanpos.next == null) {
+                jj_lastpos = jj_scanpos = jj_scanpos.next = token_source.getNextToken();
+            } else {
+                jj_lastpos = jj_scanpos = jj_scanpos.next;
+            }
+        } else {
+            jj_scanpos = jj_scanpos.next;
+        }
+        return jj_scanpos;
+    }
+
     //匹配到了，返回 false,没有匹配到，返回 true
     final private boolean jj_scan_token_util(String match, String kind) {
         int flag = 0;
@@ -319,10 +361,12 @@ public class TParser extends Utils implements TParserConstants, TParserTreeConst
                 flag++;
                 continue;
             }
-            if (flag == 0 && eq(jj_scanpos.kind, kind)) {
-                return false;
-            } else {
-                flag--;
+            if (eq(jj_scanpos.kind, kind)) {
+                if (flag == 0) {
+                    return false;
+                } else {
+                    flag--;
+                }
             }
             if (eqOR(jj_scanpos.kind, NEXT_LINE)) {
                 return true;
@@ -359,6 +403,16 @@ public class TParser extends Utils implements TParserConstants, TParserTreeConst
     }
 
     final public void BlockStatement() throws ParseException {
+        lable_:
+        while (true) {
+            switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
+                case NEXT_LINE:
+                    jj_consume_token(NEXT_LINE);
+                    break ;
+                default:
+                    break lable_;
+            }
+        }
         if (isMethod()) {
             MethodDeclaration();
         } else {
@@ -433,7 +487,7 @@ public class TParser extends Utils implements TParserConstants, TParserTreeConst
                 }
                 BlockStatement();
             }
-            jj_consume_token(RBRACE);
+            jj_consume_token_util(RBRACE);
             jjtree.closeNodeScope(jjtn000, true);
             jjtc000 = false;
             jjtreeCloseNodeScope(jjtn000);
@@ -1615,7 +1669,7 @@ public class TParser extends Utils implements TParserConstants, TParserTreeConst
         }
     }
 
-
+    // ^
     final public void ExclusiveOrExpression() throws ParseException {
         Token t = null;
         AndExpression();
@@ -1690,7 +1744,7 @@ public class TParser extends Utils implements TParserConstants, TParserTreeConst
         }
     }
 
-
+    // == !=
     final public void EqualityExpression() throws ParseException {
         Token t = null;
         RelationalExpression();
@@ -2046,7 +2100,7 @@ public class TParser extends Utils implements TParserConstants, TParserTreeConst
         }
     }
 
-
+    // ~  !
     final public void UnaryExpressionNotPlusMinus() throws ParseException {
         Token t = null;
         switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
@@ -2101,7 +2155,7 @@ public class TParser extends Utils implements TParserConstants, TParserTreeConst
         }
     }
 
-
+    // ++ --
     final public void PostfixExpression() throws ParseException {
         Token t = null;
         if (jj_2_12(2147483647)) {
@@ -2153,7 +2207,7 @@ public class TParser extends Utils implements TParserConstants, TParserTreeConst
         }
     }
 
-
+    // { [ .
     final public void PrimaryExpression() throws ParseException {
         TSHPrimaryExpression jjtn000 = new TSHPrimaryExpression(T_PrimaryExpression);
         boolean jjtc000 = true;
@@ -2439,6 +2493,7 @@ public class TParser extends Utils implements TParserConstants, TParserTreeConst
                 case NULL:
                 case TRUE:
                 case IDENTIFIER:
+                case NUMBER:
                 case LPAREN:
                 case BANG:
                 case TILDE:
@@ -2578,9 +2633,9 @@ public class TParser extends Utils implements TParserConstants, TParserTreeConst
     }
 
     final public boolean Line() throws ParseException {
-        switch ((jj_ntk == default_jjmatchedKind) ? jj_ntk() : jj_ntk) {
-            case DEFAULT:
-                jj_consume_token("0");
+        switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
+            case EOF:
+                jj_consume_token(EOF);
                 Interpreter.debug("End of File!");
             {
                 if (true) return true;
@@ -2589,7 +2644,9 @@ public class TParser extends Utils implements TParserConstants, TParserTreeConst
             default:
                 jj_la1[0] = jj_gen;
                 BlockStatement();
-                if (true) return false;
+                if (true) {
+                    return false;
+                }
         }
         throw new Error("Missing return statement in function");
     }
@@ -2599,7 +2656,7 @@ public class TParser extends Utils implements TParserConstants, TParserTreeConst
         jj_lastpos = jj_scanpos = token;
         try {
             return !notDef();
-        } catch (TParser.LookaheadSuccess ls) {
+        } catch (Parser.LookaheadSuccess ls) {
             return true;
         } finally {
 
@@ -2628,7 +2685,7 @@ public class TParser extends Utils implements TParserConstants, TParserTreeConst
         jj_lastpos = jj_scanpos = token;
         try {
             return !jj_3R_40();
-        } catch (TParser.LookaheadSuccess ls) {
+        } catch (Parser.LookaheadSuccess ls) {
             return true;
         } finally {
             jj_save(28, xla);
@@ -2647,7 +2704,7 @@ public class TParser extends Utils implements TParserConstants, TParserTreeConst
         jj_lastpos = jj_scanpos = token;
         try {
             return !jj_3R_28();
-        } catch (TParser.LookaheadSuccess ls) {
+        } catch (Parser.LookaheadSuccess ls) {
             return true;
         } finally {
             jj_save(28, xla);
@@ -2717,10 +2774,17 @@ public class TParser extends Utils implements TParserConstants, TParserTreeConst
     }
 
     final private boolean jj_3_23() {
-        if (jj_3R_28()) return true;
-        return false;
+        while (true) {
+            Token t = jj_scan_token_next();
+            if (StringUtil.isNotBlank(t.image)) {
+                if (eq(t.kind, RBRACE)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
     }
-
 
     final private boolean jj_3R_28() {
         Token xsp;
@@ -2941,7 +3005,7 @@ public class TParser extends Utils implements TParserConstants, TParserTreeConst
         jj_lastpos = jj_scanpos = token;
         try {
             return !jj_3_12();
-        } catch (TParser.LookaheadSuccess ls) {
+        } catch (Parser.LookaheadSuccess ls) {
             return true;
         } finally {
             jj_save(11, xla);
@@ -3327,7 +3391,7 @@ public class TParser extends Utils implements TParserConstants, TParserTreeConst
         jj_lastpos = jj_scanpos = token;
         try {
             return !jj_3_8();
-        } catch (TParser.LookaheadSuccess ls) {
+        } catch (Parser.LookaheadSuccess ls) {
             return true;
         } finally {
             jj_save(7, xla);
@@ -3382,7 +3446,7 @@ public class TParser extends Utils implements TParserConstants, TParserTreeConst
         jj_lastpos = jj_scanpos = token;
         try {
             return !jj_3R_37();
-        } catch (TParser.LookaheadSuccess ls) {
+        } catch (Parser.LookaheadSuccess ls) {
             return true;
         } finally {
             jj_save(13, xla);
@@ -3427,7 +3491,7 @@ public class TParser extends Utils implements TParserConstants, TParserTreeConst
         jj_lastpos = jj_scanpos = token;
         try {
             return !jj_3_4();
-        } catch (TParser.LookaheadSuccess ls) {
+        } catch (Parser.LookaheadSuccess ls) {
             return true;
         } finally {
             jj_save(3, xla);
@@ -3444,7 +3508,7 @@ public class TParser extends Utils implements TParserConstants, TParserTreeConst
         jj_lastpos = jj_scanpos = token;
         try {
             return !jj_3_23();
-        } catch (TParser.LookaheadSuccess ls) {
+        } catch (Parser.LookaheadSuccess ls) {
             return true;
         } finally {
             jj_save(22, xla);
@@ -3452,17 +3516,6 @@ public class TParser extends Utils implements TParserConstants, TParserTreeConst
     }
 
 
-    final private boolean jj_3_27(int xla) {
-        jj_la = xla;
-        jj_lastpos = jj_scanpos = token;
-        try {
-            return !jj_3_28();
-        } catch (TParser.LookaheadSuccess ls) {
-            return true;
-        } finally {
-            jj_save(27, xla);
-        }
-    }
 
 
     // 变量的定义可能是 a = 或 a,b,c =
@@ -3477,7 +3530,7 @@ public class TParser extends Utils implements TParserConstants, TParserTreeConst
         jj_lastpos = jj_scanpos = token;
         try {
             return !jj_3_7();
-        } catch (TParser.LookaheadSuccess ls) {
+        } catch (Parser.LookaheadSuccess ls) {
             return true;
         } finally {
             jj_save(6, xla);
@@ -3489,7 +3542,7 @@ public class TParser extends Utils implements TParserConstants, TParserTreeConst
         jj_lastpos = jj_scanpos = token;
         try {
             return !jj_3_9();
-        } catch (TParser.LookaheadSuccess ls) {
+        } catch (Parser.LookaheadSuccess ls) {
             return true;
         } finally {
             jj_save(8, xla);
@@ -3525,10 +3578,10 @@ public class TParser extends Utils implements TParserConstants, TParserTreeConst
 
 
     final private void jj_save(int index, int xla) {
-        TParser.JJCalls p = jj_2_rtns[index];
+        Parser.JJCalls p = jj_2_rtns[index];
         while (p.gen > jj_gen) {
             if (p.next == null) {
-                p = p.next = new TParser.JJCalls();
+                p = p.next = new Parser.JJCalls();
                 break;
             }
             p = p.next;

@@ -82,11 +82,7 @@ public class TshMethod
     private Object javaObject;
 
 
-    TshMethod(
-            String name, Class returnType, String[] paramNames,
-            Class[] paramTypes, TSHBlock methodBody,
-            NameSpace declaringNameSpace, Object modifiers
-    ) {
+    TshMethod(String name, Class returnType, String[] paramNames, Class[] paramTypes, TSHBlock methodBody, NameSpace declaringNameSpace, Object modifiers) {
         this.name = name;
         this.creturnType = returnType;
         this.paramNames = paramNames;
@@ -215,8 +211,7 @@ public class TshMethod
 
         if (javaMethod != null)
             try {
-                return Reflect.invokeMethod(
-                        javaMethod, javaObject, argValues);
+                return Reflect.invokeMethod(javaMethod, javaObject, argValues);
             } catch (ReflectError e) {
                 throw new EvalError(
                         "Error invoking Java method: " + e, callerInfo, callstack);

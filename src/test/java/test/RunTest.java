@@ -47,12 +47,13 @@ public class RunTest {
                         break; // non-interactive, return control now
                     }
 
-                    System.out.println("<" + retVal + ">");
+                    System.out.println("result :" + retVal);
                 }
             } catch (ParseException e) {
                 e.printStackTrace();
             } catch (Exception e) {
                 e.printStackTrace();
+                return;
             } finally {
                 localInterpreter.get_jjtree().reset();
                 if (callstack.depth() > 1) {

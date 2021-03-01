@@ -43,7 +43,7 @@ import java.net.URL;
 import java.util.*;
 
 public class ClassManagerImpl extends BshClassManager {
-    static final String BSH_PACKAGE = "bsh";
+    static final String BSH_PACKAGE = "tsh";
     /**
      * The classpath of the base loader.  Initially and upon reset() this is
      * an empty instance of BshClassPath.  It grows as paths are added or is

@@ -11,9 +11,9 @@ import java.util.Arrays;
 import java.util.List;
 
 public class BshScriptEngineFactory implements ScriptEngineFactory {
-    final List<String> extensions = Arrays.asList("bsh", "java");
+    final List<String> extensions = Arrays.asList("tsh", "java");
     final List<String> mimeTypes = Arrays.asList("application/x-beanshell", "application/x-bsh", "application/x-java-source");
-    final List<String> names = Arrays.asList("beanshell", "bsh", "java");
+    final List<String> names = Arrays.asList("testshell", "tsh", "java");
 
     public BshScriptEngineFactory() {
     }

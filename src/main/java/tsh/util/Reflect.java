@@ -115,12 +115,15 @@ public class Reflect {
         Object[] tmpArgs = new Object[args.length];
         Class[] types = method.getParameterTypes();
         try {
-            for (int i = 0; i < args.length; i++)
-                tmpArgs[i] = Types.castObject(
-                        args[i]/*rhs*/, types[i]/*lhsType*/, Types.ASSIGNMENT);
+            for (int i = 0; i < args.length; i++) {
+                Class clazz = String.class;
+                if (i < types.length) {
+                    clazz = types[i];
+                }
+                tmpArgs[i] = Types.castObject(args[i]/*rhs*/, clazz /*lhsType*/, Types.ASSIGNMENT);
+            }
         } catch (UtilEvalError e) {
-            throw new InterpreterError(
-                    "illegal argument type in method invocation: " + e);
+            throw new InterpreterError("illegal argument type in method invocation: " + e);
         }
 
         // unwrap any primitives
@@ -130,7 +133,12 @@ public class Reflect {
                 method, tmpArgs);
 
         try {
-            Object returnValue = method.invoke(object, tmpArgs);
+            Object returnValue = null;
+            if (method.getDeclaringClass().getName().startsWith("tsh.methods")) {
+                returnValue = method.invoke(object, new Object[]{tmpArgs});
+            } else {
+                returnValue = method.invoke(object, tmpArgs);
+            }
             if (returnValue == null)
                 returnValue = Primitive.NULL;
             Class returnType = method.getReturnType();

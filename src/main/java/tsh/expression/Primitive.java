@@ -33,9 +33,7 @@ import tsh.entity.TBigDecimal;
 import tsh.exception.InterpreterError;
 import tsh.exception.UtilEvalError;
 import tsh.exception.UtilTargetError;
-import tsh.util.NumberUtil;
 import tsh.util.Reflect;
-import tsh.util.StringUtil;
 import tsh.util.Utils;
 
 import java.math.BigDecimal;
@@ -123,7 +121,6 @@ public final class Primitive implements TParserConstants, java.io.Serializable {
     }
 
 
-
     public Primitive(byte value) {
         this(new Byte(value));
     }
@@ -198,7 +195,7 @@ public final class Primitive implements TParserConstants, java.io.Serializable {
      * The exception is for boolean operations where we will return the
      * primitive type either way.
      */
-    public static Object binaryOperation(Object obj1, Object obj2, String kind)throws UtilEvalError {
+    public static Object binaryOperation(Object obj1, Object obj2, String kind) throws UtilEvalError {
         // special primitive types
         if (obj1 == NULL || obj2 == NULL)
             throw new UtilEvalError(
@@ -244,17 +241,11 @@ public final class Primitive implements TParserConstants, java.io.Serializable {
             throws UtilEvalError {
         if (lhs instanceof Boolean)
             return booleanBinaryOperation((Boolean) lhs, (Boolean) rhs, kind);
-        else if (lhs instanceof TBigDecimal && rhs instanceof  TBigDecimal){
+        else if (lhs instanceof TBigDecimal && rhs instanceof TBigDecimal) {
             int lp = ((TBigDecimal) lhs).getPrecision();
             int rp = ((TBigDecimal) lhs).getPrecision();
-            if(lp == 0 && rp == 0 ){
-                Integer result = (Integer) intBinaryOperation(((TBigDecimal) lhs).getValue().intValue(), ((TBigDecimal) rhs).getValue().intValue(), kind);
-                return new TBigDecimal(new BigDecimal(result),0);
-            }else{
-                Double d = (Double) bigdecimalBinaryOperation(((TBigDecimal) lhs).getValue(),  ((TBigDecimal) rhs).getValue(), kind);
-                return new TBigDecimal(new BigDecimal(d), NumberUtil.getPrecision(d + ""));
-            }
-        }else {
+            return bigdecimalBinaryOperation(((TBigDecimal) lhs).getValue(), ((TBigDecimal) rhs).getValue(), kind, lp > rp ? lp : rp);
+        } else {
             throw new UtilEvalError("Invalid types in binary operator");
         }
 
@@ -282,12 +273,15 @@ public final class Primitive implements TParserConstants, java.io.Serializable {
         }
     }
 
-
-    // returns Object covering both Integer and Boolean return types
-    static Object intBinaryOperation(Integer I1, Integer I2, String kind) {
-        int lhs = I1.intValue();
-        int rhs = I2.intValue();
-
+    static Object bigdecimalBinaryOperation(BigDecimal d1, BigDecimal d2, String kind, int precision) throws UtilEvalError {
+        double lhs = d1.doubleValue();
+        double rhs = d2.doubleValue();
+        int lInt = d1.intValue();
+        int rInt = d2.intValue();
+        //如果不是整数，则不允许 << ，>>，>>>，&，| ，^ 操作
+        if (precision > 0 && Utils.eqOR(kind, LSHIFT, RSIGNEDSHIFT, RUNSIGNEDSHIFT, AND, OR, XOR)) {
+            throw new UtilEvalError("Can't shift doubles");
+        }
         switch (kind) {
             // boolean
             case LT:
@@ -308,90 +302,38 @@ public final class Primitive implements TParserConstants, java.io.Serializable {
             case NE:
                 return lhs != rhs ? Boolean.TRUE : Boolean.FALSE;
 
-            // arithmetic
             case PLUS:
-                return new Integer(lhs + rhs);
+                return new TBigDecimal(d1.add(d2), precision);
 
             case MINUS:
-                return new Integer(lhs - rhs);
+                return new TBigDecimal(d1.subtract(d2), precision);
 
             case STAR:
-                return new Integer(lhs * rhs);
+                return new TBigDecimal(d1.multiply(d2), precision);
 
             case SLASH:
-                return new Integer(lhs / rhs);
+                return new TBigDecimal(d1.divide(d2), precision);
 
             case MOD:
-                return new Integer(lhs % rhs);
-
+                return new TBigDecimal(new BigDecimal(new Double(lhs % rhs)), precision);
             // bitwise
             case LSHIFT:
-                return new Integer(lhs << rhs);
+                return new TBigDecimal(new BigDecimal(lInt << rInt), precision);
 
             case RSIGNEDSHIFT:
-                return new Integer(lhs >> rhs);
+                return new TBigDecimal(new BigDecimal(lInt >> rInt), precision);
 
             case RUNSIGNEDSHIFT:
-                return new Integer(lhs >>> rhs);
+                return new TBigDecimal(new BigDecimal(lInt >>> rInt), precision);
 
             case AND:
-                return new Integer(lhs & rhs);
+                return new TBigDecimal(new BigDecimal(lInt & rInt), precision);
 
             case OR:
-                return new Integer(lhs | rhs);
+                return new TBigDecimal(new BigDecimal(lInt | rInt), precision);
 
             case XOR:
-                return new Integer(lhs ^ rhs);
-
-            default:
-                throw new InterpreterError(
-                        "Unimplemented binary integer operator");
-        }
-    }
-
-    static Object bigdecimalBinaryOperation(BigDecimal D1, BigDecimal D2, String kind) throws UtilEvalError {
-        double lhs = D1.doubleValue();
-        double rhs = D2.doubleValue();
-
-        switch (kind) {
-            // boolean
-            case LT:
-                return lhs < rhs ? Boolean.TRUE : Boolean.FALSE;
-
-            case GT:
-                return lhs > rhs ? Boolean.TRUE : Boolean.FALSE;
-
-            case EQ:
-                return lhs == rhs ? Boolean.TRUE : Boolean.FALSE;
-
-            case LE:
-                return lhs <= rhs ? Boolean.TRUE : Boolean.FALSE;
-
-            case GE:
-                return lhs >= rhs ? Boolean.TRUE : Boolean.FALSE;
-
-            case NE:
-                return lhs != rhs ? Boolean.TRUE : Boolean.FALSE;
-
-            case PLUS:
-                return new Double(lhs + rhs);
-
-            case MINUS:
-                return new Double(lhs - rhs);
-
-            case STAR:
-                return new Double(lhs * rhs);
-
-            case SLASH:
-                return new Double(lhs / rhs);
-
-            case MOD:
-                return new Double(lhs % rhs);
-
-            case LSHIFT:
-            case RSIGNEDSHIFT:
-            case RUNSIGNEDSHIFT:
-                throw new UtilEvalError("Can't shift doubles");
+                return new TBigDecimal(new BigDecimal(lInt ^ rInt), precision);
 
             default:
                 throw new InterpreterError(
@@ -428,7 +370,7 @@ public final class Primitive implements TParserConstants, java.io.Serializable {
         else if (operand instanceof Integer) {
             int result = intUnaryOperation((Integer) operand, kind);
 
-            if (Utils.eq(kind ,INCR) || Utils.eq( kind , DECR)) {
+            if (Utils.eq(kind, INCR) || Utils.eq(kind, DECR)) {
                 if (operandType == Byte.TYPE)
                     return new Primitive((byte) result);
                 if (operandType == Short.TYPE)
@@ -650,7 +592,6 @@ public final class Primitive implements TParserConstants, java.io.Serializable {
     }
 
 
-
     /**
      * Get the corresponding java.lang wrapper class for the primitive TYPE
      * class.
@@ -676,7 +617,6 @@ public final class Primitive implements TParserConstants, java.io.Serializable {
         throw new InterpreterError(
                 "Not a primitive wrapper type: " + wrapperType);
     }
-
 
 
     public static boolean isWrapperType(Class type) {
@@ -731,7 +671,6 @@ public final class Primitive implements TParserConstants, java.io.Serializable {
 
         throw new InterpreterError("error in wrapper cast");
     }
-
 
 
     public static Primitive castPrimitive(

@@ -27,6 +27,7 @@
 
 package tsh;
 
+import tsh.entity.TBigDecimal;
 import tsh.exception.InterpreterError;
 import tsh.exception.UtilEvalError;
 import tsh.exception.UtilTargetError;
@@ -363,8 +364,7 @@ public     static final int
 		Notes: This method is currently responsible for auto-boxing/unboxing
 		conversions...  Where does that need to go?
 	*/
-    private static Object castObject(
-            Class toType, Class fromType, Object fromValue,
+    private static Object castObject(Class toType, Class fromType, Object fromValue,
             int operation, boolean checkOnly)
             throws UtilEvalError {
 		/*
@@ -425,6 +425,9 @@ public     static final int
             }
         }
 
+        if(fromType == TBigDecimal.class){
+            return fromValue.toString();
+        }
         // Else, casting to reference type
 
         // Casting from primitive or void (to reference type)
@@ -482,7 +485,8 @@ public     static final int
         if (checkOnly)
             return INVALID_CAST;
         else
-            throw castError(toType, fromType, operation);
+            //throw castError(toType, fromType, operation);
+            return fromValue;
     }
 
     /**
