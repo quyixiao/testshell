@@ -5,6 +5,7 @@ import tsh.Interpreter;
 import tsh.LHS;
 import tsh.SimpleNode;
 import tsh.constant.TParserConstants;
+import tsh.entity.TBigDecimal;
 import tsh.exception.EvalError;
 import tsh.exception.InterpreterError;
 import tsh.exception.UtilEvalError;
@@ -122,6 +123,10 @@ public class TSHAssignment extends SimpleNode implements TParserConstants {
                 lhs instanceof Number || lhs instanceof Primitive) &&
                 (rhs instanceof Boolean || rhs instanceof Character ||
                         rhs instanceof Number || rhs instanceof Primitive)) {
+            return Primitive.binaryOperation(lhs, rhs, kind);
+        }
+
+        if(lhs instanceof TBigDecimal && rhs instanceof  TBigDecimal){
             return Primitive.binaryOperation(lhs, rhs, kind);
         }
 

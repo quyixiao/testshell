@@ -1039,9 +1039,9 @@ public class Interpreter
             systemLineSeparator = System.getProperty("line.separator");
             debug = System.err;
             //DEBUG = Boolean.getBoolean("debug");
-            DEBUG = true;
+            DEBUG = false;
             //TRACE = Boolean.getBoolean("trace");
-            TRACE = true;
+            TRACE = false;
             //LOCALSCOPING =  Boolean.getBoolean("localscoping");
             LOCALSCOPING = true;
             String outfilename = System.getProperty("outfile");

@@ -415,7 +415,9 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
         }
         if (isMethod()) {
             MethodDeclaration();
-        } else {
+        }else  if (jj_2_31(2147483647)) {
+            VariableInitializer();
+        }else {
             Statement();
         }
     }
@@ -1105,7 +1107,7 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
         }
     }
 
-    final public void VariableInitializer() throws Exception {
+    final public void VariableInitializer() throws ParseException {
         switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
             case LBRACKET:
                 ListInitializer();
@@ -1114,12 +1116,6 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
                 MapInitializer();
                 break;
             case LPAREN:
-                if (isTuple(2147483647)) { //如果是元组
-                    TupleInitializer();
-                } else {
-                    Expression();
-                }
-                break;
             case FALSE:
             case NULL:
             case TRUE:
@@ -1137,7 +1133,7 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
             default:
                 jj_la1[13] = jj_gen;
                 jj_consume_token(default_1);
-                throw new Exception();
+                throw new ParseException();
         }
     }
 
@@ -1146,6 +1142,7 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
             Assignment();
         } else {
             switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
+
                 case BOOL:
                 case FALSE:
                 case NULL:
@@ -1325,83 +1322,8 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
     }
 
 
-    final public void TupleInitializer() throws ParseException {
-        TSHMapInitializer jjtn000 = new TSHMapInitializer(T_TupleInitializer);
-        boolean jjtc000 = true;
-        jjtree.openNodeScope(jjtn000);
-        jjtreeOpenNodeScope(jjtn000);
-        try {
-            jj_consume_token(LPAREN);
-            switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
-                case NUMBER:
-                case FALSE:
-                case NULL:
-                case TRUE:
-                case STR:
-                case IDENTIFIER:
-                case LPAREN:
-                case LBRACE:
-                case BANG:
-                case TILDE:
-                case INCR:
-                case DECR:
-                case PLUS:
-                case MINUS:
-                    VariableInitializer();
-                    label_2:
-                    while (true) {
-                        if (jj_2_4(2)) {
-                            ;
-                        } else {
-                            break label_2;
-                        }
-                        jj_consume_token(COMMA);
-                        VariableInitializer();
-                    }
-                    break;
-                default:
-                    jj_la1[14] = jj_gen;
-            }
-            switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
-                case COMMA:
-                    jj_consume_token(COMMA);
-                    break;
-                default:
-                    jj_la1[15] = jj_gen;
-                    ;
-            }
-            jj_consume_token(RPAREN);
-        } catch (Throwable jjte000) {
-            if (jjtc000) {
-                jjtree.clearNodeScope(jjtn000);
-                jjtc000 = false;
-            } else {
-                jjtree.popNode();
-            }
-            if (jjte000 instanceof RuntimeException) {
-                {
-                    if (true) throw (RuntimeException) jjte000;
-                }
-            }
-            if (jjte000 instanceof ParseException) {
-                {
-                    if (true) throw (ParseException) jjte000;
-                }
-            }
-            {
-                if (true) throw (Error) jjte000;
-            }
-        } finally {
-            if (jjtc000) {
-                jjtree.closeNodeScope(jjtn000, true);
-                jjtreeCloseNodeScope(jjtn000);
-            }
-        }
-    }
-
 
     final public void Assignment() throws ParseException {
-        /*@bgen(jjtree) Assignment */
         TSHAssignment jjtn000 = new TSHAssignment(T_Assignment);
         boolean jjtc000 = true;
         jjtree.openNodeScope(jjtn000);
@@ -3315,25 +3237,6 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
         return false;
     }
 
-    final private boolean jj_3R_134() {
-        if (jj_3R_39()) return true;
-        Token xsp;
-        while (true) {
-            xsp = jj_scanpos;
-            if (jj_3R_147()) {
-                jj_scanpos = xsp;
-                break;
-            }
-        }
-        return false;
-    }
-
-
-    final private boolean jj_3R_147() {
-        if (jj_scan_token(COMMA)) return true;
-        if (jj_3R_39()) return true;
-        return false;
-    }
 
 
     final private boolean jj_3R_131() {
@@ -3517,14 +3420,6 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
 
 
 
-
-    // 变量的定义可能是 a = 或 a,b,c =
-    final private boolean jj_3_28() {
-        if (jj_scan_token(IDENTIFIER)) return true;         //
-        return false;
-    }
-
-
     final private boolean jj_2_7(int xla) {
         jj_la = xla;
         jj_lastpos = jj_scanpos = token;
@@ -3536,19 +3431,6 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
             jj_save(6, xla);
         }
     }
-
-    final private boolean isTuple(int xla) {
-        jj_la = xla;
-        jj_lastpos = jj_scanpos = token;
-        try {
-            return !jj_3_9();
-        } catch (Parser.LookaheadSuccess ls) {
-            return true;
-        } finally {
-            jj_save(8, xla);
-        }
-    }
-
 
     final private boolean jj_3_9() {
         Token xsp = jj_scanpos;
@@ -3576,6 +3458,61 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
         return false;
     }
 
+
+    final private boolean jj_2_31(int xla) {
+        jj_la = xla;
+        jj_lastpos = jj_scanpos = token;
+        try {
+            return !jj_3_31();
+        } catch (LookaheadSuccess ls) {
+            return true;
+        } finally {
+            jj_save(30, xla);
+        }
+    }
+
+    // 变量初始化 a = [1,2,3] 或 a = {"username":"zhangsan","password":"123456"} 这两种情况处理
+    final private boolean jj_3_31() {
+        if (jj_scan_token(IDENTIFIER)) return true;
+        Token xsp;
+        xsp = jj_scanpos;
+        if (jj_scan_token(ASSIGN)) {
+            jj_scanpos = xsp;
+            while (true) {
+                xsp = jj_scanpos;
+                if (jj_scan_token(COMMA)) {
+                    jj_scanpos = xsp;
+                    break;
+                }
+                xsp = jj_scanpos;
+                if (jj_scan_token(IDENTIFIER)) {
+                    jj_scanpos = xsp;
+                    break;
+                }
+                xsp = jj_scanpos;
+                if (jj_scan_token(NEXT_LINE)) {
+                    jj_scanpos = xsp;
+                } else {
+                    return true;
+                }
+            }
+            if (jj_scan_token(ASSIGN)) return true;
+        }
+        if(jj_3_32()) return true;
+        return false;
+    }
+
+    final private boolean jj_3_32() {
+        Token xsp;
+        xsp = jj_scanpos;
+        if(jj_scan_token(LBRACE)){
+            jj_scanpos = xsp;
+            if(jj_scan_token(LBRACKET)){
+                return true;
+            }
+        }
+        return false;
+    }
 
     final private void jj_save(int index, int xla) {
         Parser.JJCalls p = jj_2_rtns[index];

@@ -1,5 +1,2 @@
-a = 0;
-for(i in range(1,10)){
-    a += i
-}
-println(a)
+list=['physics', 'chemistry', 1997, 2000]
+println(list)

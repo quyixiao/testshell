@@ -27,66 +27,28 @@
 
 package tsh.expression;
 
-
-import tsh.*;
+import tsh.CallStack;
+import tsh.Interpreter;
+import tsh.SimpleNode;
 import tsh.exception.EvalError;
+import tsh.exception.InterpreterError;
 
-public class TSHBlock extends SimpleNode {
-    public boolean isSynchronized = false;
+import java.util.List;
 
-    public TSHBlock(String id) {
+public class TSHList extends SimpleNode {
+    public List<Object> value;
+
+    public TSHList(String id) {
         super(id);
     }
 
+    public Object eval(CallStack callstack, Interpreter interpreter) throws EvalError {
+        if (value == null)
+            throw new InterpreterError("Null in bsh literal: " + value);
 
-    public Object eval(CallStack callstack, Interpreter interpreter)
-            throws EvalError {
-        return eval(callstack, interpreter, true);
+        return value;
     }
 
-    public Object eval( CallStack callstack, Interpreter interpreter,boolean overrideNamespace)throws EvalError {
-        return evalBlock(callstack, interpreter, overrideNamespace, null/*filter*/);
-    }
-
-
-    Object evalBlock(CallStack callstack, Interpreter interpreter,boolean overrideNamespace, NodeFilter nodeFilter)
-            throws EvalError {
-        Object ret = Primitive.VOID;
-        NameSpace enclosingNameSpace = null;
-        if (!overrideNamespace) {
-            enclosingNameSpace = callstack.top();
-            BlockNameSpace bodyNameSpace = new BlockNameSpace(enclosingNameSpace);
-            callstack.swap(bodyNameSpace);
-        }
-
-        int startChild = isSynchronized ? 1 : 0;
-        int numChildren = jjtGetNumChildren();
-
-        try {
-            for (int i = startChild; i < numChildren; i++) {
-                SimpleNode node = ((SimpleNode) jjtGetChild(i));
-
-                // filter nodes
-                if (nodeFilter != null && !nodeFilter.isVisible(node))
-                    continue;
-
-                ret = node.eval(callstack, interpreter);
-                // statement or embedded block evaluated a return statement
-                if (ret instanceof ReturnControl)
-                    break;
-            }
-        } finally {
-            // make sure we put the namespace back when we leave.
-            if (!overrideNamespace)
-                callstack.swap(enclosingNameSpace);
-        }
-        return ret;
-    }
-
-    public interface NodeFilter {
-        public boolean isVisible(SimpleNode node);
-    }
 
 
 }
-

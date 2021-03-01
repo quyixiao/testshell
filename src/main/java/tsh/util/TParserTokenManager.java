@@ -236,10 +236,10 @@ public class TParserTokenManager extends Utils implements TParserConstants {
                 input_stream.backup(1);
             }
             return getCommon();
-        } else if (!continueReader && eqOR(kind, LT)) { //如果是小于号，可能是<=，<<=,<< 三种情况
-            return getSpecial(kind, '<', '=');
+        } else if (!continueReader && eqOR(kind, LT)) { //如果是 < ，可能是<=，<<=,<< 三种情况
+            return getSpecial(new char[]{'<'}, '<', '=');
         } else if (!continueReader && eqOR(kind, GT)) {//可能会出现的情况>=，>>，>>>，>>=，>>>=
-            return getSpecial(kind, '=', '>');
+            return getSpecial(new char[]{'>'}, '=', '>');
         } else if (!continueReader && eqOR(kind, SLASH)) {     // / 号后面只能接 = 但是，如果 //,/**... */ 表示注释,下面主要是对注释处理
             char c = readChar();
             input_stream.backup(1);
@@ -266,17 +266,19 @@ public class TParserTokenManager extends Utils implements TParserConstants {
                 input_stream.tokenBegin += i;
                 return -1;
             }
-            return getSpecial(kind, '=');
-        } else if (!continueReader && eqOR(kind, ASSIGN, BANG, STAR, XOR, MOD)) {     // = ,! ,* ,/ ,^,% ,后面只能接 =
-            return getSpecial(kind, '=');
-        } else if (!continueReader && eqOR(kind, PLUS)) {            // + 号后面能接 +,=
-            return getSpecial(kind, '+', '=');
+            return getSpecial(null, '=');
+        } else if (!continueReader && eqOR(kind, ASSIGN)) {     // = ,后面只能接 =,如 ==，<=，<<=，>=，>>=，>>>=，!=，+=，-=，*=，/=，&=，|=，^=，%=
+            return getSpecial(new char[]{'=', '<', '>', '!', '+', '-', '*', '/', '&', '|', '^', '%'}, '=');
+        } else if (!continueReader && eqOR(kind, BANG, STAR, XOR, MOD)) {     // ! ,*  ,^,% ,后面只能接 =
+            return getSpecial(null, '=');
+        } else if (!continueReader && eqOR(kind, PLUS)) {            // + 号后面能接 +,= 有 ，++ 和+= 两种情况
+            return getSpecial(new char[]{'+'}, '+', '=');
         } else if (!continueReader && eqOR(kind, MINUS)) {           // - 号后面 只能接 - 或 = ，组成 -= 或--
-            return getSpecial(kind, '-', '=');
+            return getSpecial(new char[]{'-'}, '-', '=');
         } else if (!continueReader && eqOR(kind, AND)) {     // & 后面只能接 & 或 =
-            return getSpecial(kind, '&', '=');
+            return getSpecial(new char[]{'&'}, '&', '=');
         } else if (!continueReader && eqOR(kind, OR)) {      // | 后面只能接 | 或 =
-            return getSpecial(kind, '|', '=');
+            return getSpecial(new char[]{'|'}, '|', '=');
         } else if (eqOR(kind, DOUBLE_QUOT, SINGLE_QUOT)) {      // " 双引号处理,' 单引号处理
             if (continueReader && eqOR(kind, curKind)) {
                 input_stream.backup(2);
@@ -304,10 +306,19 @@ public class TParserTokenManager extends Utils implements TParserConstants {
 
 
 
-    public int getSpecial(String kind, char... matches) {
+    public int getSpecial(char [] preMatches,char... afterMatches) {
         String image = input_stream.GetImage().trim();
         image = image.substring(0, image.length() - 1);
-        if (image.length() > 0 && !image.endsWith(kind)) {
+        boolean preFlag = true;
+        if(preMatches !=null && preMatches.length > 0){
+            for (char m : preMatches) {
+                if (eq(image,m+"")) {
+                    preFlag = false;
+                    break;
+                }
+            }
+        }
+        if (image.length() > 0 && preFlag) {
             input_stream.backup(1);
             return getCommon();
         } else {
@@ -318,9 +329,10 @@ public class TParserTokenManager extends Utils implements TParserConstants {
                 return getCommon();
             }
             boolean flag = true;
-            for (char m : matches) {
+            for (char m : afterMatches) {
                 if (c == m) {
                     flag = false;
+                    break;
                 }
             }
             if (flag) {
