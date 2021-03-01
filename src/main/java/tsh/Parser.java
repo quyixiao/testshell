@@ -9,7 +9,9 @@ import tsh.util.*;
 
 import java.io.Reader;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Parser extends Utils implements TParserConstants, TParserTreeConstants {
@@ -53,7 +55,7 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
 
 
     public JJTParserState jjtree = new JJTParserState();
-    public TParserTokenManager token_source;
+    public ParserTokenManager token_source;
     public JavaCharStream jj_input_stream;
     public Token token, jj_nt;
     private String jj_ntk;
@@ -185,7 +187,7 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
 
     public Parser(java.io.Reader stream) {
         jj_input_stream = new JavaCharStream(stream, 1, 1);
-        token_source = new TParserTokenManager(jj_input_stream);
+        token_source = new ParserTokenManager(jj_input_stream);
         token = new Token();
         jj_ntk = default_1;
         jj_gen = 0;
@@ -416,7 +418,7 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
         if (isMethod()) {
             MethodDeclaration();
         }else  if (jj_2_31(2147483647)) {
-            VariableInitializer();
+            VariableDeclarator();
         }else {
             Statement();
         }
@@ -1107,6 +1109,65 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
         }
     }
 
+
+    final public void VariableDeclarator() throws ParseException {
+        TSHVariableDeclarator jjtn000 = new TSHVariableDeclarator(T_VariableDeclarator);
+        boolean jjtc000 = true;
+        jjtree.openNodeScope(jjtn000);
+        jjtreeOpenNodeScope(jjtn000);
+        Token t;
+        try {
+            List<String> list = new ArrayList<>();
+            t = jj_consume_token(IDENTIFIER);
+            list.add(t.image);
+            if (!jj_2_33(3,ASSIGN)) {           //如果没有扫描到=号，则变量的定义肯定是 a ,b = xxx
+                do{
+                    jj_consume_token(COMMA);
+                    t = jj_consume_token(IDENTIFIER);
+                    list.add(t.image);
+                }while (!jj_2_33(3,ASSIGN));
+            }
+            switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
+                case ASSIGN:
+                    jj_consume_token(ASSIGN);
+                    VariableInitializer();
+                    break;
+                default:
+                    jj_la1[12] = jj_gen;
+            }
+            jjtree.closeNodeScope(jjtn000, true);
+            jjtc000 = false;
+            jjtreeCloseNodeScope(jjtn000);
+            jjtn000.names = list.toArray(new String[list.size()]);
+        } catch (Throwable jjte000) {
+            if (jjtc000) {
+                jjtree.clearNodeScope(jjtn000);
+                jjtc000 = false;
+            } else {
+                jjtree.popNode();
+            }
+            if (jjte000 instanceof RuntimeException) {
+                {
+                    if (true) throw (RuntimeException) jjte000;
+                }
+            }
+            if (jjte000 instanceof ParseException) {
+                {
+                    if (true) throw (ParseException) jjte000;
+                }
+            }
+            {
+                if (true) throw (Error) jjte000;
+            }
+        } finally {
+            if (jjtc000) {
+                jjtree.closeNodeScope(jjtn000, true);
+                jjtreeCloseNodeScope(jjtn000);
+            }
+        }
+    }
+
+
     final public void VariableInitializer() throws ParseException {
         switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
             case LBRACKET:
@@ -1142,7 +1203,6 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
             Assignment();
         } else {
             switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
-
                 case BOOL:
                 case FALSE:
                 case NULL:
@@ -1193,7 +1253,7 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
                     VariableInitializer();
                     label_2:
                     while (true) {
-                        if (jj_scan_token(COMMA)) {
+                        if (jj_2_4(2)) {
                             ;
                         } else {
                             break label_2;
@@ -1292,7 +1352,7 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
                     jj_la1[15] = jj_gen;
                     ;
             }
-            jj_consume_token(RBRACKET);
+            jj_consume_token(RBRACE);
         } catch (Throwable jjte000) {
             if (jjtc000) {
                 jjtree.clearNodeScope(jjtn000);
@@ -2477,7 +2537,6 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
     }
 
 
-    // todo
     final public void PrimarySuffix() throws ParseException {
         TSHPrimarySuffix jjtn000 = new TSHPrimarySuffix(T_PrimarySuffix);
         boolean jjtc000 = true;
@@ -3393,13 +3452,19 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
         jj_la = xla;
         jj_lastpos = jj_scanpos = token;
         try {
-            return !jj_3_4();
+            return !jj_2_4_4();
         } catch (Parser.LookaheadSuccess ls) {
             return true;
         } finally {
             jj_save(3, xla);
         }
     }
+
+    final private boolean jj_2_4_4() {
+        if (jj_scan_token(COMMA)) return true;
+        return false;
+    }
+
 
     final private boolean jjMethod() {
         if (jj_scan_token(DEF)) return true;
@@ -3470,6 +3535,24 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
             jj_save(30, xla);
         }
     }
+
+    final private boolean jj_2_33(int xla,String kind) {
+        jj_la = xla;
+        jj_lastpos = jj_scanpos = token;
+        try {
+            return !jj_2_34(kind);
+        } catch (LookaheadSuccess ls) {
+            return true;
+        } finally {
+            jj_save(30, xla);
+        }
+    }
+
+    final private boolean jj_2_34(String kind) {
+        if (jj_scan_token(kind)) return true;
+        return false;
+    }
+
 
     // 变量初始化 a = [1,2,3] 或 a = {"username":"zhangsan","password":"123456"} 这两种情况处理
     final private boolean jj_3_31() {

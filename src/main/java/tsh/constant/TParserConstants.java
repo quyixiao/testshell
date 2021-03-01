@@ -134,6 +134,7 @@ public interface TParserConstants {
             LBRACKET,
             RBRACKET,
             SEMICOLON,
+            COLON,
             COMMA,
             DOT,
             IN,

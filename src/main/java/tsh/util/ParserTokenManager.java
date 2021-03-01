@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TParserTokenManager extends Utils implements TParserConstants {
+public class ParserTokenManager extends Utils implements TParserConstants {
 
     public static List<char[]> type = new ArrayList<>();
 
@@ -71,7 +71,7 @@ public class TParserTokenManager extends Utils implements TParserConstants {
     private String curKind = "";
 
 
-    public TParserTokenManager(JavaCharStream stream) {
+    public ParserTokenManager(JavaCharStream stream) {
         if (JavaCharStream.staticFlag) {
             throw new Error("ERROR: Cannot use a static CharStream class with a non-static lexical analyzer.");
         }
@@ -226,7 +226,7 @@ public class TParserTokenManager extends Utils implements TParserConstants {
                     return -1;
                 }
             }
-        } else if (!continueReader && eqOR(kind, LPAREN, RPAREN, LBRACE, RBRACE, LBRACKET, RBRACKET, SEMICOLON, COMMA, DOT)) {
+        } else if (!continueReader && eqOR(kind, LPAREN, RPAREN, LBRACE, RBRACE, LBRACKET, RBRACKET, SEMICOLON, COMMA, DOT,COLON)) {
             String image = input_stream.GetImage().trim();
             if (eqOR(image, SEMICOLON)) {                            //如果是; ，略过
                 input_stream.tokenBegin += 1;

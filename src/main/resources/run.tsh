@@ -1,2 +1,2 @@
-list=['physics', 'chemistry', 1997, 2000]
-println(list)
+list = ['zhangsan',2,3]
+print(list[0])

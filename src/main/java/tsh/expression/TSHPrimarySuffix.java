@@ -1,16 +1,19 @@
 package tsh.expression;
 
+import com.sun.org.apache.xml.internal.utils.IntVector;
 import tsh.*;
+import tsh.entity.TBigDecimal;
 import tsh.exception.*;
 import tsh.util.CollectionManager;
+import tsh.util.NumberUtil;
 import tsh.util.Reflect;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
 public class TSHPrimarySuffix extends SimpleNode {
     public static final int
-            CLASS = 0,
             INDEX = 1,
             NAME = 2,
             PROPERTY = 3;
@@ -125,19 +128,18 @@ public class TSHPrimarySuffix extends SimpleNode {
     /**
      *
      */
-    static int getIndexAux(
-            Object obj, CallStack callstack, Interpreter interpreter,
-            SimpleNode callerInfo)
-            throws EvalError {
-        if (!obj.getClass().isArray())
-            throw new EvalError("Not an array", callerInfo, callstack);
-
+    static int getIndexAux(Object obj, CallStack callstack, Interpreter interpreter,SimpleNode callerInfo)throws EvalError {
         int index;
         try {
             Object indexVal = ((SimpleNode) callerInfo.jjtGetChild(0)).eval(callstack, interpreter);
-            if (!(indexVal instanceof Primitive))
-                indexVal = Types.castObject(indexVal, Integer.TYPE, Types.ASSIGNMENT);
-            index = ((Primitive) indexVal).intValue();
+            if (!(indexVal instanceof Primitive)) {
+                if(indexVal instanceof TBigDecimal){
+                    indexVal = ((TBigDecimal) indexVal).getValue();
+                }else{
+                    indexVal = Types.castObject(indexVal, Integer.TYPE, Types.ASSIGNMENT);
+                }
+            }
+            index = NumberUtil.objToInt(indexVal);
         } catch (UtilEvalError e) {
             Interpreter.debug("doIndex: " + e);
             throw e.toEvalError("Arrays may only be indexed by integer types.",callerInfo, callstack);
@@ -156,7 +158,11 @@ public class TSHPrimarySuffix extends SimpleNode {
             return new LHS(obj, index);
         else
             try {
-                return Reflect.getIndex(obj, index);
+                if(obj instanceof List){
+                    return ((List) obj).get(index);
+                }else{
+                    return Reflect.getIndex(obj, index);
+                }
             } catch (UtilEvalError e) {
                 throw e.toEvalError(this, callstack);
             }
