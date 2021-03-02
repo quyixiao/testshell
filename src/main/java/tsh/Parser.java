@@ -404,7 +404,7 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
         }
     }
 
-    final public void BlockStatement() throws ParseException {
+    final public boolean BlockStatement() throws ParseException {
         lable_:
         while (true) {
             switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
@@ -415,6 +415,10 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
                     break lable_;
             }
         }
+        if(jj_2_33(3,EOF)){             //如果文件读取己经结束
+            return false;
+        }
+
         if (isMethod()) {
             MethodDeclaration();
         }else  if (jj_2_31(2147483647)) {
@@ -422,6 +426,7 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
         }else {
             Statement();
         }
+        return true;
     }
 
 
@@ -682,9 +687,8 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
         }
     }
 
-
+    //while
     final public void WhileStatement() throws ParseException {
-        /*@bgen(jjtree) WhileStatement */
         TSHWhileStatement jjtn000 = new TSHWhileStatement(T_WhileStatement);
         boolean jjtc000 = true;
         jjtree.openNodeScope(jjtn000);
@@ -2475,6 +2479,7 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
                 case NULL:
                 case TRUE:
                 case IDENTIFIER:
+                case STR:
                 case NUMBER:
                 case LPAREN:
                 case BANG:
@@ -2624,10 +2629,7 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
             break;
             default:
                 jj_la1[0] = jj_gen;
-                BlockStatement();
-                if (true) {
-                    return false;
-                }
+                return !BlockStatement();
         }
         throw new Error("Missing return statement in function");
     }
@@ -2863,7 +2865,14 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
         return false;
     }
 
+
+    final private boolean jj_3R_57() {
+        if (jj_scan_token(IDENTIFIER)) return true;
+        return false;
+    }
+
     final private boolean jj_3R_33() {
+        if (jj_3R_57()) return true;
         Token xsp;
         while (true) {
             xsp = jj_scanpos;
@@ -2875,15 +2884,14 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
         return false;
     }
 
-
     final private boolean jj_3R_104() {
         Token xsp;
         xsp = jj_scanpos;
-        if (jj_3R_131()) {                  //表示一个 list 类型
+        if (jj_3R_131()) {                      // []
             jj_scanpos = xsp;
-            if (jj_3R_132()) {
+            if (jj_3R_132()) {                  //.xxx(xxx)
                 jj_scanpos = xsp;
-                if (jj_3R_133()) return true;
+                if (jj_3R_133()) return true;   // { }
             }
         }
         return false;
@@ -2993,9 +3001,19 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
         }
     }
 
-
+    // 第一个不是++, 后面有 ++ 符号
     final private boolean jj_3_12() {
         if (jj_3R_33()) return true;
+        Token xsp;
+        xsp = jj_scanpos;
+        if (jj_scan_token(INCR)) {
+            jj_scanpos = xsp;
+            if (jj_scan_token(DECR)) return true;
+        }
+        return false;
+    }
+
+    final private boolean jj_3_12_2(){
         Token xsp;
         xsp = jj_scanpos;
         if (jj_scan_token(INCR)) {
@@ -3297,7 +3315,6 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
     }
 
 
-
     final private boolean jj_3R_131() {
         if (jj_scan_token(LBRACKET)) return true;           // [
         if (jj_3R_39()) return true;
@@ -3552,6 +3569,8 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
         if (jj_scan_token(kind)) return true;
         return false;
     }
+
+
 
 
     // 变量初始化 a = [1,2,3] 或 a = {"username":"zhangsan","password":"123456"} 这两种情况处理

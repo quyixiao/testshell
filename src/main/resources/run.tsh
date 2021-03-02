@@ -1,2 +1,7 @@
-list = ['zhangsan',2,3]
-print(list[0])
+i = 1
+a = i ++
+print(i)
+
+
+
+

@@ -342,12 +342,12 @@ public final class Primitive implements TParserConstants, java.io.Serializable {
     }
 
 
-    static Object promoteToInteger(Object wrapper) {
-        if (wrapper instanceof Character)
+    public static Object promoteToInteger(Object wrapper) {
+        if (wrapper instanceof Character) {
             return new Integer(((Character) wrapper).charValue());
-        else if ((wrapper instanceof Byte) || (wrapper instanceof Short))
+        } else if ((wrapper instanceof Byte) || (wrapper instanceof Short)) {
             return new Integer(((Number) wrapper).intValue());
-
+        }
         return wrapper;
     }
 
