@@ -4,6 +4,7 @@ import tsh.CallStack;
 import tsh.Interpreter;
 import tsh.SimpleNode;
 import tsh.constant.TParserConstants;
+import tsh.entity.TBigDecimal;
 import tsh.exception.EvalError;
 import tsh.exception.UtilEvalError;
 
@@ -40,10 +41,7 @@ public class TSHSwitchStatement extends SimpleNode implements TParserConstants {
                     if (node instanceof TSHSwitchLabel) {
                         continue;
                     }
-                    // eval it
                     Object value = ((SimpleNode) node).eval(callstack, interpreter);
-
-                    // should check to disallow continue here?
                     if (value instanceof ReturnControl) {
                         returnControl = (ReturnControl) value;
                         break;
@@ -73,14 +71,13 @@ public class TSHSwitchStatement extends SimpleNode implements TParserConstants {
      * yuck: factor this out into Primitive.java
      */
     private boolean primitiveEquals(Object switchVal, Object targetVal, CallStack callstack, SimpleNode switchExp) throws EvalError {
-        if (switchVal instanceof Primitive || targetVal instanceof Primitive) {
+        if (switchVal instanceof Primitive || targetVal instanceof Primitive || switchVal instanceof TBigDecimal || targetVal instanceof TBigDecimal ) {
             try {
-                // binaryOperation can return Primitive or wrapper type
                 Object result = Primitive.binaryOperation(switchVal, targetVal, TParserConstants.EQ);
                 result = Primitive.unwrap(result);
                 return result.equals(Boolean.TRUE);
             } catch (UtilEvalError e) {
-                throw e.toEvalError("Switch value: " + switchExp.getText() + ": ", this, callstack);
+                return Boolean.FALSE;
             }
         } else {
             return switchVal.equals(targetVal);

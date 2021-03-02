@@ -244,6 +244,19 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
         throw new ParseException();
     }
 
+  final private void jj_consume_token_next_line() throws ParseException {
+      lable_:
+      while (true) {
+          switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
+              case NEXT_LINE:
+                  jj_consume_token(NEXT_LINE);
+                  break ;
+              default:
+                  break lable_;
+          }
+      }
+  }
+
 
 
     final private Token jj_consume_token_util(String kind) throws ParseException {
@@ -405,20 +418,8 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
     }
 
     final public boolean BlockStatement() throws ParseException {
-        lable_:
-        while (true) {
-            switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
-                case NEXT_LINE:
-                    jj_consume_token(NEXT_LINE);
-                    break ;
-                default:
-                    break lable_;
-            }
-        }
-        if(jj_2_33(3,EOF)){             //如果文件读取己经结束
-            return false;
-        }
-
+        jj_consume_token_next_line();
+        if(jj_2_33(3,EOF)) return false;
         if (isMethod()) {
             MethodDeclaration();
         }else  if (jj_2_31(2147483647)) {
@@ -428,6 +429,8 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
         }
         return true;
     }
+
+
 
 
     private void MethodDeclaration() throws ParseException {
@@ -798,6 +801,7 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
             jj_consume_token(LBRACE);
             label_23:
             while (true) {
+                jj_consume_token_next_line();
                 switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
                     case CASE:
                     case _DEFAULT:
@@ -808,17 +812,19 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
                         break label_23;
                 }
                 SwitchLabel();
+                int i = 0;
                 label_24:
-                while (true) {
-                    if (jj_2_29(1)) {
+                while (true && i != 1) {
+                    i = jj_2_29(1);
+                    if (i == 2 || i == 1) {             //如果是 break i = 1 ,则下次退出
                         ;
-                    } else {
+                    } else {                            //如果遇到 case 或 } 情况，直接终止到label_24
                         break label_24;
                     }
                     BlockStatement();
                 }
             }
-            jj_consume_token(RBRACE);
+            jj_consume_token_util(RBRACE);
         } catch (Throwable jjte000) {
             if (jjtc000) {
                 jjtree.clearNodeScope(jjtn000);
@@ -1012,7 +1018,6 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
                     jj_la1[83] = jj_gen;
                     ;
             }
-            jj_consume_token(SEMICOLON);
             jjtree.closeNodeScope(jjtn000, true);
             jjtc000 = false;
             jjtreeCloseNodeScope(jjtn000);
@@ -2657,10 +2662,6 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
         return false;
     }
 
-    final private boolean jj_3_22() {
-        if (jj_3R_40()) return true;
-        return false;
-    }
 
 
     final private boolean jj_3_40(int xla) {
@@ -2682,79 +2683,32 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
     }
 
 
-    final private boolean jj_2_29(int xla) {
+    final private int jj_2_29(int xla) {
         jj_la = xla;
         jj_lastpos = jj_scanpos = token;
         try {
-            return !jj_3R_28();
+            return jj_3R_28();
         } catch (Parser.LookaheadSuccess ls) {
-            return true;
+            return 0;
         } finally {
             jj_save(28, xla);
         }
     }
 
-
-    final private boolean jj_3R_45() {
-        Token xsp;
-        xsp = jj_scanpos;
-        if (jj_3_22()) {
-            jj_scanpos = xsp;
-            if (jj_3R_38()) {               // {}  静态代码块
-                jj_scanpos = xsp;
-                if (jj_3R_78()) {                   // 大概三目运算符 ? xxx: bbb ;
-                    jj_scanpos = xsp;
-                    if (jj_scan_token(SWITCH)) {                   // switch 表达式
-                        jj_scanpos = xsp;
-                        if (jj_scan_token(IF)) {                       // if 表达式
-                            jj_scanpos = xsp;
-                            if (jj_scan_token(WHILE)) {                   //  while 表达式
-                                jj_scanpos = xsp;
-                                if (jj_scan_token(DO)) {                   // do while()表达式
-                                    jj_scanpos = xsp;
-                                    if (jj_scan_token(FOR)) {                   // for (i in list )
-                                        jj_scanpos = xsp;
-                                        if (jj_scan_token(BREAK)) {                   // break; 或 break label_1 ;
-                                            jj_scanpos = xsp;
-                                            if (jj_scan_token(CONTINUE)) {                   // continue 或 continue label_1;
-                                                jj_scanpos = xsp;
-                                                if (jj_scan_token(RETURN)) {               // return 表达式;
-                                                    return true;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+    final private int jj_3R_28() {
+        while (true){
+            Token t = jj_scan_token_next();
+            if (StringUtil.isNotBlank(t.image)) {   // },和 case 的情况，表示本次终止掉
+                if (eqOR(t.kind, RBRACE,CASE)) {
+                    return 0;
+                } else if(eqOR(t.kind,BREAK)){      // break 表示下一次终止掉
+                    return 1;
                 }
+                return 2;
             }
         }
-        return false;
     }
 
-
-    final private boolean jj_3R_78() {
-        if (jj_3R_39()) return true;
-        if (jj_scan_token(NEXT_LINE)) return true; //
-        return false;
-    }
-
-
-    final private boolean jj_3R_38() {
-        Token xsp;
-        if (jj_scan_token(LBRACE)) return true; // {
-        while (true) {
-            xsp = jj_scanpos;
-            if (jj_3_23()) {
-                jj_scanpos = xsp;
-                break;
-            }
-        }
-        if (jj_scan_token(RBRACE)) return true;         //  }
-        return false;
-    }
 
     final private boolean jj_3_23() {
         while (true) {
@@ -2769,41 +2723,6 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
         }
     }
 
-    final private boolean jj_3R_28() {
-        Token xsp;
-        xsp = jj_scanpos;
-        if (jjMethod()) {                       // method
-            jj_scanpos = xsp;
-            if (jj_3R_49()) {               // 定义一个list
-                jj_scanpos = xsp;
-                if (jj_3R_45()) {  // do while ,while ,for ,  {}等
-                    jj_scanpos = xsp;
-                }
-            }
-        }
-        return false;
-    }
-
-
-    final private boolean jj_3R_49() {
-        if (jj_3R_93()) return true;
-        if (jj_scan_token(NEXT_LINE)) return true;      // ;
-        return false;
-    }
-
-
-    final private boolean jj_3R_93() {
-        if (jj_3R_176()) return true;      // 数组变量名称或 =
-        Token xsp;
-        while (true) {
-            xsp = jj_scanpos;
-            if (jj_3R_177()) {
-                jj_scanpos = xsp;
-                break;
-            }
-        }
-        return false;
-    }
 
     final private boolean jj_3R_177() {
         if (jj_scan_token(COMMA)) return true;

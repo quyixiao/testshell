@@ -1,7 +1,11 @@
-i = 1
-a = i ++
-print(i)
-
-
-
-
+a = 3
+switch(a){
+    case "1":
+    case "2":
+    case 3:
+        print('结果是2')
+        break;
+    default :
+        print('不知道类型')
+        break;
+}
