@@ -44,7 +44,7 @@ public class Utils {
             splashScreen.dispose();
     }
 
-    public static boolean eq(String value, String... str) {
+    public static boolean eq(String value, String ... str) {
         for (String s : str) {
             if (!s.equals(value)) {
                 return false;

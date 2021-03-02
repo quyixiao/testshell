@@ -139,19 +139,6 @@ public class StringUtil {
     }
 
 
-
-    public static boolean isNotEmpty(final CharSequence cs) {
-        return !isEmpty(cs);
-    }
-
-
-    public static boolean isNotBlank(final CharSequence cs) {
-        return !isBlank(cs);
-    }
-
-
-
-
     public static boolean isNumber(String str) {
         if (str.length() == 0) {
             return false;

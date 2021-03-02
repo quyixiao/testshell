@@ -61,7 +61,7 @@ public interface TParserTreeConstants {
     public final static String T_TryStatement = "TryStatement";
     public final static String T_ListInitializer = "T_ListInitializer";
     public final static String T_MapInitializer = "T_MapInitializer";
-    public final static String T_TupleInitializer = "T_TupleInitializer";
+    public final static String T_LabeledStatement = "T_LabeledStatement";
 
 
 }

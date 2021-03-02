@@ -6,15 +6,22 @@ import tsh.exception.EvalError;
 import tsh.exception.UtilEvalError;
 import tsh.interfac.BshIterator;
 import tsh.util.CollectionManager;
+import tsh.util.StringUtil;
 
 public class TSHForStatement extends SimpleNode implements TParserConstants {
 
     public String varName;
 
+    private String label;
+
     public TSHForStatement(String id) {
         super(id);
     }
 
+    public Object eval(CallStack callstack, Interpreter interpreter, String label) throws EvalError {
+        this.label = label;
+        return eval(callstack, interpreter);
+    }
 
     public Object eval(CallStack callstack, Interpreter interpreter) throws EvalError {
         Class elementType = null;
@@ -47,7 +54,7 @@ public class TSHForStatement extends SimpleNode implements TParserConstants {
                     value = Primitive.NULL;
                 }
                 if (elementType != null) {
-                    eachNameSpace.setTypedVariable(varName/*name*/, elementType/*type*/, value/*value*/,null/*none*/);
+                    eachNameSpace.setTypedVariable(varName/*name*/, elementType/*type*/, value/*value*/, null/*none*/);
                 } else {
                     eachNameSpace.setVariable(varName, value, false);
                 }
@@ -59,16 +66,24 @@ public class TSHForStatement extends SimpleNode implements TParserConstants {
                 // not empty statement
                 Object ret = statement.eval(callstack, interpreter);
                 if (ret instanceof ReturnControl) {
-                    switch (((ReturnControl) ret).kind) {
-                        case RETURN:
+                    String retLabel = ((ReturnControl) ret).label;
+                    if (StringUtil.isNotBlank(retLabel)) {                //处理 break label 的情况
+                        if (!retLabel.equals(label)) {
                             returnControl = ret;
-                            breakout = true;
-                            break;
-                        case CONTINUE:
-                            break;
-                        case BREAK:
-                            breakout = true;
-                            break;
+                        }
+                        breakout = true;
+                    } else {
+                        switch (((ReturnControl) ret).kind) {
+                            case RETURN:
+                                returnControl = ret;
+                                breakout = true;
+                                break;
+                            case CONTINUE:
+                                break;
+                            case BREAK:
+                                breakout = true;
+                                break;
+                        }
                     }
                 }
             }

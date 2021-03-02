@@ -9,6 +9,8 @@ public class TSHReturnStatement extends SimpleNode {
 
     public String kind;
 
+    public String label;
+
     public TSHReturnStatement(String id) {
         super(id);
     }
@@ -21,6 +23,6 @@ public class TSHReturnStatement extends SimpleNode {
         } else {
             value = Primitive.VOID;
         }
-        return new ReturnControl(kind, value, this);
+        return new ReturnControl(kind, value, this,label);
     }
 }

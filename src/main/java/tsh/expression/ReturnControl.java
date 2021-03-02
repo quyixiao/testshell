@@ -36,15 +36,17 @@ import tsh.constant.TParserConstants;
 public class ReturnControl implements TParserConstants {
     public String kind;
     public Object value;
+    public String label;
     /**
      * The node where we returned... for printing error messages correctly
      */
     public SimpleNode returnPoint;
 
-    public ReturnControl(String kind, Object value, SimpleNode returnPoint) {
+    public ReturnControl(String kind, Object value, SimpleNode returnPoint,String label) {
         this.kind = kind;
         this.value = value;
         this.returnPoint = returnPoint;
+        this.label = label;
     }
 }
 

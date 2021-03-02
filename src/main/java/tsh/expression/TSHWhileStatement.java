@@ -5,6 +5,7 @@ import tsh.Interpreter;
 import tsh.SimpleNode;
 import tsh.constant.TParserConstants;
 import tsh.exception.EvalError;
+import tsh.util.StringUtil;
 
 public class TSHWhileStatement extends SimpleNode implements TParserConstants {
 
@@ -12,12 +13,16 @@ public class TSHWhileStatement extends SimpleNode implements TParserConstants {
      * Set by Parser, default {@code false}
      */
     public boolean isDoStatement;
-
+    private String label;
 
     public TSHWhileStatement(String id) {
         super(id);
     }
 
+    public Object eval(CallStack callstack, Interpreter interpreter, String label) throws EvalError {
+        this.label = label;
+        return eval(callstack, interpreter);
+    }
 
     public Object eval(CallStack callstack, Interpreter interpreter) throws EvalError {
         int numChild = jjtGetNumChildren();
@@ -43,22 +48,26 @@ public class TSHWhileStatement extends SimpleNode implements TParserConstants {
             }
             Object ret = body.eval(callstack, interpreter);
             if (ret instanceof ReturnControl) {
-                switch (((ReturnControl) ret).kind) {
-                    case RETURN:
+                String retLabel = ((ReturnControl) ret).label;
+                if (StringUtil.isNotBlank(retLabel)) {                //处理 break label 的情况
+                    if (!retLabel.equals(label)) {
                         return ret;
-
-                    case CONTINUE:
-                        break;
-
-                    case BREAK:
-                        return Primitive.VOID;
+                    }
+                    break;
+                } else {
+                    switch (((ReturnControl) ret).kind) {
+                        case RETURN:
+                            return ret;
+                        case CONTINUE:
+                            break;
+                        case BREAK:
+                            return Primitive.VOID;
+                    }
                 }
             }
         }
         return Primitive.VOID;
     }
-
-
 
 
 }

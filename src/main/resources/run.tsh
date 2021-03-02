@@ -1,11 +1,16 @@
-a = 3
-switch(a){
-    case "1":
-    case "2":
-    case 3:
-        print('结果是2')
-        break;
-    default :
-        print('不知道类型')
-        break;
+i = 1
+label_1:
+while(true){
+    for(k in range(1,5)){
+        switch(k){
+                        case 3:
+                            print('111')
+                            break label_1
+                        default:
+                            print('default')
+                            break
+                    }
+        print('++++++++++++++++++++++++++')
+    }
 }
+print('-----------------')

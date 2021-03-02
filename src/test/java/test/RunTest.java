@@ -46,8 +46,6 @@ public class RunTest {
                         retVal = ((ReturnControl) retVal).value;
                         break; // non-interactive, return control now
                     }
-
-                    System.out.println("result :" + retVal);
                 }
             } catch (ParseException e) {
                 e.printStackTrace();
