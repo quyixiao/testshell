@@ -226,7 +226,7 @@ public class ParserTokenManager extends Utils implements TParserConstants {
                     return -1;
                 }
             }
-        } else if (!continueReader && eqOR(kind, LPAREN, RPAREN, LBRACE, RBRACE, LBRACKET, RBRACKET, SEMICOLON, COMMA, DOT,COLON)) {
+        } else if (!continueReader && eqOR(kind, LPAREN, RPAREN, LBRACE, RBRACE, LBRACKET, RBRACKET, SEMICOLON, COMMA, COLON)) {
             String image = input_stream.GetImage().trim();
             if (eqOR(image, SEMICOLON)) {                            //如果是; ，略过
                 input_stream.tokenBegin += 1;
@@ -235,7 +235,17 @@ public class ParserTokenManager extends Utils implements TParserConstants {
             if (image.length() > 1) {
                 input_stream.backup(1);
             }
-            return getCommon();
+            return  getCommon();
+        } else if (!continueReader && eqOR(kind, DOT)) {    //. 的处理
+            String image = input_stream.GetImage().trim();
+            image = image.substring(0, image.length() - 1);
+            if(StringUtil.isNumber(image)){ //如果前面是数字，则直接略过
+                return 0;
+            }
+            if (image.length() > 1) {
+                input_stream.backup(1);
+            }
+            return  getCommon();
         } else if (!continueReader && eqOR(kind, LT)) { //如果是 < ，可能是<=，<<=,<< 三种情况
             return getSpecial(new char[]{'<'}, '<', '=');
         } else if (!continueReader && eqOR(kind, GT)) {//可能会出现的情况>=，>>，>>>，>>=，>>>=

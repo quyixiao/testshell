@@ -426,7 +426,7 @@ public     static final int
         }
 
         if(fromType == TBigDecimal.class){
-            return fromValue.toString();
+            return fromValue;
         }
         // Else, casting to reference type
 

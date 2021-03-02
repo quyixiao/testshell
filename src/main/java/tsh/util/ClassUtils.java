@@ -7,15 +7,17 @@ import java.lang.reflect.Method;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.util.Enumeration;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 public class ClassUtils {
-    public static Set<Class<?>> getClasses(String pack) {
 
+
+    public static Map<String,Method> methodMap = new HashMap<>();
+
+
+    public static Set<Class<?>> getClasses(String pack) {
         // 第一个class类的集合
         Set<Class<?>> classes = new LinkedHashSet<Class<?>>();
         // 是否循环迭代
@@ -139,17 +141,19 @@ public class ClassUtils {
         }
     }
 
+
     public static Method getMethod(String methodName) {
+        if(methodMap.size() > 0){
+            return methodMap.get(methodName);
+        }
         Set<Class<?>> classSet = ClassUtils.getClasses("tsh.methods");
         for (Class c : classSet) {
             Method method[] = c.getDeclaredMethods();
             for (Method m : method) {
-                if (methodName.equals(m.getName())) {
-                    return m;
-                }
+                methodMap.put(m.getName(),m);
             }
         }
-        return null;
+        return methodMap.get(methodName);
     }
 
 
