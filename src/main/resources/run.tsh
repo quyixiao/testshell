@@ -1,1 +1,1 @@
-print(ceil(4.12))
+print(fsum([1,2,3]))

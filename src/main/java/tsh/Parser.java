@@ -1256,6 +1256,12 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
                 case MINUS:
                     ConditionalExpression();
                     break;
+                case LBRACKET:
+                    ListInitializer();
+                    break;
+                case LBRACE:
+                    MapInitializer();
+                    break;
                 default:
                     jj_la1[23] = jj_gen;
                     jj_consume_token(default_1);
@@ -2514,6 +2520,8 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
                 case STR:
                 case NUMBER:
                 case LPAREN:
+                case LBRACKET:
+                case LBRACE:
                 case BANG:
                 case TILDE:
                 case INCR:
