@@ -1,1 +1,1 @@
-print(fsum([1,2,3]))
+print(radians(45))

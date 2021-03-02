@@ -117,4 +117,29 @@ public class MathMethod {
         return new TBigDecimal(bigDecimal, maxPrecision);
     }
 
+    //22. log10()返回x的以10为底的对数
+    public Object log10(Object... t) {
+        TBigDecimal v = (TBigDecimal) t[0];
+        double a = Math.log10(NumberUtil.objToDoubleWithDefault(v.getValue(), 0d));
+        return new TBigDecimal(new BigDecimal(a), 16);
+    }
+
+
+    //26. pow()返回x的y次方，即x**y
+    public Object pow(Object... t) {
+        TBigDecimal v1 = (TBigDecimal) t[0];
+        TBigDecimal v2 = (TBigDecimal) t[1];
+        int p = v1.getPrecision() > v2.getPrecision()? v1.getPrecision():v2.getPrecision();
+        double a = Math.pow(NumberUtil.objToDoubleWithDefault(v1.getValue(),0d),
+                NumberUtil.objToDoubleWithDefault(v2.getValue(),0d)
+        );
+        return new TBigDecimal(new BigDecimal(a), p);
+    }
+
+    public Object radians(Object... t) {
+        TBigDecimal v = (TBigDecimal) t[0];
+        double a = Math.toRadians(NumberUtil.objToDoubleWithDefault(v.getValue(), 0d));
+        return new TBigDecimal(new BigDecimal(a),16);
+    }
 }
+
