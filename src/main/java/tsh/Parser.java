@@ -258,6 +258,8 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
     }
 
 
+
+
     final private Token jj_consume_token_util(String kind) throws ParseException {
         Token oldToken;
         while (true) {
@@ -2592,6 +2594,10 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
             switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
                 case LBRACKET:
                     jj_consume_token(LBRACKET);
+
+
+
+
                     Expression();
                     jj_consume_token(RBRACKET);
                     jjtree.closeNodeScope(jjtn000, true);

@@ -1,6 +1,5 @@
 package tsh.expression;
 
-import com.sun.org.apache.xml.internal.utils.IntVector;
 import tsh.*;
 import tsh.entity.TBigDecimal;
 import tsh.exception.*;
@@ -27,18 +26,20 @@ public class TSHPrimarySuffix extends SimpleNode {
     }
 
 
-    public Object doSuffix(Object obj, boolean toLHS, CallStack callstack, Interpreter interpreter)throws EvalError {
-        if (obj instanceof SimpleNode)
-            if (obj instanceof TSHAmbiguousName)
+    public Object doSuffix(Object obj, boolean toLHS, CallStack callstack, Interpreter interpreter) throws EvalError {
+        if (obj instanceof SimpleNode) {
+            if (obj instanceof TSHAmbiguousName) {
                 obj = ((TSHAmbiguousName) obj).toObject(callstack, interpreter);
-            else
+            } else {
                 obj = ((SimpleNode) obj).eval(callstack, interpreter);
-        else if (obj instanceof LHS)
+            }
+        } else if (obj instanceof LHS) {
             try {
                 obj = ((LHS) obj).getValue();
             } catch (UtilEvalError e) {
                 throw e.toEvalError(this, callstack);
             }
+        }
 
         try {
             switch (operation) {
@@ -61,8 +62,6 @@ public class TSHPrimarySuffix extends SimpleNode {
                     this, callstack, true);
         }
     }
-
-
 
 
     /*
@@ -100,7 +99,7 @@ public class TSHPrimarySuffix extends SimpleNode {
             try {
                 return Reflect.invokeObjectMethod(obj, field, oa, interpreter, callstack, this);
             } catch (ReflectError e) {
-                throw new EvalError("Error in method invocation: " + e.getMessage(),        this, callstack);
+                throw new EvalError("Error in method invocation: " + e.getMessage(), this, callstack);
             } catch (InvocationTargetException e) {
                 String msg = "Method Invocation " + field;
                 Throwable te = e.getTargetException();
@@ -128,21 +127,21 @@ public class TSHPrimarySuffix extends SimpleNode {
     /**
      *
      */
-    static int getIndexAux(Object obj, CallStack callstack, Interpreter interpreter,SimpleNode callerInfo)throws EvalError {
+    static int getIndexAux(Object obj, CallStack callstack, Interpreter interpreter, SimpleNode callerInfo) throws EvalError {
         int index;
         try {
             Object indexVal = ((SimpleNode) callerInfo.jjtGetChild(0)).eval(callstack, interpreter);
             if (!(indexVal instanceof Primitive)) {
-                if(indexVal instanceof TBigDecimal){
+                if (indexVal instanceof TBigDecimal) {
                     indexVal = ((TBigDecimal) indexVal).getValue();
-                }else{
+                } else {
                     indexVal = Types.castObject(indexVal, Integer.TYPE, Types.ASSIGNMENT);
                 }
             }
             index = NumberUtil.objToInt(indexVal);
         } catch (UtilEvalError e) {
             Interpreter.debug("doIndex: " + e);
-            throw e.toEvalError("Arrays may only be indexed by integer types.",callerInfo, callstack);
+            throw e.toEvalError("Arrays may only be indexed by integer types.", callerInfo, callstack);
         }
 
         return index;
@@ -158,9 +157,11 @@ public class TSHPrimarySuffix extends SimpleNode {
             return new LHS(obj, index);
         else
             try {
-                if(obj instanceof List){
+                if (obj instanceof List) {
                     return ((List) obj).get(index);
-                }else{
+                } else if (obj instanceof String) {
+                    return ((String) obj).toCharArray()[index] + "";
+                } else {
                     return Reflect.getIndex(obj, index);
                 }
             } catch (UtilEvalError e) {
@@ -182,7 +183,7 @@ public class TSHPrimarySuffix extends SimpleNode {
         Object value = ((SimpleNode) jjtGetChild(0)).eval(callstack, interpreter);
 
         if (!(value instanceof String))
-            throw new EvalError(            "Property expression must be a String or identifier.",this, callstack);
+            throw new EvalError("Property expression must be a String or identifier.", this, callstack);
 
         if (toLHS)
             return new LHS(obj, (String) value);

@@ -57,12 +57,12 @@ public class PaserTest {
 
     @Test
     public void test3() throws Exception {
-        Reader in = new FileReader("/Users/quyixiao/project/testshell/src/main/resources/run.tsh");
+        Reader in = new FileReader("/Users/quyixiao/git/java-python/script/while.tsh");
         Parser parser = new Parser(in);
         parser.setRetainComments(true);
         for (int i = 0; i < 30; i++) {
             Token token = parser.token_source.getNextToken();
-            System.out.println(token.image + "          :           " + (token.kind == "\n" ? "\\n" : token.kind));
+            System.out.println(i + "    "+token.image + "          :           " + (token.kind == "\n" ? "\\n" : token.kind));
         }
     }
 

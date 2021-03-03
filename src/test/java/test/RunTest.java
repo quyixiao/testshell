@@ -20,7 +20,7 @@ public class RunTest {
     @Test
     public void test() throws Exception {
         Object retVal = null;
-        String file = "/Users/quyixiao/project/testshell/src/main/resources/run.tsh";
+        String file = "/Users/quyixiao/git/java-python/script/string.tsh";
         Reader in = new BufferedReader(new FileReader(file));
         Interpreter localInterpreter =
                 new Interpreter(

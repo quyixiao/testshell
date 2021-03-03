@@ -136,10 +136,37 @@ public class MathMethod {
         return new TBigDecimal(new BigDecimal(a), p);
     }
 
+    // 27. radians()把角度x转换成弧度
     public Object radians(Object... t) {
         TBigDecimal v = (TBigDecimal) t[0];
         double a = Math.toRadians(NumberUtil.objToDoubleWithDefault(v.getValue(), 0d));
         return new TBigDecimal(new BigDecimal(a),16);
     }
+
+
+    //28. sin()求x(x为弧度)的正弦值
+    public Object sin(Object... t) {
+        TBigDecimal v = (TBigDecimal) t[0];
+        double a = Math.sin(NumberUtil.objToDoubleWithDefault(v.getValue(), 0d));
+        return new TBigDecimal(new BigDecimal(a),16);
+    }
+
+
+    //29. sqrt()求x的平方根
+    public Object sqrt(Object... t) {
+        TBigDecimal v = (TBigDecimal) t[0];
+        double a = Math.sqrt(NumberUtil.objToDoubleWithDefault(v.getValue(), 0d));
+        return new TBigDecimal(new BigDecimal(a),16);
+    }
+
+
+    //30. tan()返回x(x为弧度)的正切值
+    public Object tan(Object... t) {
+        TBigDecimal v = (TBigDecimal) t[0];
+        double a = Math.tan(NumberUtil.objToDoubleWithDefault(v.getValue(), 0d));
+        return new TBigDecimal(new BigDecimal(a),16);
+    }
+
+
 }
 

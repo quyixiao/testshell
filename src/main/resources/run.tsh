@@ -1,1 +1,2 @@
-print(radians(45))
+a = "abcdef"
+print(a[0])
