@@ -944,19 +944,6 @@ public class NameSpace implements java.io.Serializable, BshClassManager.Listener
         if (!declaredOnly && (method == null) && (parent != null))
             return parent.getMethod(name, sig);
 
-
-        if(method == null){
-            try {
-                Method mt  =  ClassUtils.getMethod(name);
-                if(mt !=null){
-                    method = new TshMethod(mt,mt.getDeclaringClass().newInstance());
-                }
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
         return method;
     }
 

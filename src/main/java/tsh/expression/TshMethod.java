@@ -64,7 +64,6 @@ public class TshMethod implements java.io.Serializable {
     */
     NameSpace declaringNameSpace;
 
-
     private String name;
     private Class creturnType;
 
@@ -79,13 +78,14 @@ public class TshMethod implements java.io.Serializable {
     // Java Method, for a BshObject that delegates to a real Java method
     private Method javaMethod;
     private Object javaObject;
+    private Object[] defaultValues;
 
     public TshMethod(TSHMethodDeclaration method, NameSpace declaringNameSpace, Object modifiers) {
-        this(method.methodName, null, method.paramsNode.getParamNames(), null, method.blockNode, declaringNameSpace, modifiers);
+        this(method.methodName, null, method.paramsNode.getParamNames(), null, method.blockNode,
+                declaringNameSpace,method.paramsNode.getParamDefaultValues());
     }
 
-
-    public TshMethod(String name, Class returnType, String[] paramNames, Class[] paramTypes, TSHBlock methodBody, NameSpace declaringNameSpace, Object modifiers) {
+    public TshMethod(String name, Class returnType, String[] paramNames, Class[] paramTypes, TSHBlock methodBody, NameSpace declaringNameSpace,Object [] defaultValues) {
         this.name = name;
         this.creturnType = returnType;
         this.paramNames = paramNames;
@@ -94,6 +94,7 @@ public class TshMethod implements java.io.Serializable {
         this.cparamTypes = paramTypes;
         this.methodBody = methodBody;
         this.declaringNameSpace = declaringNameSpace;
+        this.defaultValues = defaultValues;
     }
 
     /*
@@ -103,7 +104,7 @@ public class TshMethod implements java.io.Serializable {
     public TshMethod(Method method, Object object) {
         this(method.getName(), method.getReturnType(), null/*paramNames*/,
                 method.getParameterTypes(), null/*method.block*/,
-                null/*declaringNameSpace*/, null/*modifiers*/);
+                null/*declaringNameSpace*/,null);
 
         this.javaMethod = method;
         this.javaObject = object;
@@ -146,35 +147,113 @@ public class TshMethod implements java.io.Serializable {
         return name;
     }
 
-    /**
-     * Invoke the declared method with the specified arguments and interpreter
-     * reference.  This is the simplest form of invoke() for BshMethod
-     * intended to be used in reflective style access to bsh scripts.
-     */
-    public Object invoke(
-            Object[] argValues, Interpreter interpreter)
+
+
+    public Object invokeNew(
+            Object[] argValues, Interpreter interpreter, CallStack callstack,
+            SimpleNode callerInfo)
             throws EvalError {
+        return invokeNew(argValues, interpreter, callstack, callerInfo, false);
+    }
+
+
+    Object invokeNew(Object[] argValues, Interpreter interpreter, CallStack callstack, SimpleNode callerInfo, boolean overrideNameSpace)
+            throws EvalError {
+        if (argValues != null)
+            for (int i = 0; i < argValues.length; i++) {
+                if (argValues[i] == null) {
+                    throw new Error("HERE!");
+                }
+            }
+        if (javaMethod != null) {
+            try {
+                return Reflect.invokeMethod(javaMethod, javaObject, argValues);
+            } catch (ReflectError e) {
+                throw new EvalError("Error invoking Java method: " + e, callerInfo, callstack);
+            } catch (InvocationTargetException e2) {
+                throw new TargetError("Exception invoking imported object method.", e2, callerInfo, callstack, true/*isNative*/);
+            }
+        }
+
+        return invokeImplNew(argValues, interpreter, callstack, callerInfo, overrideNameSpace);
+    }
+
+
+
+    private Object invokeImplNew(Object[] argValues, Interpreter interpreter, CallStack callstack,SimpleNode callerInfo, boolean overrideNameSpace) throws EvalError {
+        Class returnType = getReturnType();
+        Class[] paramTypes = getParameterTypes();
+
+        if (callstack == null)
+            callstack = new CallStack(declaringNameSpace);
+
+        if (argValues == null)
+            argValues = new Object[]{};
+
+
+        NameSpace localNameSpace;
+        if (overrideNameSpace) {
+            localNameSpace = callstack.top();
+        }else {
+            localNameSpace = new NameSpace(declaringNameSpace, name);
+            localNameSpace.isMethod = true;
+        }
+        localNameSpace.setNode(callerInfo);
+
+        for (int i = 0; i < numArgs; i++) {
+            try {
+                localNameSpace.setLocalVariable(paramNames[i], argValues[i],interpreter.getStrictJava());
+            } catch (UtilEvalError e3) {
+                throw e3.toEvalError(callerInfo, callstack);
+            }
+        }
+
+        if (!overrideNameSpace)
+            callstack.push(localNameSpace);
+
+        Object ret = methodBody.eval(callstack, interpreter, true/*override*/);
+
+        CallStack returnStack = callstack.copy();
+
+        if (!overrideNameSpace)
+            callstack.pop();
+
+        ReturnControl retControl = null;
+        if (ret instanceof ReturnControl) {
+            retControl = (ReturnControl) ret;
+
+            if (Utils.eq(retControl.kind, retControl.RETURN))
+                ret = ((ReturnControl) ret).value;
+            else
+                throw new EvalError("'continue' or 'break' in method body", retControl.returnPoint, returnStack);
+
+            if (returnType == Void.TYPE && ret != Primitive.VOID)
+                throw new EvalError("Cannot return value from void method", retControl.returnPoint, returnStack);
+        }
+
+        if (returnType != null) {
+            if (returnType == Void.TYPE)
+                return Primitive.VOID;
+
+            try {
+                ret =Types.castObject(ret, returnType, Types.ASSIGNMENT);
+            } catch (UtilEvalError e) {
+                SimpleNode node = callerInfo;
+                if (retControl != null)
+                    node = retControl.returnPoint;
+                throw e.toEvalError("Incorrect type returned from method: "+ name + e.getMessage(), node, callstack);
+            }
+        }
+
+        return ret;
+    }
+
+
+    public Object invoke(Object[] argValues, Interpreter interpreter) throws EvalError {
         return invoke(argValues, interpreter, null, null, false);
     }
 
-    /**
-     * Invoke the bsh method with the specified args, interpreter ref,
-     * and callstack.
-     * callerInfo is the node representing the method invocation
-     * It is used primarily for debugging in order to provide access to the
-     * text of the construct that invoked the method through the namespace.
-     *
-     * @param callerInfo is the BeanShell AST node representing the method
-     *                   invocation.  It is used to print the line number and text of
-     *                   errors in EvalError exceptions.  If the node is null here error
-     *                   messages may not be able to point to the precise location and text
-     *                   of the error.
-     * @param callstack  is the callstack.  If callstack is null a new one
-     *                   will be created with the declaring namespace of the method on top
-     *                   of the stack (i.e. it will look for purposes of the method
-     *                   invocation like the method call occurred in the declaring
-     *                   (enclosing) namespace in which the method is defined).
-     */
+
     public Object invoke(
             Object[] argValues, Interpreter interpreter, CallStack callstack,
             SimpleNode callerInfo)
@@ -182,27 +261,6 @@ public class TshMethod implements java.io.Serializable {
         return invoke(argValues, interpreter, callstack, callerInfo, false);
     }
 
-    /**
-     * Invoke the bsh method with the specified args, interpreter ref,
-     * and callstack.
-     * callerInfo is the node representing the method invocation
-     * It is used primarily for debugging in order to provide access to the
-     * text of the construct that invoked the method through the namespace.
-     *
-     * @param callerInfo        is the BeanShell AST node representing the method
-     *                          invocation.  It is used to print the line number and text of
-     *                          errors in EvalError exceptions.  If the node is null here error
-     *                          messages may not be able to point to the precise location and text
-     *                          of the error.
-     * @param callstack         is the callstack.  If callstack is null a new one
-     *                          will be created with the declaring namespace of the method on top
-     *                          of the stack (i.e. it will look for purposes of the method
-     *                          invocation like the method call occurred in the declaring
-     *                          (enclosing) namespace in which the method is defined).
-     * @param overrideNameSpace When true the method is executed in the namespace on the top of the
-     *                          stack instead of creating its own local namespace.  This allows it
-     *                          to be used in constructors.
-     */
     Object invoke(Object[] argValues, Interpreter interpreter, CallStack callstack, SimpleNode callerInfo, boolean overrideNameSpace)
             throws EvalError {
         if (argValues != null)
@@ -217,63 +275,48 @@ public class TshMethod implements java.io.Serializable {
             } catch (ReflectError e) {
                 throw new EvalError("Error invoking Java method: " + e, callerInfo, callstack);
             } catch (InvocationTargetException e2) {
-                throw new TargetError("Exception invoking imported object method.",
-                        e2, callerInfo, callstack, true/*isNative*/);
+                throw new TargetError("Exception invoking imported object method.", e2, callerInfo, callstack, true/*isNative*/);
             }
         }
 
         return invokeImpl(argValues, interpreter, callstack, callerInfo, overrideNameSpace);
     }
 
-    private Object invokeImpl(Object[] argValues, Interpreter interpreter, CallStack callstack,SimpleNode callerInfo, boolean overrideNameSpace)
-            throws EvalError {
+    private Object invokeImpl(Object[] argValues, Interpreter interpreter, CallStack callstack,SimpleNode callerInfo, boolean overrideNameSpace) throws EvalError {
         Class returnType = getReturnType();
         Class[] paramTypes = getParameterTypes();
 
-        // If null callstack
         if (callstack == null)
             callstack = new CallStack(declaringNameSpace);
 
         if (argValues == null)
             argValues = new Object[]{};
 
-        // Cardinality (number of args) mismatch
-        if (argValues.length != numArgs) {
-            throw new EvalError("Wrong number of arguments for local method: " + name, callerInfo, callstack);
-        }
 
-        // Make the local namespace for the method invocation
         NameSpace localNameSpace;
-        if (overrideNameSpace)
+        if (overrideNameSpace) {
             localNameSpace = callstack.top();
-        else {
+        }else {
             localNameSpace = new NameSpace(declaringNameSpace, name);
             localNameSpace.isMethod = true;
         }
-        // should we do this for both cases above?
         localNameSpace.setNode(callerInfo);
 
-        // set the method parameters in the local namespace
         for (int i = 0; i < numArgs; i++) {
             try {
                 localNameSpace.setLocalVariable(paramNames[i], argValues[i],interpreter.getStrictJava());
             } catch (UtilEvalError e3) {
                 throw e3.toEvalError(callerInfo, callstack);
             }
-
         }
 
-        // Push the new namespace on the call stack
         if (!overrideNameSpace)
             callstack.push(localNameSpace);
 
-        // Invoke the block, overriding namespace with localNameSpace
         Object ret = methodBody.eval(callstack, interpreter, true/*override*/);
 
-        // save the callstack including the called method, just for error mess
         CallStack returnStack = callstack.copy();
 
-        // Get back to caller namespace
         if (!overrideNameSpace)
             callstack.pop();
 
@@ -281,38 +324,26 @@ public class TshMethod implements java.io.Serializable {
         if (ret instanceof ReturnControl) {
             retControl = (ReturnControl) ret;
 
-            // Method body can only use 'return' statement type return control.
             if (Utils.eq(retControl.kind, retControl.RETURN))
                 ret = ((ReturnControl) ret).value;
             else
-                // retControl.returnPoint is the Node of the return statement
                 throw new EvalError("'continue' or 'break' in method body", retControl.returnPoint, returnStack);
 
-            // Check for explicit return of value from void method type.
-            // retControl.returnPoint is the Node of the return statement
             if (returnType == Void.TYPE && ret != Primitive.VOID)
                 throw new EvalError("Cannot return value from void method", retControl.returnPoint, returnStack);
         }
 
         if (returnType != null) {
-            // If return type void, return void as the value.
             if (returnType == Void.TYPE)
                 return Primitive.VOID;
 
-            // return type is a class
             try {
-                ret =
-                        // Types.getAssignableForm( ret, (Class)returnType );
-                        Types.castObject(ret, returnType, Types.ASSIGNMENT);
+                ret =Types.castObject(ret, returnType, Types.ASSIGNMENT);
             } catch (UtilEvalError e) {
-                // Point to return statement point if we had one.
-                // (else it was implicit return? What's the case here?)
                 SimpleNode node = callerInfo;
                 if (retControl != null)
                     node = retControl.returnPoint;
-                throw e.toEvalError(
-                        "Incorrect type returned from method: "
-                                + name + e.getMessage(), node, callstack);
+                throw e.toEvalError("Incorrect type returned from method: "+ name + e.getMessage(), node, callstack);
             }
         }
 

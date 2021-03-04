@@ -34,7 +34,7 @@ public class TSHMethodDeclaration extends SimpleNode {
     public Object eval(CallStack callstack, Interpreter interpreter) throws EvalError {
         evalNodes(callstack, interpreter);
         NameSpace namespace = callstack.top();
-        TshMethod bshMethod = new TshMethod(this, namespace, null);
+        TshMethod bshMethod = new TshMethod(this, namespace,null);
         try {
             namespace.setMethod(methodName, bshMethod);
         } catch (UtilEvalError e) {

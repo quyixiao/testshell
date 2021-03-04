@@ -35,6 +35,7 @@ import tsh.util.*;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
  * What's in a name?  I'll tell you...
@@ -745,7 +746,7 @@ public class Name implements java.io.Serializable {
      * </pre>
      */
     public Object invokeMethod(Interpreter interpreter, Object[] args, CallStack callstack,SimpleNode callerInfo)
-            throws UtilEvalError, EvalError, ReflectError, InvocationTargetException {
+            throws UtilEvalError, EvalError, ReflectError, InvocationTargetException{
 
         String methodName = Name.suffix(value, 1);
         BshClassManager bcm = interpreter.getClassManager();
@@ -816,64 +817,57 @@ public class Name implements java.io.Serializable {
         String commandName = value;
         Class[] argTypes = Types.getTypes(args);
 
-        // Check for existing method
+
         TshMethod meth = null;
         try {
             meth = namespace.getMethod(commandName, argTypes);
         } catch (UtilEvalError e) {
-            throw e.toEvalError(
-                    "Local method invocation", callerInfo, callstack);
+            throw e.toEvalError("Local method invocation", callerInfo, callstack);
         }
 
-        // If defined, invoke it
         if (meth != null)
-            return meth.invoke(args, interpreter, callstack, callerInfo);
+            return meth.invokeNew(args, interpreter, callstack, callerInfo);
 
-        BshClassManager bcm = interpreter.getClassManager();
 
-        // Look for a BeanShell command
+        try {
+            Method mt  =  ClassUtils.getMethod(commandName);
+            if(mt !=null){
+                meth = new TshMethod(mt,mt.getDeclaringClass().newInstance());
+            }
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
 
         Object commandObject;
         try {
-            commandObject = namespace.getCommand(
-                    commandName, argTypes, interpreter);
+            commandObject = namespace.getCommand(commandName, argTypes, interpreter);
         } catch (UtilEvalError e) {
-            throw e.toEvalError("Error loading command: ",
-                    callerInfo, callstack);
+            throw e.toEvalError("Error loading command: ", callerInfo, callstack);
         }
 
-        // should try to print usage here if nothing found
         if (commandObject == null) {
-            // Look for a default invoke() handler method in the namespace
-            // Note: this code duplicates that in This.java... should it?
-            // Call on 'This' can never be a command
             TshMethod invokeMethod = null;
             try {
-                invokeMethod = namespace.getMethod(
-                        "invoke", new Class[]{null, null});
+                invokeMethod = namespace.getMethod("invoke", new Class[]{null, null});
             } catch (UtilEvalError e) {
-                throw e.toEvalError(
-                        "Local method invocation", callerInfo, callstack);
+                throw e.toEvalError("Local method invocation", callerInfo, callstack);
             }
 
             if (invokeMethod != null)
-                return invokeMethod.invoke(
-                        new Object[]{commandName, args},
-                        interpreter, callstack, callerInfo);
+                return invokeMethod.invoke(new Object[]{commandName, args},interpreter, callstack, callerInfo);
 
-            throw new EvalError("Command not found: "
-                    + StringUtil.methodString(commandName, argTypes),
-                    callerInfo, callstack);
+            throw new EvalError("Command not found: "+ StringUtil.methodString(commandName, argTypes),callerInfo, callstack);
         }
 
         if (commandObject instanceof TshMethod)
-            return ((TshMethod) commandObject).invoke(
-                    args, interpreter, callstack, callerInfo);
+            return ((TshMethod) commandObject).invoke(args, interpreter, callstack, callerInfo);
 
         if (commandObject instanceof Class)
             try {
-                return Reflect.invokeCompiledCommand(
-                        ((Class) commandObject), args, interpreter, callstack);
+                return Reflect.invokeCompiledCommand(((Class) commandObject), args, interpreter, callstack);
             } catch (UtilEvalError e) {
                 throw e.toEvalError("Error invoking compiled command: ",
                         callerInfo, callstack);

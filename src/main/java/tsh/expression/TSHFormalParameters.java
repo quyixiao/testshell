@@ -5,8 +5,13 @@ import tsh.Interpreter;
 import tsh.SimpleNode;
 import tsh.exception.EvalError;
 
-public class TSHFormalParameters  extends SimpleNode {
+import java.util.ArrayList;
+import java.util.List;
+
+public class TSHFormalParameters extends SimpleNode {
     public String[] paramNames;
+    public Object[] defaultValues;
+
 
     int numArgs;
 
@@ -15,41 +20,51 @@ public class TSHFormalParameters  extends SimpleNode {
     }
 
 
-    void insureParsed() {
+    void insureParsed(CallStack callstack, Interpreter interpreter) throws EvalError {
         if (paramNames != null)
             return;
 
         this.numArgs = jjtGetNumChildren();
-        String[] paramNames = new String[numArgs];
 
+        List<String> names = new ArrayList<>();
+        List<Object> values = new ArrayList<>();
+
+        int flag = 0;
         for (int i = 0; i < numArgs; i++) {
-            TSHFormalParameter param = (TSHFormalParameter) jjtGetChild(i);
-            paramNames[i] = param.name;
+            SimpleNode parameter = (SimpleNode) jjtGetChild(i);
+            if (parameter instanceof TSHFormalParameter) {
+                TSHFormalParameter param = (TSHFormalParameter) parameter;
+                names.add(param.name);
+                flag++;
+                values.add(null);
+            } else {
+                Object result = parameter.eval(callstack, interpreter);
+                values.set(flag - 1, result);
+            }
         }
-
-        this.paramNames = paramNames;
+        this.numArgs = names.size();
+        this.paramNames = names.toArray(new String[names.size()]);
+        this.defaultValues = values.toArray(new Object[values.size()]);
     }
 
     public String[] getParamNames() {
-        insureParsed();
         return paramNames;
     }
 
-    public Object eval(CallStack callstack, Interpreter interpreter) throws EvalError {
-        insureParsed();
-        Class[] paramTypes = new Class[numArgs];
+    public Object[] getParamDefaultValues() {
+        return defaultValues;
+    }
 
+
+    public Object eval(CallStack callstack, Interpreter interpreter) throws EvalError {
+        insureParsed(callstack, interpreter);
+        Class[] paramTypes = new Class[numArgs];
         for (int i = 0; i < numArgs; i++) {
             TSHFormalParameter param = (TSHFormalParameter) jjtGetChild(i);
             paramTypes[i] = (Class) param.eval(callstack, interpreter);
         }
-
         return paramTypes;
     }
-
-
-
-
 
 
 }
