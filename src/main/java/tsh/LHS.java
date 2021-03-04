@@ -39,6 +39,7 @@ import tsh.util.Reflect;
 import tsh.util.ReflectManager;
 
 import java.lang.reflect.Field;
+import java.util.List;
 
 /**
  * An LHS is a wrapper for an variable, field, or property.  It ordinarily
@@ -208,25 +209,31 @@ public     LHS(Object object, String propName) {
             }
         } else if (type == PROPERTY) {
             CollectionManager cm = CollectionManager.getCollectionManager();
-            if (cm.isMap(object))
+            if (cm.isMap(object)) {
                 cm.putInMap(object/*map*/, propName, Primitive.unwrap(val));
-            else
+            }else {
                 try {
                     Reflect.setObjectProperty(object, propName, val);
                 } catch (ReflectError e) {
                     Interpreter.debug("Assignment: " + e.getMessage());
                     throw new UtilEvalError("No such property: " + propName);
                 }
-        } else if (type == INDEX)
+            }
+        } else if (type == INDEX) {
             try {
-                Reflect.setIndex(object, index, val);
+                if(object instanceof List){
+                    ((List) object).set(index,val);
+                }else{
+                    Reflect.setIndex(object, index, val);
+                }
             } catch (UtilTargetError e1) { // pass along target error
                 throw e1;
             } catch (Exception e) {
                 throw new UtilEvalError("Assignment: " + e.getMessage());
             }
-        else
+        }else {
             throw new InterpreterError("unknown lhs");
+        }
 
         return val;
     }

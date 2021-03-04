@@ -387,8 +387,7 @@ public     static final int
 
         // assignment to loose type, void type, or exactly same type
         if (toType == null || toType == fromType)
-            return checkOnly ? VALID_CAST :
-                    fromValue;
+            return checkOnly ? VALID_CAST : fromValue;
 
         // Casting to primitive type
         if (toType.isPrimitive()) {

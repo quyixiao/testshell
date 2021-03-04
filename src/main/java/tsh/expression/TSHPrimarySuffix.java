@@ -12,6 +12,7 @@ import tsh.util.Reflect;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.util.List;
 
 public class TSHPrimarySuffix extends SimpleNode implements TParserConstants {
@@ -71,10 +72,7 @@ public class TSHPrimarySuffix extends SimpleNode implements TParserConstants {
         Field access, .length on array, or a method invocation
         Must handle toLHS case for each.
     */
-    private Object doName(
-            Object obj, boolean toLHS,
-            CallStack callstack, Interpreter interpreter)
-            throws EvalError, ReflectError, InvocationTargetException {
+    private Object doName(Object obj, boolean toLHS,CallStack callstack, Interpreter interpreter)throws EvalError, ReflectError, InvocationTargetException {
         try {
             // .length on array
             if (field.equals("length") && obj.getClass().isArray())
@@ -100,7 +98,12 @@ public class TSHPrimarySuffix extends SimpleNode implements TParserConstants {
             // we handle all cases ... (e.g. property style access, etc.)
             // maybe move this to Reflect ?
             try {
-                return Reflect.invokeObjectMethod(obj, field, oa, interpreter, callstack, this);
+                Object object= Reflect.invokeObjectMethod(obj, field, oa, interpreter, callstack, this);
+                if(object instanceof  Primitive) {
+                    Primitive primitive = (Primitive) object;
+                    return primitive.getValue();
+                }
+                return object;
             } catch (ReflectError e) {
                 throw new EvalError("Error in method invocation: " + e.getMessage(), this, callstack);
             } catch (InvocationTargetException e) {

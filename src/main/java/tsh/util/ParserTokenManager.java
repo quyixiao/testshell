@@ -468,7 +468,7 @@ public class ParserTokenManager extends Utils implements TParserConstants {
                 }
                 curChar = input_stream.readChar();
             } catch (IOException e) {
-                jjStartNfaWithStates_0(EOF);
+                jjStartNfaWithStates_0(SPACE);
                 return input_stream.bufpos + 1;
             } catch (Exception e) {
                 e.printStackTrace();

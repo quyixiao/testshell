@@ -33,7 +33,9 @@ import tsh.entity.TBigDecimal;
 import tsh.exception.InterpreterError;
 import tsh.exception.UtilEvalError;
 import tsh.exception.UtilTargetError;
+import tsh.util.NumberUtil;
 import tsh.util.Reflect;
+import tsh.util.StringUtil;
 import tsh.util.Utils;
 
 import java.math.BigDecimal;
@@ -153,12 +155,18 @@ public final class Primitive implements TParserConstants, java.io.Serializable {
      * Return the primitive value stored in its java.lang wrapper class
      */
     public Object getValue() {
-        if (value == Special.NULL_VALUE)
+        if (value == Special.NULL_VALUE) {
             return null;
-        else if (value == Special.VOID_TYPE)
+        }else if (value == Special.VOID_TYPE) {
             throw new InterpreterError("attempt to unwrap void type");
-        else
-            return value;
+        }else {
+           if(value instanceof Short || value instanceof Integer || value instanceof Long || value instanceof Float
+                || value instanceof Double){
+               return new TBigDecimal(NumberUtil.objToBigDecimalDefault(value,BigDecimal.ZERO), NumberUtil.getPrecision(value.toString()));
+           }else{
+               return value;
+           }
+        }
     }
 
     public String toString() {

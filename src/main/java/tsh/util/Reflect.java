@@ -103,9 +103,7 @@ public class Reflect {
      *
      * @param args may be null
      */
-    public static Object invokeMethod(
-            Method method, Object object, Object[] args)
-            throws ReflectError, InvocationTargetException {
+    public static Object invokeMethod(Method method, Object object, Object[] args)throws ReflectError, InvocationTargetException {
         if (args == null)
             args = new Object[0];
 
@@ -129,9 +127,7 @@ public class Reflect {
         // unwrap any primitives
         tmpArgs = Primitive.unwrap(tmpArgs);
 
-        logInvokeMethod("Invoking method (after massaging values): ",
-                method, tmpArgs);
-
+        logInvokeMethod("Invoking method (after massaging values): ",method, tmpArgs);
         try {
             Object returnValue = null;
             if (method.getDeclaringClass().getName().startsWith("tsh.methods")) {

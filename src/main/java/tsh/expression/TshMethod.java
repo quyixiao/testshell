@@ -55,8 +55,7 @@ import java.lang.reflect.Method;
 	Note: this method incorrectly caches the method structure.  It needs to
 	be cleared when the classloader changes.
 */
-public class TshMethod
-        implements java.io.Serializable {
+public class TshMethod implements java.io.Serializable {
     /*
         This is the namespace in which the method is set.
         It is a back-reference for the node, which needs to execute under this
@@ -200,56 +199,29 @@ public class TshMethod
      *                          stack instead of creating its own local namespace.  This allows it
      *                          to be used in constructors.
      */
-    Object invoke(
-            Object[] argValues, Interpreter interpreter, CallStack callstack,
-            SimpleNode callerInfo, boolean overrideNameSpace)
+    Object invoke(Object[] argValues, Interpreter interpreter, CallStack callstack, SimpleNode callerInfo, boolean overrideNameSpace)
             throws EvalError {
         if (argValues != null)
-            for (int i = 0; i < argValues.length; i++)
-                if (argValues[i] == null)
+            for (int i = 0; i < argValues.length; i++) {
+                if (argValues[i] == null) {
                     throw new Error("HERE!");
-
-        if (javaMethod != null)
+                }
+            }
+        if (javaMethod != null) {
             try {
                 return Reflect.invokeMethod(javaMethod, javaObject, argValues);
             } catch (ReflectError e) {
-                throw new EvalError(
-                        "Error invoking Java method: " + e, callerInfo, callstack);
+                throw new EvalError("Error invoking Java method: " + e, callerInfo, callstack);
             } catch (InvocationTargetException e2) {
-                throw new TargetError(
-                        "Exception invoking imported object method.",
+                throw new TargetError("Exception invoking imported object method.",
                         e2, callerInfo, callstack, true/*isNative*/);
             }
+        }
 
- /*       // is this a syncrhonized method?
-        if (modifiers != null && modifiers.hasModifier("synchronized")) {
-            // The lock is our declaring namespace's This reference
-            // (the method's 'super').  Or in the case of a class it's the
-            // class instance.
-            Object lock;
-            if (declaringNameSpace.isClass) {
-                try {
-                    lock = declaringNameSpace.getClassInstance();
-                } catch (UtilEvalError e) {
-                    throw new InterpreterError(
-                            "Can't get class instance for synchronized method.");
-                }
-            } else
-                lock = declaringNameSpace.getThis(interpreter); // ???
-
-            synchronized (lock) {
-                return invokeImpl(
-                        argValues, interpreter, callstack,
-                        callerInfo, overrideNameSpace);
-            }
-        } else*/
-        return invokeImpl(argValues, interpreter, callstack, callerInfo,
-                overrideNameSpace);
+        return invokeImpl(argValues, interpreter, callstack, callerInfo, overrideNameSpace);
     }
 
-    private Object invokeImpl(
-            Object[] argValues, Interpreter interpreter, CallStack callstack,
-            SimpleNode callerInfo, boolean overrideNameSpace)
+    private Object invokeImpl(Object[] argValues, Interpreter interpreter, CallStack callstack,SimpleNode callerInfo, boolean overrideNameSpace)
             throws EvalError {
         Class returnType = getReturnType();
         Class[] paramTypes = getParameterTypes();
@@ -263,23 +235,7 @@ public class TshMethod
 
         // Cardinality (number of args) mismatch
         if (argValues.length != numArgs) {
-		/*
-			// look for help string
-			try {
-				// should check for null namespace here
-				String help = 
-					(String)declaringNameSpace.get(
-					"tsh.help."+name, interpreter );
-
-				interpreter.println(help);
-				return Primitive.VOID;
-			} catch ( Exception e ) {
-				throw eval error
-			}
-		*/
-            throw new EvalError(
-                    "Wrong number of arguments for local method: "
-                            + name, callerInfo, callstack);
+            throw new EvalError("Wrong number of arguments for local method: " + name, callerInfo, callstack);
         }
 
         // Make the local namespace for the method invocation
@@ -298,38 +254,25 @@ public class TshMethod
             // Set typed variable
             if (paramTypes[i] != null) {
                 try {
-                    argValues[i] =
-                            //Types.getAssignableForm( argValues[i], paramTypes[i] );
-                            Types.castObject(argValues[i], paramTypes[i], Types.ASSIGNMENT);
+                    //Types.getAssignableForm( argValues[i], paramTypes[i] );
+                    argValues[i] = Types.castObject(argValues[i], paramTypes[i], Types.ASSIGNMENT);
                 } catch (UtilEvalError e) {
-                    throw new EvalError(
-                            "Invalid argument: "
-                                    + "`" + paramNames[i] + "'" + " for method: "
-                                    + name + " : " +
-                                    e.getMessage(), callerInfo, callstack);
+                    throw new EvalError("Invalid argument: "+ "`" + paramNames[i] + "'" + " for method: "+ name + " : " + e.getMessage(), callerInfo, callstack);
                 }
                 try {
-                    localNameSpace.setTypedVariable(paramNames[i],
-                            paramTypes[i], argValues[i], null/*modifiers*/);
+                    localNameSpace.setTypedVariable(paramNames[i], paramTypes[i], argValues[i], null/*modifiers*/);
                 } catch (UtilEvalError e2) {
-                    throw e2.toEvalError("Typed method parameter assignment",
-                            callerInfo, callstack);
+                    throw e2.toEvalError("Typed method parameter assignment", callerInfo, callstack);
                 }
             }
             // Set untyped variable
-            else  // untyped param
-            {
+            else {  // untyped param
                 // getAssignable would catch this for typed param
                 if (argValues[i] == Primitive.VOID)
-                    throw new EvalError(
-                            "Undefined variable or class name, parameter: " +
-                                    paramNames[i] + " to method: "
-                                    + name, callerInfo, callstack);
+                    throw new EvalError("Undefined variable or class name, parameter: " +paramNames[i] + " to method: " + name, callerInfo, callstack);
                 else
                     try {
-                        localNameSpace.setLocalVariable(
-                                paramNames[i], argValues[i],
-                                interpreter.getStrictJava());
+                        localNameSpace.setLocalVariable(paramNames[i], argValues[i],interpreter.getStrictJava());
                     } catch (UtilEvalError e3) {
                         throw e3.toEvalError(callerInfo, callstack);
                     }
@@ -341,8 +284,7 @@ public class TshMethod
             callstack.push(localNameSpace);
 
         // Invoke the block, overriding namespace with localNameSpace
-        Object ret = methodBody.eval(
-                callstack, interpreter, true/*override*/);
+        Object ret = methodBody.eval(callstack, interpreter, true/*override*/);
 
         // save the callstack including the called method, just for error mess
         CallStack returnStack = callstack.copy();

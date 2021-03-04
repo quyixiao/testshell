@@ -27,7 +27,7 @@ public class TSHVariableDeclarator extends SimpleNode {
                 throw new EvalError("Void initializer.", this, callstack);
             }
             try {
-                if (initializer instanceof TSHListInitializer) {//如果是集合类型
+                if (initializer instanceof TSHListInitializer || value instanceof  List) {//如果是集合类型
                     List<Object> objectList = (List<Object>) value;
                     for (int i = 0; i < names.length; i++) {
                         if (objectList.size() > i) {
