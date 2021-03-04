@@ -80,8 +80,12 @@ public class TshMethod implements java.io.Serializable {
     private Method javaMethod;
     private Object javaObject;
 
+    public TshMethod(TSHMethodDeclaration method, NameSpace declaringNameSpace, Object modifiers) {
+        this(method.methodName, null, method.paramsNode.getParamNames(), null, method.blockNode, declaringNameSpace, modifiers);
+    }
 
-    TshMethod(String name, Class returnType, String[] paramNames, Class[] paramTypes, TSHBlock methodBody, NameSpace declaringNameSpace, Object modifiers) {
+
+    public TshMethod(String name, Class returnType, String[] paramNames, Class[] paramTypes, TSHBlock methodBody, NameSpace declaringNameSpace, Object modifiers) {
         this.name = name;
         this.creturnType = returnType;
         this.paramNames = paramNames;
@@ -251,32 +255,12 @@ public class TshMethod implements java.io.Serializable {
 
         // set the method parameters in the local namespace
         for (int i = 0; i < numArgs; i++) {
-            // Set typed variable
-            if (paramTypes[i] != null) {
-                try {
-                    //Types.getAssignableForm( argValues[i], paramTypes[i] );
-                    argValues[i] = Types.castObject(argValues[i], paramTypes[i], Types.ASSIGNMENT);
-                } catch (UtilEvalError e) {
-                    throw new EvalError("Invalid argument: "+ "`" + paramNames[i] + "'" + " for method: "+ name + " : " + e.getMessage(), callerInfo, callstack);
-                }
-                try {
-                    localNameSpace.setTypedVariable(paramNames[i], paramTypes[i], argValues[i], null/*modifiers*/);
-                } catch (UtilEvalError e2) {
-                    throw e2.toEvalError("Typed method parameter assignment", callerInfo, callstack);
-                }
+            try {
+                localNameSpace.setLocalVariable(paramNames[i], argValues[i],interpreter.getStrictJava());
+            } catch (UtilEvalError e3) {
+                throw e3.toEvalError(callerInfo, callstack);
             }
-            // Set untyped variable
-            else {  // untyped param
-                // getAssignable would catch this for typed param
-                if (argValues[i] == Primitive.VOID)
-                    throw new EvalError("Undefined variable or class name, parameter: " +paramNames[i] + " to method: " + name, callerInfo, callstack);
-                else
-                    try {
-                        localNameSpace.setLocalVariable(paramNames[i], argValues[i],interpreter.getStrictJava());
-                    } catch (UtilEvalError e3) {
-                        throw e3.toEvalError(callerInfo, callstack);
-                    }
-            }
+
         }
 
         // Push the new namespace on the call stack

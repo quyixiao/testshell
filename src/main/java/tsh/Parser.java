@@ -604,8 +604,9 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
             jjtc000 = false;
             jjtreeCloseNodeScope(jjtn000);
             jjtn000.name = t.image;
-            t = getNextToken();
-            if (eq(t.kind, ASSIGN)) { //如果是等于号
+
+            if (jj_2_33(3, ASSIGN)) {           //如果没有扫描到=号，则变量的定义肯定是 a ,b = xxx
+                jj_consume_token(ASSIGN);
                 Expression();
             }
         } catch (Throwable jjte000) {
@@ -3667,6 +3668,8 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
             jj_save(30, xla);
         }
     }
+
+
 
     final private boolean jj_2_34(String kind) {
         if (jj_scan_token(kind)) return true;

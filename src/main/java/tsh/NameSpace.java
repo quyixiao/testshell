@@ -916,18 +916,24 @@ public class NameSpace implements java.io.Serializable, BshClassManager.Listener
                     Vector vm = (Vector) m;
                     ma = new TshMethod[vm.size()];
                     vm.copyInto(ma);
-                } else
+                } else {
                     ma = new TshMethod[]{(TshMethod) m};
+                }
 
-                // Apply most specific signature matching
-                Class[][] candidates = new Class[ma.length][];
-                for (int i = 0; i < ma.length; i++)
-                    candidates[i] = ma[i].getParameterTypes();
+                if(ma.length > 1){
+                    // Apply most specific signature matching
+                    Class[][] candidates = new Class[ma.length][];
+                    for (int i = 0; i < ma.length; i++) {
+                        candidates[i] = ma[i].getParameterTypes();
+                    }
 
-                int match =
-                        Reflect.findMostSpecificSignature(sig, candidates);
-                if (match != -1)
-                    method = ma[match];
+                    int match = Reflect.findMostSpecificSignature(sig, candidates);
+                    if (match != -1) {
+                        method = ma[match];
+                    }
+                }else{
+                    method = ma[0];
+                }
             }
         }
 

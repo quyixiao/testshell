@@ -685,22 +685,14 @@ public class Reflect {
             for (int i = 0; i < candidates.length; i++) {
                 Class[] targetMatch = candidates[i];
 
-                // If idealMatch fits targetMatch and this is the first match
-                // or targetMatch is more specific than the best match, make it
-                // the new best match.
-                if (Types.isSignatureAssignable(
-                        idealMatch, targetMatch, round)
-                        && ((bestMatch == null) ||
-                        (Types.isSignatureAssignable(targetMatch, bestMatch,
-                                Types.JAVA_BASE_ASSIGNABLE) &&
-                                !Types.areSignaturesEqual(targetMatch, bestMatch))
-                )
+                if (Types.isSignatureAssignable(idealMatch, targetMatch, round) &&
+                        ((bestMatch == null) || (Types.isSignatureAssignable(targetMatch, bestMatch, Types.JAVA_BASE_ASSIGNABLE) &&
+                                !Types.areSignaturesEqual(targetMatch, bestMatch)))
                 ) {
                     bestMatch = targetMatch;
                     bestMatchIndex = i;
                 }
             }
-
             if (bestMatch != null)
                 return bestMatchIndex;
         }

@@ -2,6 +2,7 @@ package tsh.expression;
 
 import tsh.*;
 import tsh.exception.EvalError;
+import tsh.exception.UtilEvalError;
 
 public class TSHAmbiguousName extends SimpleNode {
     public String text;
@@ -39,5 +40,17 @@ public class TSHAmbiguousName extends SimpleNode {
         return null;
     }
 
+
+
+    public Class toClass(CallStack callstack, Interpreter interpreter) throws EvalError {
+        try {
+            return getName(callstack.top()).toClass();
+        } catch (ClassNotFoundException e) {
+            throw new EvalError(e.getMessage(), this, callstack);
+        } catch (UtilEvalError e2) {
+            // ClassPathException is a type of UtilEvalError
+            throw e2.toEvalError(this, callstack);
+        }
+    }
 
 }

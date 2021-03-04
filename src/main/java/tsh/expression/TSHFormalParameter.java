@@ -27,7 +27,10 @@
 
 package tsh.expression;
 
+import tsh.CallStack;
+import tsh.Interpreter;
 import tsh.SimpleNode;
+import tsh.exception.EvalError;
 
 /**
  * A formal parameter declaration.
@@ -38,10 +41,16 @@ public class TSHFormalParameter extends SimpleNode {
     public String name;
     private SimpleNode defaultValue;
 
-
     public TSHFormalParameter(String id) {
         super(id);
     }
+
+
+    public Object eval(CallStack callstack, Interpreter interpreter) throws EvalError {
+
+        return UNTYPED;
+    }
+
 
 }
 
