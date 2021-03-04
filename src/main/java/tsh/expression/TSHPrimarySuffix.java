@@ -12,8 +12,8 @@ import tsh.util.Reflect;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 public class TSHPrimarySuffix extends SimpleNode implements TParserConstants {
     public static final int
@@ -72,7 +72,7 @@ public class TSHPrimarySuffix extends SimpleNode implements TParserConstants {
         Field access, .length on array, or a method invocation
         Must handle toLHS case for each.
     */
-    private Object doName(Object obj, boolean toLHS,CallStack callstack, Interpreter interpreter)throws EvalError, ReflectError, InvocationTargetException {
+    private Object doName(Object obj, boolean toLHS, CallStack callstack, Interpreter interpreter) throws EvalError, ReflectError, InvocationTargetException {
         try {
             // .length on array
             if (field.equals("length") && obj.getClass().isArray())
@@ -98,8 +98,8 @@ public class TSHPrimarySuffix extends SimpleNode implements TParserConstants {
             // we handle all cases ... (e.g. property style access, etc.)
             // maybe move this to Reflect ?
             try {
-                Object object= Reflect.invokeObjectMethod(obj, field, oa, interpreter, callstack, this);
-                if(object instanceof  Primitive) {
+                Object object = Reflect.invokeObjectMethod(obj, field, oa, interpreter, callstack, this);
+                if (object instanceof Primitive) {
                     Primitive primitive = (Primitive) object;
                     return primitive.getValue();
                 }
@@ -133,14 +133,14 @@ public class TSHPrimarySuffix extends SimpleNode implements TParserConstants {
     /**
      *
      */
-    static TSHTuple getIndexAux(Object obj, CallStack callstack, Interpreter interpreter, SimpleNode callerInfo) throws EvalError {
+    static TSHTuple getIndexAux(CallStack callstack, Interpreter interpreter, SimpleNode callerInfo) throws EvalError {
         try {
             Object indexVal = ((SimpleNode) callerInfo.jjtGetChild(0)).eval(callstack, interpreter);
-            int index1 = getIndex(indexVal);
+            Object index1 = getIndex(indexVal);
             int num = callerInfo.jjtGetNumChildren();
             if (num > 1) {
                 Object indexVal1 = ((SimpleNode) callerInfo.jjtGetChild(1)).eval(callstack, interpreter);
-                int index2 = getIndex(indexVal1);
+                Object index2 = getIndex(indexVal1);
                 return new TSHTuple(true, index1, index2);
             }
             return new TSHTuple(false, index1);
@@ -150,15 +150,17 @@ public class TSHPrimarySuffix extends SimpleNode implements TParserConstants {
         }
     }
 
-    public static int getIndex(Object indexVal) throws UtilEvalError {
+    public static Object getIndex(Object indexVal) throws UtilEvalError {
         if (!(indexVal instanceof Primitive)) {
             if (indexVal instanceof TBigDecimal) {
-                indexVal = ((TBigDecimal) indexVal).getValue();
+                indexVal = NumberUtil.objToInt(((TBigDecimal) indexVal).getValue());
             } else {
-                indexVal = Types.castObject(indexVal, Integer.TYPE, Types.ASSIGNMENT);
+                if (!(indexVal instanceof String)) {
+                    indexVal = Types.castObject(indexVal, Integer.TYPE, Types.ASSIGNMENT);
+                }
             }
         }
-        return NumberUtil.objToInt(indexVal);
+        return indexVal;
     }
 
     /**
@@ -166,7 +168,7 @@ public class TSHPrimarySuffix extends SimpleNode implements TParserConstants {
      * Must handle toLHS case.
      */
     private Object doIndex(Object obj, boolean toLHS, CallStack callstack, Interpreter interpreter) throws EvalError, ReflectError {
-        Tuple3<Boolean, Integer, Integer> data = getIndexAux(obj, callstack, interpreter, this).getData();
+        Tuple3<Boolean, Object, Object> data = getIndexAux(callstack, interpreter, this).getData();
         if (toLHS) {
             return new LHS(obj, data.getSecond());
         } else {
@@ -175,21 +177,23 @@ public class TSHPrimarySuffix extends SimpleNode implements TParserConstants {
                     int beginIndex;
                     int endIndex;
                     if (obj instanceof List) {
-                        beginIndex = getRealIndex(((List) obj).size(), data.getSecond());
-                        endIndex = getRealIndex(((List) obj).size(), data.getThird());
+                        beginIndex = getRealIndex(((List) obj).size(), getInt(data.getSecond()));
+                        endIndex = getRealIndex(((List) obj).size(), getInt(data.getThird()));
                         return ((List) obj).subList(beginIndex, endIndex);
                     } else if (obj instanceof String) {
-                        beginIndex = getRealIndex(((String) obj).length(), data.getSecond());
-                        endIndex = getRealIndex(((String) obj).length(), data.getThird());
+                        beginIndex = getRealIndex(((String) obj).length(), getInt(data.getSecond()));
+                        endIndex = getRealIndex(((String) obj).length(), getInt(data.getThird()));
                         return obj.toString().substring(beginIndex, endIndex);
                     }
                 } else {
                     if (obj instanceof List) {
-                        return ((List) obj).get(getRealIndex(((List) obj).size(), data.getSecond()));
+                        return ((List) obj).get(getRealIndex(((List) obj).size(), getInt(data.getSecond())));
                     } else if (obj instanceof String) {
-                        return ((String) obj).toCharArray()[getRealIndex(((String) obj).length(), data.getSecond())] + "";
+                        return ((String) obj).toCharArray()[getRealIndex(((String) obj).length(), getInt(data.getSecond()))] + "";
+                    } else if (obj instanceof Map) {
+                        return ((Map) obj).get(data.getSecond());
                     } else {
-                        return Reflect.getIndex(obj, data.getSecond());
+                        return Reflect.getIndex(obj, getInt(data.getSecond()));
                     }
                 }
             } catch (UtilEvalError e) {
@@ -197,6 +201,10 @@ public class TSHPrimarySuffix extends SimpleNode implements TParserConstants {
             }
         }
         return null;
+    }
+
+    public int getInt(Object value) {
+        return NumberUtil.objToInt(value);
     }
 
     public int getRealIndex(int size, int position) {
@@ -243,10 +251,4 @@ public class TSHPrimarySuffix extends SimpleNode implements TParserConstants {
         }
     }
 
-
-    public static void main(String[] args) {
-        String a = "abcdefg";
-        String b = a.toString().substring(1, 7);
-        System.out.println(b);
-    }
 }

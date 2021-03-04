@@ -35,11 +35,13 @@ import tsh.exception.UtilEvalError;
 import tsh.exception.UtilTargetError;
 import tsh.expression.Primitive;
 import tsh.util.CollectionManager;
+import tsh.util.NumberUtil;
 import tsh.util.Reflect;
 import tsh.util.ReflectManager;
 
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Map;
 
 /**
  * An LHS is a wrapper for an variable, field, or property.  It ordinarily
@@ -77,7 +79,7 @@ public class LHS implements TParserConstants, java.io.Serializable {
     String propName;
     Field field;
     Object object;
-    int index;
+    Object index;
 
     /**
      * @param localVar if true the variable is set directly in the This
@@ -129,7 +131,7 @@ public     LHS(Object object, String propName) {
     /**
      * Array index LHS Constructor.
      */
-    public LHS(Object array, int index) {
+    public LHS(Object array, Object index) {
         if (array == null)
             throw new NullPointerException("constructed empty LHS");
 
@@ -168,7 +170,7 @@ public     LHS(Object object, String propName) {
 
         if (type == INDEX)
             try {
-                return Reflect.getIndex(object, index);
+                return Reflect.getIndex(object, NumberUtil.objToInt(index));
             } catch (Exception e) {
                 throw new UtilEvalError("Array access: " + e);
             }
@@ -222,9 +224,11 @@ public     LHS(Object object, String propName) {
         } else if (type == INDEX) {
             try {
                 if(object instanceof List){
-                    ((List) object).set(index,val);
+                    ((List) object).set(NumberUtil.objToInt(index),val);
+                }else if (object instanceof Map){
+                    ((Map) object).put(index,val);
                 }else{
-                    Reflect.setIndex(object, index, val);
+                    Reflect.setIndex(object, NumberUtil.objToInt(index), val);
                 }
             } catch (UtilTargetError e1) { // pass along target error
                 throw e1;

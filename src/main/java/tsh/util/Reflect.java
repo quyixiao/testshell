@@ -170,8 +170,7 @@ public class Reflect {
         } catch (ArrayStoreException e2) {
             throw new UtilTargetError(e2);
         } catch (IllegalArgumentException e1) {
-            throw new UtilTargetError(
-                    new ArrayStoreException(e1.toString()));
+            throw new UtilTargetError(new ArrayStoreException(e1.toString()));
         } catch (Exception e) {
             throw new ReflectError("Array access:" + e);
         }

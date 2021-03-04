@@ -8,7 +8,11 @@ import tsh.interfac.BshIterator;
 import tsh.util.CollectionManager;
 import tsh.util.StringUtil;
 
+import java.util.Map;
+
 public class TSHForStatement extends SimpleNode implements TParserConstants {
+
+    public String kOrI;     //可能是 map 的 key ，也可能是 list 的索引
 
     public String varName;
 
@@ -43,21 +47,77 @@ public class TSHForStatement extends SimpleNode implements TParserConstants {
         }
         CollectionManager cm = CollectionManager.getCollectionManager();
         if (!cm.isBshIterable(iteratee)) {
+            if (iteratee instanceof Map) {
+                //对于 map 的处理
+                return forMap(enclosingNameSpace, eachNameSpace, (Map) iteratee, statement, callstack, interpreter);
+            }
             throw new EvalError("Can't iterate over type: " + iteratee.getClass(), this, callstack);
         }
         BshIterator iterator = cm.getBshIterator(iteratee);
         Object returnControl = Primitive.VOID;
+        int i = 0;
         while (iterator.hasNext()) {
             try {
                 Object value = iterator.next();
                 if (value == null) {
                     value = Primitive.NULL;
                 }
+
+                if (StringUtil.isNotBlank(kOrI)) {
+                    eachNameSpace.setVariable(kOrI, i, false);
+                }
+
                 if (elementType != null) {
                     eachNameSpace.setTypedVariable(varName/*name*/, elementType/*type*/, value/*value*/, null/*none*/);
                 } else {
                     eachNameSpace.setVariable(varName, value, false);
                 }
+            } catch (UtilEvalError e) {
+                throw e.toEvalError("for loop iterator variable:" + varName, this, callstack);
+            }
+            boolean breakout = false; // switch eats a multi-level break here?
+            if (statement != null) {
+                // not empty statement
+                Object ret = statement.eval(callstack, interpreter);
+                if (ret instanceof ReturnControl) {
+                    String retLabel = ((ReturnControl) ret).label;
+                    if (StringUtil.isNotBlank(retLabel)) {                //处理 break label 的情况
+                        if (!retLabel.equals(label)) {
+                            returnControl = ret;
+                        }
+                        breakout = true;
+                    } else {
+                        switch (((ReturnControl) ret).kind) {
+                            case RETURN:
+                                returnControl = ret;
+                                breakout = true;
+                                break;
+                            case CONTINUE:
+                                break;
+                            case BREAK:
+                                breakout = true;
+                                break;
+                        }
+                    }
+                }
+            }
+            if (breakout) {
+                break;
+            }
+            i++;
+        }
+        callstack.swap(enclosingNameSpace);
+        return returnControl;
+    }
+
+
+    public Object forMap(NameSpace enclosingNameSpace, BlockNameSpace eachNameSpace, Map<Object, Object> map, SimpleNode statement,
+                         CallStack callstack, Interpreter interpreter) throws EvalError {
+        Object returnControl = Primitive.VOID;
+        for (Map.Entry<Object, Object> entry : map.entrySet()) {
+            try {
+                eachNameSpace.setVariable(kOrI, entry.getKey(), false);
+                eachNameSpace.setVariable(varName, entry.getValue(), false);
             } catch (UtilEvalError e) {
                 throw e.toEvalError("for loop iterator variable:" + varName, this, callstack);
             }

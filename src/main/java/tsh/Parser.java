@@ -244,6 +244,18 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
         throw new ParseException();
     }
 
+
+    final private Token jj_consume_token_next() throws ParseException {
+        Token oldToken;
+        if ((oldToken = token).next != null) {
+            token = token.next;
+        } else {
+            token = token.next = token_source.getNextToken();
+        }
+        return token;
+    }
+
+
     final private void jj_consume_token_next_line() throws ParseException {
         lable_:
         while (true) {
@@ -996,14 +1008,21 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
             jj_consume_token(FOR);                  // for
             jj_consume_token(LPAREN);               // (
             t = jj_consume_token(IDENTIFIER);       // i
-            jj_consume_token(IN);                // in
+            Token t1 = jj_consume_token_next();
+            if (eq(t1.kind, COMMA)) {              // for(i,item in range(1,5)){} 的情况
+                jjtn000.kOrI = t.image;
+                Token t2 = jj_consume_token(IDENTIFIER);       // i
+                jjtn000.varName = t2.image;
+                jj_consume_token(IN);      // in
+            } else {                                        //如果没有消费到, 的话，肯定消费了 in
+                jjtn000.varName = t.image;
+            }
             Expression();                           // range(1,10)
             jj_consume_token(RPAREN);               // )
             Statement();                            // {}
             jjtree.closeNodeScope(jjtn000, true);
             jjtc000 = false;
             jjtreeCloseNodeScope(jjtn000);
-            jjtn000.varName = t.image;
         } catch (Throwable jjte000) {
             if (jjtc000) {
                 jjtree.clearNodeScope(jjtn000);
