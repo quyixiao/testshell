@@ -744,45 +744,29 @@ public class Name implements java.io.Serializable {
      * java.lang.Integer.getInteger("foo");
      * </pre>
      */
-    public Object invokeMethod(
-            Interpreter interpreter, Object[] args, CallStack callstack,
-            SimpleNode callerInfo
-    )
+    public Object invokeMethod(Interpreter interpreter, Object[] args, CallStack callstack,SimpleNode callerInfo)
             throws UtilEvalError, EvalError, ReflectError, InvocationTargetException {
+
         String methodName = Name.suffix(value, 1);
         BshClassManager bcm = interpreter.getClassManager();
         NameSpace namespace = callstack.top();
 
-        // Optimization - If classOfStaticMethod is set then we have already
-        // been here and determined that this is a static method invocation.
-        // Note: maybe factor this out with path below... clean up.
         if (classOfStaticMethod != null) {
-            return Reflect.invokeStaticMethod(
-                    bcm, classOfStaticMethod, methodName, args);
+            return Reflect.invokeStaticMethod(bcm, classOfStaticMethod, methodName, args);
         }
 
         if (!Name.isCompound(value))
-            return invokeLocalMethod(
-                    interpreter, args, callstack, callerInfo);
-
-        // Note: if we want methods declared inside blocks to be accessible via
-        // this.methodname() inside the block we could handle it here as a
-        // special case.  See also resolveThisFieldReference() special handling
-        // for BlockNameSpace case.  They currently work via the direct name
-        // e.g. methodName().
+            return invokeLocalMethod(interpreter, args, callstack, callerInfo);
 
         String prefix = Name.prefix(value);
 
-        // Superclass method invocation? (e.g. super.foo())
         if (prefix.equals("super") && Name.countParts(value) == 2) {
-            // Allow getThis() to work through block namespaces first
             This ths = namespace.getThis(interpreter);
             NameSpace thisNameSpace = ths.getNameSpace();
             NameSpace classNameSpace = getClassNameSpace(thisNameSpace);
             if (classNameSpace != null) {
                 Object instance = classNameSpace.getClassInstance();
-                return ClassGenerator.getClassGenerator()
-                        .invokeSuperclassMethod(bcm, instance, methodName, args);
+                return ClassGenerator.getClassGenerator().invokeSuperclassMethod(bcm, instance, methodName, args);
             }
         }
 
@@ -796,31 +780,17 @@ public class Name implements java.io.Serializable {
 
         // if we've got an object, resolve the method
         if (!(obj instanceof ClassIdentifier)) {
-
             if (obj instanceof Primitive) {
-
                 if (obj == Primitive.NULL)
-                    throw new UtilTargetError(new NullPointerException(
-                            "Null Pointer in Method Invocation"));
+                    throw new UtilTargetError(new NullPointerException("Null Pointer in Method Invocation"));
 
-                // some other primitive
-                // should avoid calling methods on primitive, as we do
-                // in Name (can't treat primitive like an object message)
-                // but the hole is useful right now.
                 if (Interpreter.DEBUG)
-                    interpreter.debug(
-                            "Attempt to access method on primitive..."
-                                    + " allowing bsh.Primitive to peek through for debugging");
+                    interpreter.debug("Attempt to access method on primitive..." + " allowing bsh.Primitive to peek through for debugging");
             }
 
-            // found an object and it's not an undefined variable
-            return Reflect.invokeObjectMethod(
-                    obj, methodName, args, interpreter, callstack, callerInfo);
+            return Reflect.invokeObjectMethod(obj, methodName, args, interpreter, callstack, callerInfo);
         }
 
-        // It's a class
-
-        // try static method
         if (Interpreter.DEBUG)
             Interpreter.debug("invokeMethod: trying static - " + targetName);
 
@@ -836,27 +806,12 @@ public class Name implements java.io.Serializable {
         throw new UtilEvalError("invokeMethod: unknown target: " + targetName);
     }
 
-    /**
-     * Invoke a locally declared method or a bsh command.
-     * If the method is not already declared in the namespace then try
-     * to load it as a resource from the imported command path (e.g.
-     * /bsh/commands)
-     */
-	/*
-		Note: the bsh command code should probably not be here...  we need to
-		scope it by the namespace that imported the command... so it probably
-		needs to be integrated into NameSpace.
-	*/
-    private Object invokeLocalMethod(
-            Interpreter interpreter, Object[] args, CallStack callstack,
-            SimpleNode callerInfo
-    )
+    private Object invokeLocalMethod(Interpreter interpreter, Object[] args, CallStack callstack,SimpleNode callerInfo)
             throws EvalError/*, ReflectError, InvocationTargetException*/ {
         if (Interpreter.DEBUG)
             Interpreter.debug("invokeLocalMethod: " + value);
         if (interpreter == null)
-            throw new InterpreterError(
-                    "invokeLocalMethod: interpreter = null");
+            throw new InterpreterError("invokeLocalMethod: interpreter = null");
 
         String commandName = value;
         Class[] argTypes = Types.getTypes(args);
@@ -927,32 +882,6 @@ public class Name implements java.io.Serializable {
         throw new InterpreterError("invalid command type");
     }
 
-/*
-	private String getHelp( String name )
-		throws UtilEvalError
-	{
-		try {
-			// should check for null namespace here
-			return get( "tsh.help."+name, null/interpreter/ );
-		} catch ( Exception e ) {
-			return "usage: "+name;
-		}
-	}
-
-	private String getHelp( Class commandClass )
-		throws UtilEvalError
-	{
-        try {
-            return (String)Reflect.invokeStaticMethod(
-				null/bcm/, commandClass, "usage", null );
-        } catch( Exception e )
-			return "usage: "+name;
-		}
-	}
-*/
-
-    // Static methods that operate on compound ('.' separated) names
-    // I guess we could move these to StringUtil someday
 
     public static boolean isCompound(String value) {
         return value.indexOf('.') != -1;

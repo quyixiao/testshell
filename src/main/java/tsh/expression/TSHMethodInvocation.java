@@ -45,9 +45,7 @@ public class TSHMethodInvocation extends SimpleNode {
         try {
             return name.invokeMethod(interpreter, args, callstack, this);
         } catch (ReflectError e) {
-            throw new EvalError(
-                    "Error in method invocation: " + e.getMessage(),
-                    this, callstack);
+            throw new EvalError("Error in method invocation: " + e.getMessage(),this, callstack);
         } catch (InvocationTargetException e) {
             String msg = "Method Invocation " + name;
             Throwable te = e.getTargetException();

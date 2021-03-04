@@ -48,7 +48,7 @@ public class CommonMethod {
     public Object type(Object... t) {
         Object v = t[0];
         if (v instanceof Boolean) {
-            return "bool";
+            return "boolean";
         }else if(v instanceof TBigDecimal){
             return "number";
         }else if (v instanceof List) {

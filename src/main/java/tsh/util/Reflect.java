@@ -70,12 +70,10 @@ public class Reflect {
 
         // Plain Java object, find the java method
         try {
-            BshClassManager bcm =
-                    interpreter == null ? null : interpreter.getClassManager();
+            BshClassManager bcm = interpreter == null ? null : interpreter.getClassManager();
             Class clas = object.getClass();
 
-            Method method = resolveExpectedJavaMethod(
-                    bcm, clas, object, methodName, args, false);
+            Method method = resolveExpectedJavaMethod(bcm, clas, object, methodName, args, false);
 
             return invokeMethod(method, object, args);
         } catch (UtilEvalError e) {
@@ -103,7 +101,7 @@ public class Reflect {
      *
      * @param args may be null
      */
-    public static Object invokeMethod(Method method, Object object, Object[] args)throws ReflectError, InvocationTargetException {
+    public static Object invokeMethod(Method method, Object object, Object[] args) throws ReflectError, InvocationTargetException {
         if (args == null)
             args = new Object[0];
 
@@ -112,22 +110,25 @@ public class Reflect {
         // Map types to assignable forms, need to keep this fast...
         Object[] tmpArgs = new Object[args.length];
         Class[] types = method.getParameterTypes();
-        try {
-            for (int i = 0; i < args.length; i++) {
+
+        for (int i = 0; i < args.length; i++) {
+            try {
                 Class clazz = String.class;
                 if (i < types.length) {
                     clazz = types[i];
                 }
                 tmpArgs[i] = Types.castObject(args[i]/*rhs*/, clazz /*lhsType*/, Types.ASSIGNMENT);
+            } catch (UtilEvalError e) {
+                tmpArgs[i] = args[i];
+                //throw new InterpreterError("illegal argument type in method invocation: " + e);
             }
-        } catch (UtilEvalError e) {
-            throw new InterpreterError("illegal argument type in method invocation: " + e);
+
         }
 
         // unwrap any primitives
         tmpArgs = Primitive.unwrap(tmpArgs);
 
-        logInvokeMethod("Invoking method (after massaging values): ",method, tmpArgs);
+        logInvokeMethod("Invoking method (after massaging values): ", method, tmpArgs);
         try {
             Object returnValue = null;
             if (method.getDeclaringClass().getName().startsWith("tsh.methods")) {
@@ -426,9 +427,7 @@ public class Reflect {
             try {
                 method = findOverloadedMethod(clas, name, types, publicOnly);
             } catch (SecurityException e) {
-                throw new UtilTargetError(
-                        "Security Exception while searching methods of: " + clas,
-                        e);
+                throw new UtilTargetError("Security Exception while searching methods of: " + clas, e);
             }
 
             checkFoundStaticMethod(method, staticOnly, clas);
@@ -459,12 +458,9 @@ public class Reflect {
     private static Method findOverloadedMethod(
             Class baseClass, String methodName, Class[] types, boolean publicOnly) {
         if (Interpreter.DEBUG)
-            Interpreter.debug("Searching for method: " +
-                    StringUtil.methodString(methodName, types)
-                    + " in '" + baseClass.getName() + "'");
+            Interpreter.debug("Searching for method: " +StringUtil.methodString(methodName, types)+ " in '" + baseClass.getName() + "'");
 
-        Method[] methods = getCandidateMethods(
-                baseClass, methodName, types.length, publicOnly);
+        Method[] methods = getCandidateMethods(baseClass, methodName, types.length, publicOnly);
 
         if (Interpreter.DEBUG)
             Interpreter.debug("Looking for most specific method: " + methodName);
@@ -649,8 +645,7 @@ public class Reflect {
      *                types of their arguments.
      * @see #findMostSpecificSignature(Class[], Class[][])
      */
-    static Method findMostSpecificMethod(
-            Class[] idealMatch, Method[] methods) {
+    static Method findMostSpecificMethod(Class[] idealMatch, Method[] methods) {
         // copy signatures into array for findMostSpecificMethod()
         Class[][] candidateSigs = new Class[methods.length][];
         for (int i = 0; i < methods.length; i++)

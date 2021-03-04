@@ -8,10 +8,12 @@ import tsh.exception.EvalError;
 import tsh.exception.UtilEvalError;
 
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 public class TSHVariableDeclarator extends SimpleNode {
     public String[] names = null;
+
 
     public TSHVariableDeclarator(String id) {
         super(id);

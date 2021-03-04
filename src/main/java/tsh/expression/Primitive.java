@@ -33,9 +33,7 @@ import tsh.entity.TBigDecimal;
 import tsh.exception.InterpreterError;
 import tsh.exception.UtilEvalError;
 import tsh.exception.UtilTargetError;
-import tsh.util.NumberUtil;
 import tsh.util.Reflect;
-import tsh.util.StringUtil;
 import tsh.util.Utils;
 
 import java.math.BigDecimal;
@@ -157,15 +155,10 @@ public final class Primitive implements TParserConstants, java.io.Serializable {
     public Object getValue() {
         if (value == Special.NULL_VALUE) {
             return null;
-        }else if (value == Special.VOID_TYPE) {
+        } else if (value == Special.VOID_TYPE) {
             throw new InterpreterError("attempt to unwrap void type");
-        }else {
-           if(value instanceof Short || value instanceof Integer || value instanceof Long || value instanceof Float
-                || value instanceof Double){
-               return new TBigDecimal(NumberUtil.objToBigDecimalDefault(value,BigDecimal.ZERO), NumberUtil.getPrecision(value.toString()));
-           }else{
-               return value;
-           }
+        } else {
+            return value;
         }
     }
 
@@ -590,12 +583,14 @@ public final class Primitive implements TParserConstants, java.io.Serializable {
             return Primitive.NULL;
 
         if (value instanceof Boolean)
-            return ((Boolean) value).booleanValue() ? Primitive.TRUE :
-                    Primitive.FALSE;
+            return ((Boolean) value).booleanValue() ? Primitive.TRUE : Primitive.FALSE;
 
         if (type.isPrimitive() && isWrapperType(value.getClass()))
             return new Primitive(value);
 
+        if (value instanceof TBigDecimal) {
+            return new Primitive(value);
+        }
         return value;
     }
 
@@ -640,8 +635,7 @@ public final class Primitive implements TParserConstants, java.io.Serializable {
      * @param value  is the value in java.lang wrapper.
      *               value may not be null.
      */
-    public static Object castWrapper(
-            Class toType, Object value) {
+    public static Object castWrapper(Class toType, Object value) {
         if (!toType.isPrimitive())
             throw new InterpreterError("invalid type in castWrapper: " + toType);
         if (value == null)
@@ -657,8 +651,19 @@ public final class Primitive implements TParserConstants, java.io.Serializable {
         if (value instanceof Character)
             value = new Integer(((Character) value).charValue());
 
-        if (!(value instanceof Number))
+        if (!(value instanceof Number)) {
+            if (value instanceof TBigDecimal) {
+                if (toType == Integer.TYPE)
+                    return ((TBigDecimal) value).intValue();
+                if (toType == Long.TYPE)
+                    return ((TBigDecimal) value).doubleValue();
+                if (toType == Float.TYPE)
+                    return ((TBigDecimal) value).floatValue();
+                if (toType == Double.TYPE)
+                    return ((TBigDecimal) value).doubleValue();
+            }
             throw new InterpreterError("bad type in cast");
+        }
 
         Number number = (Number) value;
 
@@ -681,21 +686,14 @@ public final class Primitive implements TParserConstants, java.io.Serializable {
     }
 
 
-    public static Primitive castPrimitive(
-            Class toType, Class fromType, Primitive fromValue,
-            boolean checkOnly, int operation)
+    public static Primitive castPrimitive(Class toType, Class fromType, Primitive fromValue, boolean checkOnly, int operation)
             throws UtilEvalError {
-		/*
-			Lots of preconditions checked here...
-			Once things are running smoothly we might comment these out
-			(That's what assertions are for).
-		*/
         if (checkOnly && fromValue != null)
             throw new InterpreterError("bad cast param 1");
         if (!checkOnly && fromValue == null)
             throw new InterpreterError("bad cast param 2");
-        if (fromType != null && !fromType.isPrimitive())
-            throw new InterpreterError("bad fromType:" + fromType);
+        //if (fromType != null && (!fromType.isPrimitive() ))
+        //    throw new InterpreterError("bad fromType:" + fromType);
         if (fromValue == Primitive.NULL && fromType != null)
             throw new InterpreterError("inconsistent args 1");
         if (fromValue == Primitive.VOID && fromType != Void.TYPE)
@@ -703,11 +701,11 @@ public final class Primitive implements TParserConstants, java.io.Serializable {
 
         // can't cast void to anything
         if (fromType == Void.TYPE)
-            if (checkOnly)
+            if (checkOnly) {
                 return Types.INVALID_CAST;
-            else
-                throw Types.castError(Reflect.normalizeClassName(toType),
-                        "void value", operation);
+            } else {
+                throw Types.castError(Reflect.normalizeClassName(toType), "void value", operation);
+            }
 
         // unwrap Primitive fromValue to its wrapper value, etc.
         Object value = null;
@@ -720,22 +718,18 @@ public final class Primitive implements TParserConstants, java.io.Serializable {
                 if (checkOnly)
                     return Types.INVALID_CAST;
                 else
-                    throw Types.castError(
-                            "primitive type:" + toType, "Null value", operation);
+                    throw Types.castError("primitive type:" + toType, "Null value", operation);
 
             // fall through
         } else {
             // Trying to cast primitive to an object type
             // Primitive.NULL can be cast to any object type
             if (fromType == null)
-                return checkOnly ? Types.VALID_CAST :
-                        Primitive.NULL;
-
+                return checkOnly ? Types.VALID_CAST : Primitive.NULL;
             if (checkOnly)
                 return Types.INVALID_CAST;
             else
-                throw Types.castError(
-                        "object type:" + toType, "primitive value", operation);
+                throw Types.castError("object type:" + toType, "primitive value", operation);
         }
 
         // can only cast boolean to boolean
@@ -746,8 +740,7 @@ public final class Primitive implements TParserConstants, java.io.Serializable {
                 else
                     throw Types.castError(toType, fromType, operation);
 
-            return checkOnly ? Types.VALID_CAST :
-                    fromValue;
+            return checkOnly ? Types.VALID_CAST : fromValue;
         }
 
         // Do numeric cast
@@ -762,8 +755,7 @@ public final class Primitive implements TParserConstants, java.io.Serializable {
                 throw Types.castError(toType, fromType, operation);
         }
 
-        return checkOnly ? Types.VALID_CAST :
-                new Primitive(castWrapper(toType, value));
+        return checkOnly ? Types.VALID_CAST : new Primitive(castWrapper(toType, value));
     }
 
 }

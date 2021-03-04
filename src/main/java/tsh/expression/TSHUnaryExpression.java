@@ -69,11 +69,9 @@ public class TSHUnaryExpression extends SimpleNode implements TParserConstants {
             Object result =  primitiveWrapperUnaryOperation(op, kind);
             return new TBigDecimal(NumberUtil.objToBigDecimalDefault(result,BigDecimal.ZERO),precision);
         }
-
         if (!(op instanceof Primitive)) {
             throw new UtilEvalError("Unary operation " + id + " inappropriate for object");
         }
-
         return Primitive.unaryOperation((Primitive) op, kind);
     }
 
@@ -104,7 +102,7 @@ public class TSHUnaryExpression extends SimpleNode implements TParserConstants {
             return new Float(Primitive.floatUnaryOperation((Float) operand, kind));
         } else if (operand instanceof Double) {
             return new Double(Primitive.doubleUnaryOperation((Double) operand, kind));
-        } else {
+        }else {
             throw new InterpreterError("An error occurred.  Please call technical support.");
         }
     }

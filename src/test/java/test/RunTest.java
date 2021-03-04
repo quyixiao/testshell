@@ -20,7 +20,7 @@ public class RunTest {
     @Test
     public void test() throws Exception {
         Object retVal = null;
-        String file = "/Users/quyixiao/git/java-python/script/map.tsh";
+        String file = "/Users/quyixiao/git/java-python/script/list.tsh";
         Reader in = new BufferedReader(new FileReader(file));
         Interpreter localInterpreter =
                 new Interpreter(
@@ -62,3 +62,4 @@ public class RunTest {
         }
     }
 }
+

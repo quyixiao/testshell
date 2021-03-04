@@ -34,6 +34,8 @@ import tsh.exception.UtilTargetError;
 import tsh.expression.Primitive;
 import tsh.util.Reflect;
 
+import java.math.BigDecimal;
+
 /**
  * Static routines supporing type comparison and conversion in BeanShell.
  * <p>
@@ -54,7 +56,7 @@ public class Types {
             JAVA_VARARGS_ASSIGNABLE = 3,
             BSH_ASSIGNABLE = 4;
 
-public     static final int
+    public static final int
             FIRST_ROUND_ASSIGNABLE = JAVA_BASE_ASSIGNABLE,
             LAST_ROUND_ASSIGNABLE = BSH_ASSIGNABLE;
 
@@ -226,8 +228,13 @@ public     static final int
 
             if ((rhsType == Float.TYPE) && (lhsType == Double.TYPE))
                 return true;
+        }else if((rhsType == TBigDecimal.class) &&
+                    (lhsType == Long.TYPE || lhsType == Float.TYPE || lhsType == Double.TYPE
+                        || lhsType == Integer.TYPE || lhsType == BigDecimal.class || lhsType == Short.TYPE)){
+            return true;
         } else if (lhsType.isAssignableFrom(rhsType))
             return true;
+
 
         return false;
     }
@@ -301,13 +308,8 @@ public     static final int
         if (fromValue == null)
             throw new InterpreterError("null fromValue");
 
-        Class fromType =
-                fromValue instanceof Primitive ?
-                        ((Primitive) fromValue).getType()
-                        : fromValue.getClass();
-
-        return castObject(
-                toType, fromType, fromValue, operation, false/*checkonly*/);
+        Class fromType = fromValue instanceof Primitive ? ((Primitive) fromValue).getType() : fromValue.getClass();
+        return castObject(toType, fromType, fromValue, operation, false/*checkonly*/);
     }
 
     /**
@@ -365,7 +367,7 @@ public     static final int
 		conversions...  Where does that need to go?
 	*/
     private static Object castObject(Class toType, Class fromType, Object fromValue,
-            int operation, boolean checkOnly)
+                                     int operation, boolean checkOnly)
             throws UtilEvalError {
 		/*
 			Lots of preconditions checked here...
@@ -391,12 +393,9 @@ public     static final int
 
         // Casting to primitive type
         if (toType.isPrimitive()) {
-            if (fromType == Void.TYPE || fromType == null
-                    || fromType.isPrimitive()) {
+            if (fromType == Void.TYPE || fromType == null || fromType.isPrimitive()) {
                 // Both primitives, do primitive cast
-                return Primitive.castPrimitive(
-                        toType, fromType, (Primitive) fromValue,
-                        checkOnly, operation);
+                return Primitive.castPrimitive(toType, fromType, (Primitive) fromValue, checkOnly, operation);
             } else {
                 if (Primitive.isWrapperType(fromType)) {
                     // wrapper to primitive
@@ -405,15 +404,14 @@ public     static final int
                     //Object r = checkOnly ? VALID_CAST :
                     Class unboxedFromType = Primitive.unboxType(fromType);
                     Primitive primFromValue;
-                    if (checkOnly)
+                    if (checkOnly) {
                         primFromValue = null; // must be null in checkOnly
-                    else
-                        primFromValue = (Primitive) Primitive.wrap(
-                                fromValue, unboxedFromType);
+                    } else {
+                        primFromValue = (Primitive) Primitive.wrap(fromValue, unboxedFromType);
+                    }
 
-                    return Primitive.castPrimitive(
-                            toType, unboxedFromType, primFromValue,
-                            checkOnly, operation);
+
+                    return Primitive.castPrimitive(toType, unboxedFromType, primFromValue, checkOnly, operation);
                 } else {
                     // Cannot cast from arbitrary object to primitive
                     if (checkOnly)
@@ -424,7 +422,7 @@ public     static final int
             }
         }
 
-        if(fromType == TBigDecimal.class){
+        if (fromType == TBigDecimal.class) {
             return fromValue;
         }
         // Else, casting to reference type
@@ -478,8 +476,7 @@ public     static final int
         if (Primitive.isWrapperType(toType)
                 && Primitive.isWrapperType(fromType)
         )
-            return checkOnly ? VALID_CAST :
-                    Primitive.castWrapper(toType, fromValue);
+            return checkOnly ? VALID_CAST : Primitive.castWrapper(toType, fromValue);
 
         if (checkOnly)
             return INVALID_CAST;
