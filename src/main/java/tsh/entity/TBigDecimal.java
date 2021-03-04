@@ -1,5 +1,8 @@
 package tsh.entity;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+
 import java.math.BigDecimal;
 
 public class TBigDecimal {
@@ -37,5 +40,11 @@ public class TBigDecimal {
     @Override
     public String toString() {
         return value.setScale(precision, BigDecimal.ROUND_HALF_UP) + "";
+    }
+
+    public static void main(String[] args) {
+        TBigDecimal t = new TBigDecimal(new BigDecimal(10),2);
+        System.out.println(JSON.toJSONString(t.toString(), SerializerFeature.UseSingleQuotes,SerializerFeature.WriteEnumUsingToString));
+        System.out.println(t);
     }
 }

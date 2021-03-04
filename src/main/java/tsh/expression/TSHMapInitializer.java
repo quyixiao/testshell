@@ -6,6 +6,7 @@ import tsh.SimpleNode;
 import tsh.exception.EvalError;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class TSHMapInitializer extends SimpleNode {
@@ -16,7 +17,7 @@ public class TSHMapInitializer extends SimpleNode {
 
     public Object eval(CallStack callstack, Interpreter interpreter) throws EvalError {
         int numInitializers = jjtGetNumChildren();
-        Map<Object, Object> initializers = new HashMap<>();
+        Map<Object, Object> initializers = new LinkedHashMap<>();
         for (int i = 0; i < numInitializers; i = i + 2) {
             SimpleNode lNode = (SimpleNode) jjtGetChild(i);
             SimpleNode rNode = (SimpleNode) jjtGetChild(i + 1);
