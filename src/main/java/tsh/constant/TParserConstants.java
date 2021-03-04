@@ -109,6 +109,8 @@ public interface TParserConstants {
     public final static String default_jjmatchedKind = "0x7fffffff";
     String default_1 = "-1";
 
+    int DEFAULT_INT_MAX = 2147483647;
+
 
     String DEFAULT = "default";
 

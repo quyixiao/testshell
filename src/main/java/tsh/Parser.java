@@ -2386,6 +2386,93 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
     }
 
 
+
+
+    final public void CustomLiteral(String kind,Object value) throws ParseException {
+        TSHLiteral jjtn000 = new TSHLiteral(T_Literal);
+        boolean jjtc000 = true;
+        jjtree.openNodeScope(jjtn000);
+        jjtreeOpenNodeScope(jjtn000);
+        boolean b;
+        String literal = value.toString();
+        try {
+            switch (kind) {
+                case NUMBER:
+                    jjtree.closeNodeScope(jjtn000, true);
+                    jjtc000 = false;
+                    jjtreeCloseNodeScope(jjtn000);
+                    TBigDecimal tBigDecimal = new TBigDecimal();
+                    tBigDecimal.setValue(NumberUtil.objToBigDecimalDefault(literal, BigDecimal.ZERO));
+                    tBigDecimal.setPrecision(NumberUtil.getPrecision(literal));
+                    try {
+                        jjtn000.value = tBigDecimal;
+                    } catch (NumberFormatException e) {
+                        {
+                            if (true) throw createParseException(
+                                    "Error or number too big for integer type: " + literal);
+                        }
+                    }
+                    break;
+                case STR:
+                    jjtree.closeNodeScope(jjtn000, true);
+                    jjtc000 = false;
+                    jjtreeCloseNodeScope(jjtn000);
+                    try {
+                        jjtn000.stringSetup(literal.substring(1, literal.length() - 1));
+                    } catch (Exception e) {
+                        {
+                            if (true) throw createParseException("Error parsing string: " +literal);
+                        }
+                    }
+                    break;
+                case FALSE:
+                case TRUE:
+                    b = NumberUtil.objToBooleanDefault(value,false);
+                    jjtree.closeNodeScope(jjtn000, true);
+                    jjtc000 = false;
+                    jjtreeCloseNodeScope(jjtn000);
+                    jjtn000.value = b ? Primitive.TRUE : Primitive.FALSE;
+                    break;
+                case NULL:
+                    jjtree.closeNodeScope(jjtn000, true);
+                    jjtc000 = false;
+                    jjtreeCloseNodeScope(jjtn000);
+                    jjtn000.value = Primitive.NULL;
+                    break;
+                default:
+                    jj_la1[61] = jj_gen;
+                    jj_consume_token(default_1);
+                    throw new ParseException();
+            }
+        } catch (Throwable jjte000) {
+            if (jjtc000) {
+                jjtree.clearNodeScope(jjtn000);
+                jjtc000 = false;
+            } else {
+                jjtree.popNode();
+            }
+            if (jjte000 instanceof RuntimeException) {
+                {
+                    if (true) throw (RuntimeException) jjte000;
+                }
+            }
+            if (jjte000 instanceof ParseException) {
+                {
+                    if (true) throw (ParseException) jjte000;
+                }
+            }
+            {
+                if (true) throw (Error) jjte000;
+            }
+        } finally {
+            if (jjtc000) {
+                jjtree.closeNodeScope(jjtn000, true);
+                jjtreeCloseNodeScope(jjtn000);
+            }
+        }
+    }
+
+
     final public void Literal() throws ParseException {
         /*@bgen(jjtree) Literal */
         TSHLiteral jjtn000 = new TSHLiteral(T_Literal);
@@ -2594,11 +2681,22 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
             switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
                 case LBRACKET:
                     jj_consume_token(LBRACKET);
-
-
-
-
-                    Expression();
+                    int flag = jj_3_41(33);
+                    if (flag == 1) {             // [:3]
+                        CustomLiteral(NUMBER, 0);
+                        jj_consume_token(COLON);
+                        Expression();
+                    } else if (flag == 2) {      // [1:]
+                        Expression();
+                        jj_consume_token(COLON);
+                        CustomLiteral(NUMBER, DEFAULT_INT_MAX);     //默认最大值为 int最大值
+                    } else if (flag == 3) {      // [1:3]
+                        Expression();
+                        jj_consume_token(COLON);
+                        Expression();
+                    } else {                      // [3]
+                        Expression();
+                    }
                     jj_consume_token(RBRACKET);
                     jjtree.closeNodeScope(jjtn000, true);
                     jjtc000 = false;
@@ -2723,6 +2821,42 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
     }
 
 
+    final private int jj_3_41(int xla) {
+        jj_la = xla;
+        jj_lastpos = jj_scanpos = token;
+        try {
+            return jj_3_41_1();
+        } catch (Parser.LookaheadSuccess ls) {
+            return 0;
+        } finally {
+            jj_save(26, xla);
+        }
+    }
+
+
+    final private int jj_3_41_1() {
+        Token t1 = jj_scan_token_next();
+        if (eq(t1.kind, COLON)) {               //   [:3]这种情况
+            return 1;
+        }
+
+        while (true) {
+            Token t2 = jj_scan_token_next();
+            if (eq(t2.kind, COLON)) {
+                Token t3 = jj_scan_token_next();
+                if (eq(t3.kind, RBRACKET)) {    //  [1:]
+                    return 2;
+                } else {
+                    return 3;                   //  [1:2]
+                }
+            }
+            if (eq(t2.kind, RBRACKET)) {        //  [2]
+                return 4;
+            }
+        }
+    }
+
+
     final private int jj_2_29(int xla) {
         jj_la = xla;
         jj_lastpos = jj_scanpos = token;
@@ -2764,20 +2898,7 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
     }
 
 
-    final private boolean jj_3R_177() {
-        if (jj_scan_token(COMMA)) return true;
-        if (jj_3R_176()) return true;
-        return false;
-    }
 
-
-    final private boolean jj_3R_176() {
-        if (jj_scan_token(IDENTIFIER)) return true;                 // 变量名称
-        Token xsp;
-        xsp = jj_scanpos;
-        if (jj_3R_180()) jj_scanpos = xsp;                  // =
-        return false;
-    }
 
     final private boolean jj_3R_180() {
         if (jj_scan_token(ASSIGN)) return true;
@@ -2972,15 +3093,7 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
         return false;
     }
 
-    final private boolean jj_3_12_2() {
-        Token xsp;
-        xsp = jj_scanpos;
-        if (jj_scan_token(INCR)) {
-            jj_scanpos = xsp;
-            if (jj_scan_token(DECR)) return true;
-        }
-        return false;
-    }
+
 
     final private boolean jj_3R_158() {
         if (jj_3R_161()) return true;

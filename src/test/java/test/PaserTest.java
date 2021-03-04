@@ -74,5 +74,4 @@ public class PaserTest {
         mt.invoke(clazz.newInstance(),new Object[]{new Object[]{"1",1,1.2}});
     }
 
-
 }

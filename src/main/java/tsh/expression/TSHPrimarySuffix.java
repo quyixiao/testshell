@@ -1,8 +1,11 @@
 package tsh.expression;
 
 import tsh.*;
+import tsh.constant.TParserConstants;
 import tsh.entity.TBigDecimal;
 import tsh.exception.*;
+import tsh.t.TSHTuple;
+import tsh.t.Tuple3;
 import tsh.util.CollectionManager;
 import tsh.util.NumberUtil;
 import tsh.util.Reflect;
@@ -11,7 +14,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-public class TSHPrimarySuffix extends SimpleNode {
+public class TSHPrimarySuffix extends SimpleNode implements TParserConstants {
     public static final int
             INDEX = 1,
             NAME = 2,
@@ -127,24 +130,32 @@ public class TSHPrimarySuffix extends SimpleNode {
     /**
      *
      */
-    static int getIndexAux(Object obj, CallStack callstack, Interpreter interpreter, SimpleNode callerInfo) throws EvalError {
-        int index;
+    static TSHTuple getIndexAux(Object obj, CallStack callstack, Interpreter interpreter, SimpleNode callerInfo) throws EvalError {
         try {
             Object indexVal = ((SimpleNode) callerInfo.jjtGetChild(0)).eval(callstack, interpreter);
-            if (!(indexVal instanceof Primitive)) {
-                if (indexVal instanceof TBigDecimal) {
-                    indexVal = ((TBigDecimal) indexVal).getValue();
-                } else {
-                    indexVal = Types.castObject(indexVal, Integer.TYPE, Types.ASSIGNMENT);
-                }
+            int index1 = getIndex(indexVal);
+            int num = callerInfo.jjtGetNumChildren();
+            if (num > 1) {
+                Object indexVal1 = ((SimpleNode) callerInfo.jjtGetChild(1)).eval(callstack, interpreter);
+                int index2 = getIndex(indexVal1);
+                return new TSHTuple(true, index1, index2);
             }
-            index = NumberUtil.objToInt(indexVal);
+            return new TSHTuple(false, index1);
         } catch (UtilEvalError e) {
             Interpreter.debug("doIndex: " + e);
             throw e.toEvalError("Arrays may only be indexed by integer types.", callerInfo, callstack);
         }
+    }
 
-        return index;
+    public static int getIndex(Object indexVal) throws UtilEvalError {
+        if (!(indexVal instanceof Primitive)) {
+            if (indexVal instanceof TBigDecimal) {
+                indexVal = ((TBigDecimal) indexVal).getValue();
+            } else {
+                indexVal = Types.castObject(indexVal, Integer.TYPE, Types.ASSIGNMENT);
+            }
+        }
+        return NumberUtil.objToInt(indexVal);
     }
 
     /**
@@ -152,21 +163,47 @@ public class TSHPrimarySuffix extends SimpleNode {
      * Must handle toLHS case.
      */
     private Object doIndex(Object obj, boolean toLHS, CallStack callstack, Interpreter interpreter) throws EvalError, ReflectError {
-        int index = getIndexAux(obj, callstack, interpreter, this);
-        if (toLHS)
-            return new LHS(obj, index);
-        else
+        Tuple3<Boolean, Integer, Integer> data = getIndexAux(obj, callstack, interpreter, this).getData();
+        if (toLHS) {
+            return new LHS(obj, data.getSecond());
+        } else {
             try {
-                if (obj instanceof List) {
-                    return ((List) obj).get(index);
-                } else if (obj instanceof String) {
-                    return ((String) obj).toCharArray()[index] + "";
+                if (data.getFirst()) {
+                    int beginIndex;
+                    int endIndex;
+                    if (obj instanceof List) {
+                        beginIndex = getRealIndex(((List) obj).size(), data.getSecond());
+                        endIndex = getRealIndex(((List) obj).size(), data.getThird());
+                        return ((List) obj).subList(beginIndex, endIndex);
+                    } else if (obj instanceof String) {
+                        beginIndex = getRealIndex(((String) obj).length(), data.getSecond());
+                        endIndex = getRealIndex(((String) obj).length(), data.getThird());
+                        return obj.toString().substring(beginIndex, endIndex);
+                    }
                 } else {
-                    return Reflect.getIndex(obj, index);
+                    if (obj instanceof List) {
+                        return ((List) obj).get(getRealIndex(((List) obj).size(), data.getSecond()));
+                    } else if (obj instanceof String) {
+                        return ((String) obj).toCharArray()[getRealIndex(((String) obj).length(), data.getSecond())] + "";
+                    } else {
+                        return Reflect.getIndex(obj, data.getSecond());
+                    }
                 }
             } catch (UtilEvalError e) {
                 throw e.toEvalError(this, callstack);
             }
+        }
+        return null;
+    }
+
+    public int getRealIndex(int size, int position) {
+        if (position < 0) {
+            return size + position;
+        }
+        if (position == DEFAULT_INT_MAX) {
+            return size;
+        }
+        return position;
     }
 
     /**
@@ -194,7 +231,6 @@ public class TSHPrimarySuffix extends SimpleNode {
             Object val = cm.getFromMap(obj, value/*key*/);
             return (val == null ? val = Primitive.NULL : val);
         }
-
         try {
             return Reflect.getObjectProperty(obj, (String) value);
         } catch (UtilEvalError e) {
@@ -202,5 +238,12 @@ public class TSHPrimarySuffix extends SimpleNode {
         } catch (ReflectError e) {
             throw new EvalError("No such property: " + value, this, callstack);
         }
+    }
+
+
+    public static void main(String[] args) {
+        String a = "abcdefg";
+        String b = a.toString().substring(1, 7);
+        System.out.println(b);
     }
 }
