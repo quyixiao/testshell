@@ -14,8 +14,6 @@ public class TSHMethodInvocation extends SimpleNode {
     }
 
 
-
-
     TSHAmbiguousName getNameNode() {
         return (TSHAmbiguousName) jjtGetChild(0);
     }

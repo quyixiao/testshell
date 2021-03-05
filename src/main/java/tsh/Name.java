@@ -188,16 +188,32 @@ public class Name implements java.io.Serializable {
      *                   that we want a class; where in general the var path may be taken.
      * @see toObject()
      */
-    synchronized public Object toObject(
-            CallStack callstack, Interpreter interpreter, boolean forceClass)
-            throws UtilEvalError {
+    synchronized public Object toObject(CallStack callstack, Interpreter interpreter, boolean forceClass) throws UtilEvalError {
         reset();
 
         Object obj = null;
-        while (evalName != null)
-            obj = consumeNextObjectField(
-                    callstack, interpreter, forceClass, false/*autoalloc*/);
+        while (evalName != null) {
+            obj = consumeNextObjectField(callstack, interpreter, forceClass, false/*autoalloc*/);
+        }
 
+        if (obj == null)
+            throw new InterpreterError("null value in toObject()");
+
+        return obj;
+    }
+
+
+    synchronized public Object toObjectNew(CallStack callstack, Interpreter interpreter, boolean forceClass,String methodName) throws UtilEvalError {
+        reset();
+
+        Object obj = null;
+        while (evalName != null) {
+            obj = consumeNextObjectField(callstack, interpreter, forceClass, false/*autoalloc*/);
+        }
+
+        if(obj== Primitive.VOID){
+            obj = namespace.getMethod(methodName, new Class[]{null});
+        }
         if (obj == null)
             throw new InterpreterError("null value in toObject()");
 
@@ -745,8 +761,8 @@ public class Name implements java.io.Serializable {
      * java.lang.Integer.getInteger("foo");
      * </pre>
      */
-    public Object invokeMethod(Interpreter interpreter, Object[] args, CallStack callstack,SimpleNode callerInfo)
-            throws UtilEvalError, EvalError, ReflectError, InvocationTargetException{
+    public Object invokeMethod(Interpreter interpreter, Object[] args, CallStack callstack, SimpleNode callerInfo)
+            throws UtilEvalError, EvalError, ReflectError, InvocationTargetException {
 
         String methodName = Name.suffix(value, 1);
         BshClassManager bcm = interpreter.getClassManager();
@@ -807,7 +823,7 @@ public class Name implements java.io.Serializable {
         throw new UtilEvalError("invokeMethod: unknown target: " + targetName);
     }
 
-    private Object invokeLocalMethod(Interpreter interpreter, Object[] args, CallStack callstack,SimpleNode callerInfo)
+    private Object invokeLocalMethod(Interpreter interpreter, Object[] args, CallStack callstack, SimpleNode callerInfo)
             throws EvalError/*, ReflectError, InvocationTargetException*/ {
         if (Interpreter.DEBUG)
             Interpreter.debug("invokeLocalMethod: " + value);
@@ -827,11 +843,11 @@ public class Name implements java.io.Serializable {
 
         if (meth != null) {
             return meth.invokeNew(args, interpreter, callstack, callerInfo);
-        }else{
+        } else {
             try {
-                Method mt  =  ClassUtils.getMethod(commandName);
-                if(mt !=null){
-                    meth = new TshMethod(mt,mt.getDeclaringClass().newInstance());
+                Method mt = ClassUtils.getMethod(commandName);
+                if (mt != null) {
+                    meth = new TshMethod(mt, mt.getDeclaringClass().newInstance());
                     return meth.invoke(args, interpreter, callstack, callerInfo);
                 }
             } catch (Exception e) {
@@ -855,9 +871,9 @@ public class Name implements java.io.Serializable {
             }
 
             if (invokeMethod != null)
-                return invokeMethod.invoke(new Object[]{commandName, args},interpreter, callstack, callerInfo);
+                return invokeMethod.invoke(new Object[]{commandName, args}, interpreter, callstack, callerInfo);
 
-            throw new EvalError("Command not found: "+ StringUtil.methodString(commandName, argTypes),callerInfo, callstack);
+            throw new EvalError("Command not found: " + StringUtil.methodString(commandName, argTypes), callerInfo, callstack);
         }
 
         if (commandObject instanceof TshMethod)

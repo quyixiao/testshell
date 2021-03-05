@@ -23,7 +23,7 @@ public class TSHAmbiguousName extends SimpleNode {
 
     Object toObject(CallStack callstack, Interpreter interpreter, boolean forceClass) throws EvalError {
         try {
-            return getName(callstack.top()).toObject(callstack, interpreter, forceClass);
+            return getName(callstack.top()).toObjectNew(callstack, interpreter, forceClass,text);
         } catch (Exception e) {
             e.printStackTrace();
         }

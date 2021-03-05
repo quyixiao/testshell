@@ -36,8 +36,9 @@ public class TSHArguments extends SimpleNode {
                 Object value = argsI.eval(callstack, interpreter);
                 list.add(value);
             }
-            if (list.get(i) == Primitive.VOID)
-                throw new EvalError("Undefined argument: " +   ((SimpleNode) jjtGetChild(i)).getText(), this, callstack);
+            if (list.get(i) == Primitive.VOID) {
+                throw new EvalError("Undefined argument: " + ((SimpleNode) jjtGetChild(i)).getText(), this, callstack);
+            }
         }
         return list.toArray();
     }

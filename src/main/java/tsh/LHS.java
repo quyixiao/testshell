@@ -34,6 +34,7 @@ import tsh.exception.ReflectError;
 import tsh.exception.UtilEvalError;
 import tsh.exception.UtilTargetError;
 import tsh.expression.Primitive;
+import tsh.expression.TshMethod;
 import tsh.util.CollectionManager;
 import tsh.util.NumberUtil;
 import tsh.util.Reflect;
@@ -184,11 +185,15 @@ public     LHS(Object object, String propName) {
     public Object assign(Object val, boolean strictJava)
             throws UtilEvalError {
         if (type == VARIABLE) {
-            // Set the variable in namespace according to localVar flag
-            if (localVar)
-                nameSpace.setLocalVariableOrProperty(varName, val, strictJava);
-            else
-                nameSpace.setVariableOrProperty(varName, val, strictJava);
+            if(val instanceof TshMethod){
+                nameSpace.setMethod(varName, (TshMethod) val);
+            }else{
+                if (localVar) {
+                    nameSpace.setLocalVariableOrProperty(varName, val, strictJava);
+                }else {
+                    nameSpace.setVariableOrProperty(varName, val, strictJava);
+                }
+            }
         } else if (type == FIELD) {
             try {
                 // This should probably be in Reflect.java

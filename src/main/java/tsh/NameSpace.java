@@ -926,12 +926,11 @@ public class NameSpace implements java.io.Serializable, BshClassManager.Listener
                     for (int i = 0; i < ma.length; i++) {
                         candidates[i] = ma[i].getParameterTypes();
                     }
-
                     int match = Reflect.findMostSpecificSignature(sig, candidates);
                     if (match != -1) {
                         method = ma[match];
                     }
-                }else{
+                }else{                 //如果只有一个方法，则取第0个即可
                     method = ma[0];
                 }
             }
