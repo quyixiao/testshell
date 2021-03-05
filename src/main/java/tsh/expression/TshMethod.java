@@ -173,11 +173,9 @@ public class TshMethod implements java.io.Serializable {
                 if(argValue == null){
                     argValue = defaultValues.get(paramName);
                 }
-
                 if(argValue == null && argValues !=null && argValues.length > 0 && i < argValues.length){
                     argValue = argValues[i];
                 }
-
                 localNameSpace.setLocalVariable(paramName,argValue ,interpreter.getStrictJava());
             } catch (UtilEvalError e3) {
                 throw e3.toEvalError(callerInfo, callstack);
@@ -188,7 +186,6 @@ public class TshMethod implements java.io.Serializable {
             callstack.push(localNameSpace);
 
         Object ret = methodBody.eval(callstack, interpreter, true/*override*/);
-
         CallStack returnStack = callstack.copy();
 
         if (!overrideNameSpace)

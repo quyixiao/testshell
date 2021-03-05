@@ -34,7 +34,6 @@ import tsh.exception.UtilEvalError;
 import tsh.expression.Primitive;
 import tsh.expression.TshMethod;
 import tsh.util.BshClassManager;
-import tsh.util.ClassUtils;
 import tsh.util.Reflect;
 
 import java.io.IOException;
@@ -265,38 +264,12 @@ public class NameSpace implements java.io.Serializable, BshClassManager.Listener
     /**
      * Set a variable explicitly in the local scope.
      */
-    public void setLocalVariable(
-            String name, Object value, boolean strictJava)
-            throws UtilEvalError {
+    public void setLocalVariable(String name, Object value, boolean strictJava) throws UtilEvalError {
         setVariable(name, value, strictJava, false/*recurse*/);
     }
 
-    /**
-     * Set the value of a the variable 'name' through this namespace.
-     * The variable may be an existing or non-existing variable.
-     * It may live in this namespace or in a parent namespace if recurse is
-     * true.
-     * <p>
-     * Note: This method is not public and does *not* know about LOCALSCOPING.
-     * Its caller methods must set recurse intelligently in all situations
-     * (perhaps based on LOCALSCOPING).
-     *
-     * <p>
-     * Note: this method is primarily intended for use internally.  If you use
-     * this method outside of the bsh package and wish to set variables with
-     * primitive values you will have to wrap them using bsh.Primitive.
-     *
-     * @param strictJava specifies whether strict java rules are applied.
-     * @param recurse    determines whether we will search for the variable in
-     *                   our parent's scope before assigning locally.
-     * @see bsh.Primitive
-     * <p>
-     * Setting a new variable (which didn't exist before) or removing
-     * a variable causes a namespace change.
-     */
-    void setVariable(
-            String name, Object value, boolean strictJava, boolean recurse)
-            throws UtilEvalError {
+
+    void setVariable(String name, Object value, boolean strictJava, boolean recurse) throws UtilEvalError {
         if (variables == null)
             variables = new Hashtable();
 
@@ -920,7 +893,7 @@ public class NameSpace implements java.io.Serializable, BshClassManager.Listener
                     ma = new TshMethod[]{(TshMethod) m};
                 }
 
-                if(ma.length > 1){
+                if (ma.length > 1) {
                     // Apply most specific signature matching
                     Class[][] candidates = new Class[ma.length][];
                     for (int i = 0; i < ma.length; i++) {
@@ -930,7 +903,7 @@ public class NameSpace implements java.io.Serializable, BshClassManager.Listener
                     if (match != -1) {
                         method = ma[match];
                     }
-                }else{                 //如果只有一个方法，则取第0个即可
+                } else {                 //如果只有一个方法，则取第0个即可
                     method = ma[0];
                 }
             }
@@ -1548,7 +1521,6 @@ public class NameSpace implements java.io.Serializable, BshClassManager.Listener
         else
             return "<invoked from Java code>";
     }
-
 
 
     /**
