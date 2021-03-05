@@ -2341,7 +2341,9 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         jjtreeOpenNodeScope(jjtn000);
         try {
             AmbiguousName();                    //方法名称
-            Arguments();                        //参数列表
+            while (jj_2_33(3, LPAREN)) {   //如果存在 a()()形式的方法调用
+                Arguments();
+            }
         } catch (Throwable jjte000) {
             if (jjtc000) {
                 jjtree.clearNodeScope(jjtn000);
@@ -3464,21 +3466,21 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         if (jj_scan_token(IDENTIFIER)) return true;
         jj_3_30();
         jj_3_29();
-        if (jj_3R_34())  return true;
+        if (jj_3R_34()) return true;
         return false;
     }
 
 
-    final private void jj_3_29(){
+    final private void jj_3_29() {
         Token xsp;
-        while(true){
+        while (true) {
             xsp = jj_scanpos;
-            if (jj_scan_token(COMMA)){
+            if (jj_scan_token(COMMA)) {
                 jj_scanpos = xsp;
                 break;
             }
             xsp = jj_scanpos;
-            if (jj_scan_token(IDENTIFIER)){
+            if (jj_scan_token(IDENTIFIER)) {
                 jj_scanpos = xsp;
                 break;
             }
@@ -3486,16 +3488,16 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
-    final private void jj_3_30(){
+    final private void jj_3_30() {
         Token xsp;
-        while(true){
+        while (true) {
             xsp = jj_scanpos;
-            if (jj_scan_token(LBRACKET)){
+            if (jj_scan_token(LBRACKET)) {
                 jj_scanpos = xsp;
                 break;
             }
             xsp = jj_scanpos;
-            if (jj_scan_token_util(RBRACKET)){
+            if (jj_scan_token_util(RBRACKET)) {
                 jj_scanpos = xsp;
                 break;
             }
@@ -3665,7 +3667,6 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
             jj_save(30, xla);
         }
     }
-
 
 
     final private boolean jj_2_34(String kind) {
