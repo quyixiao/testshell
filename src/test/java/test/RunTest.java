@@ -20,7 +20,7 @@ public class RunTest {
     @Test
     public void test() throws Exception {
         Object retVal = null;
-        String file = "/Users/quyixiao/git/java-python/script/method/method8.tsh";
+        String file = "/Users/quyixiao/git/java-python/script/method/method13_sort.tsh";
         Reader in = new BufferedReader(new FileReader(file));
         Interpreter localInterpreter =
                 new Interpreter(
@@ -49,6 +49,7 @@ public class RunTest {
                 }
             } catch (ParseException e) {
                 e.printStackTrace();
+                return;
             } catch (Exception e) {
                 e.printStackTrace();
                 return;

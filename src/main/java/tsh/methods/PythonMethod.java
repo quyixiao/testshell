@@ -6,6 +6,7 @@ import tsh.util.NumberUtil;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class PythonMethod {
 
@@ -27,4 +28,16 @@ public class PythonMethod {
         return list;
     }
 
+
+    public Object len(Object ... t){
+        if(t[0] instanceof List){
+            return new TBigDecimal(new BigDecimal(((List)t[0]).size()),0);
+        }else if (t[0] instanceof Map){
+            return new TBigDecimal(new BigDecimal(((Map)t[0]).size()),0);
+        }else if (t[0] instanceof String){
+            return new TBigDecimal(new BigDecimal(t[0].toString().length()),0);
+        }
+        return new TBigDecimal(BigDecimal.ZERO,0);
+
+    }
 }
