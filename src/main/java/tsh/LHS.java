@@ -55,7 +55,7 @@ import java.util.Map;
  * invocation.  In this case it may only be resolved to a value and cannot be
  * assigned.  (You can't assign a value to the result of a method call e.g.
  * "foo() = 5;").
-  <p>
+ * <p>
  */
 public class LHS implements ParserConstants, java.io.Serializable {
     NameSpace nameSpace;
@@ -99,7 +99,7 @@ public class LHS implements ParserConstants, java.io.Serializable {
      * Static field LHS Constructor.
      * This simply calls Object field constructor with null object.
      */
-     public LHS(Field field) {
+    public LHS(Field field) {
         type = FIELD;
         this.object = null;
         this.field = field;
@@ -108,7 +108,7 @@ public class LHS implements ParserConstants, java.io.Serializable {
     /**
      * Object field LHS Constructor.
      */
-public     LHS(Object object, Field field) {
+    public LHS(Object object, Field field) {
         if (object == null)
             throw new NullPointerException("constructed empty LHS");
 
@@ -120,7 +120,7 @@ public     LHS(Object object, Field field) {
     /**
      * Object property LHS Constructor.
      */
-public     LHS(Object object, String propName) {
+    public LHS(Object object, String propName) {
         if (object == null)
             throw new NullPointerException("constructed empty LHS");
 
@@ -171,7 +171,11 @@ public     LHS(Object object, String propName) {
 
         if (type == INDEX)
             try {
-                return Reflect.getIndex(object, NumberUtil.objToInt(index));
+                if (object instanceof List) {
+                    return ((List) object).get(NumberUtil.objToInt(index));
+                } else {
+                    return Reflect.getIndex(object, NumberUtil.objToInt(index));
+                }
             } catch (Exception e) {
                 throw new UtilEvalError("Array access: " + e);
             }
@@ -185,12 +189,12 @@ public     LHS(Object object, String propName) {
     public Object assign(Object val, boolean strictJava)
             throws UtilEvalError {
         if (type == VARIABLE) {
-            if(val instanceof TshMethod){
+            if (val instanceof TshMethod) {
                 nameSpace.setMethod(varName, (TshMethod) val);
-            }else{
+            } else {
                 if (localVar) {
                     nameSpace.setLocalVariableOrProperty(varName, val, strictJava);
-                }else {
+                } else {
                     nameSpace.setVariableOrProperty(varName, val, strictJava);
                 }
             }
@@ -218,7 +222,7 @@ public     LHS(Object object, String propName) {
             CollectionManager cm = CollectionManager.getCollectionManager();
             if (cm.isMap(object)) {
                 cm.putInMap(object/*map*/, propName, Primitive.unwrap(val));
-            }else {
+            } else {
                 try {
                     Reflect.setObjectProperty(object, propName, val);
                 } catch (ReflectError e) {
@@ -228,11 +232,11 @@ public     LHS(Object object, String propName) {
             }
         } else if (type == INDEX) {
             try {
-                if(object instanceof List){
-                    ((List) object).set(NumberUtil.objToInt(index),val);
-                }else if (object instanceof Map){
-                    ((Map) object).put(index,val);
-                }else{
+                if (object instanceof List) {
+                    ((List) object).set(NumberUtil.objToInt(index), val);
+                } else if (object instanceof Map) {
+                    ((Map) object).put(index, val);
+                } else {
                     Reflect.setIndex(object, NumberUtil.objToInt(index), val);
                 }
             } catch (UtilTargetError e1) { // pass along target error
@@ -240,7 +244,7 @@ public     LHS(Object object, String propName) {
             } catch (Exception e) {
                 throw new UtilEvalError("Assignment: " + e.getMessage());
             }
-        }else {
+        } else {
             throw new InterpreterError("unknown lhs");
         }
 

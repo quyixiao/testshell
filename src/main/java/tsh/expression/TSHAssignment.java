@@ -23,34 +23,26 @@ public class TSHAssignment extends SimpleNode implements ParserConstants {
 
     public Object eval(CallStack callstack, Interpreter interpreter) throws EvalError {
         TSHPrimaryExpression lhsNode = (TSHPrimaryExpression) jjtGetChild(0);
-        if (lhsNode == null)
+        if (lhsNode == null) {
             throw new InterpreterError("Error, null LHSnode");
+        }
 
         boolean strictJava = interpreter.getStrictJava();
         LHS lhs = lhsNode.toLHS(callstack, interpreter);
-        if (lhs == null)
+        if (lhs == null) {
             throw new InterpreterError("Error, null LHS");
+        }
 
-        // For operator-assign operations save the lhs value before evaluating
-        // the rhs.  This is correct Java behavior for postfix operations
-        // e.g. i=1; i+=i++; // should be 2 not 3
         Object lhsValue = null;
-        if (Utils.notEq(operator, ASSIGN)) // assign doesn't need the pre-value
+        if (Utils.notEq(operator, ASSIGN)) {
             try {
                 lhsValue = lhs.getValue();
             } catch (UtilEvalError e) {
                 throw e.toEvalError(this, callstack);
             }
-
+        }
         SimpleNode rhsNode = (SimpleNode) jjtGetChild(1);
-
-        Object rhs;
-
-        // implement "blocks" foo = { };
-        // if ( rhsNode instanceof BSHBlock )
-        //    rsh =
-        // else
-        rhs = rhsNode.eval(callstack, interpreter);
+        Object rhs = rhsNode.eval(callstack, interpreter);
 
         if (rhs == Primitive.VOID)
             throw new EvalError("Void assignment.", this, callstack);
@@ -94,13 +86,13 @@ public class TSHAssignment extends SimpleNode implements ParserConstants {
                     return lhs.assign(operation(lhsValue, rhs, RUNSIGNEDSHIFT), strictJava);
 
                 default:
-                    throw new InterpreterError(
-                            "unimplemented operator in assignment TSH");
+                    throw new InterpreterError("unimplemented operator in assignment TSH");
             }
         } catch (UtilEvalError e) {
             throw e.toEvalError(this, callstack);
         }
     }
+
 
     private Object operation(Object lhs, Object rhs, String kind) throws UtilEvalError {
         if (lhs instanceof String && rhs != Primitive.VOID) {
@@ -110,13 +102,13 @@ public class TSHAssignment extends SimpleNode implements ParserConstants {
             return (String) lhs + rhs;
         }
 
-        if (lhs instanceof Primitive || rhs instanceof Primitive)
-            if (lhs == Primitive.VOID || rhs == Primitive.VOID)
-                throw new UtilEvalError(
-                        "Illegal use of undefined object or 'void' literal");
-            else if (lhs == Primitive.NULL || rhs == Primitive.NULL)
-                throw new UtilEvalError(
-                        "Illegal use of null object or 'null' literal");
+        if (lhs instanceof Primitive || rhs instanceof Primitive) {
+            if (lhs == Primitive.VOID || rhs == Primitive.VOID) {
+                throw new UtilEvalError("Illegal use of undefined object or 'void' literal");
+            } else if (lhs == Primitive.NULL || rhs == Primitive.NULL) {
+                throw new UtilEvalError("Illegal use of null object or 'null' literal");
+            }
+        }
 
 
         if ((lhs instanceof Boolean || lhs instanceof Character ||
@@ -126,11 +118,10 @@ public class TSHAssignment extends SimpleNode implements ParserConstants {
             return Primitive.binaryOperation(lhs, rhs, kind);
         }
 
-        if(lhs instanceof TBigDecimal && rhs instanceof  TBigDecimal){
+        if (lhs instanceof TBigDecimal && rhs instanceof TBigDecimal) {
             return Primitive.binaryOperation(lhs, rhs, kind);
         }
 
-        throw new UtilEvalError("Non primitive value in operator: " +
-                lhs.getClass() + " " +" " + rhs.getClass());
+        throw new UtilEvalError("Non primitive value in operator: " + lhs.getClass() + " " + " " + rhs.getClass());
     }
 }

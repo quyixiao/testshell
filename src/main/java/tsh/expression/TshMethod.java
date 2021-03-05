@@ -204,19 +204,6 @@ public class TshMethod implements java.io.Serializable {
                 throw new EvalError("Cannot return value from void method", retControl.returnPoint, returnStack);
         }
 
-        if (returnType != null) {
-            if (returnType == Void.TYPE) {
-                return Primitive.VOID;
-            }
-            try {
-                ret =Types.castObject(ret, returnType, Types.ASSIGNMENT);
-            } catch (UtilEvalError e) {
-                SimpleNode node = callerInfo;
-                if (retControl != null)
-                    node = retControl.returnPoint;
-                throw e.toEvalError("Incorrect type returned from method: "+ name + e.getMessage(), node, callstack);
-            }
-        }
         return ret;
     }
 
@@ -224,7 +211,6 @@ public class TshMethod implements java.io.Serializable {
     public Object invoke(Object[] argValues, Interpreter interpreter) throws EvalError {
         return invoke(argValues, interpreter, null, null, false);
     }
-
 
     public Object invoke(Object[] argValues, Interpreter interpreter, CallStack callstack,SimpleNode callerInfo)throws EvalError {
         return invoke(argValues, interpreter, callstack, callerInfo, false);
