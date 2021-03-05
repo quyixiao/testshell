@@ -82,6 +82,7 @@ public interface ParserConstants {
     String CONTINUE_LINE = "\\";                          //
     String AT = "@";                          //
 
+    String SSTAR = "**";                         //  ** 两个* 的情况
     String EQ = "==";                            //  ==
     String LE = "<=";                            //  <=
     String GE = ">=";                            //  >=
@@ -141,6 +142,7 @@ public interface ParserConstants {
             DOT,
             IN,
             HOOK,
+            SSTAR,
             ASSIGN, GT, LT, BANG, OR, AND, PLUS, MINUS, STAR, SLASH, XOR, MOD,
             EQ, LE, GE, NE, INCR, DECR, BOOL_AND, BOOL_OR, LSHIFT, RSIGNEDSHIFT, RUNSIGNEDSHIFT, PLUSASSIGN, MINUSASSIGN,
             STARASSIGN, SLASHASSIGN, ANDASSIGN, ORASSIGN, XORASSIGN, MODASSIGN, LSHIFTASSIGN, RSIGNEDSHIFTASSIGN, RUNSIGNEDSHIFTASSIGN,

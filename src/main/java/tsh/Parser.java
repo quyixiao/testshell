@@ -544,6 +544,8 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         try {
             jj_consume_token(LPAREN);
             switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
+                case STAR:
+                case SSTAR:
                 case IDENTIFIER:
                     FormalParameter();
                     label_3:
@@ -599,6 +601,14 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         jjtreeOpenNodeScope(jjtn000);
         Token t;
         try {
+            if (jj_2_33(3, STAR)) {             // def fn(x, y,*args)   一个* 的情况
+                jj_consume_token(STAR);
+                jjtn000.kind = STAR;
+            }else if (jj_2_33(3,SSTAR)){        // def fn(x, y,**kwargs) 2 个 * 的情况
+                jj_consume_token(SSTAR);
+                jjtn000.kind = SSTAR;
+            }
+
             t = jj_consume_token(IDENTIFIER);
             jjtree.closeNodeScope(jjtn000, true);
             jjtc000 = false;

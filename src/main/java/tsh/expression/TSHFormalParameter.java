@@ -39,12 +39,11 @@ import tsh.exception.EvalError;
 public class TSHFormalParameter extends SimpleNode {
     public static final Class UNTYPED = null;
     public String name;
-    private SimpleNode defaultValue;
+    public String kind;
 
     public TSHFormalParameter(String id) {
         super(id);
     }
-
 
     public Object eval(CallStack callstack, Interpreter interpreter) throws EvalError {
 

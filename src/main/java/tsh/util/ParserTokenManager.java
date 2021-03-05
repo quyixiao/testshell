@@ -142,8 +142,8 @@ public class ParserTokenManager extends Utils implements ParserConstants {
             jjmatchedKind = default_jjmatchedKind;            // 2147483647
             jjmatchedPos = 0;
             curPos = jjMoveStringLiteralDfa0_0();
-            if(curPos == -1){
-                continue ;
+            if (curPos == -1) {
+                continue;
             }
             if (jjmatchedKind != default_jjmatchedKind) {
                 if (eqOR(jjmatchedKind, EOF)) {
@@ -220,13 +220,13 @@ public class ParserTokenManager extends Utils implements ParserConstants {
                     input_stream.backup(1);
                     return getCommon();
                 } else {
-                    Tuple2<Boolean,Integer> line = readUtilChar('\n').getData();
-                    int i =  line.getSecond() + input_stream.GetImage().length() -1  ;
+                    Tuple2<Boolean, Integer> line = readUtilChar('\n').getData();
+                    int i = line.getSecond() + input_stream.GetImage().length() - 1;
                     input_stream.tokenBegin += i;
                     return -1;
                 }
             }
-        } else if (!continueReader && eqOR(kind, LPAREN, RPAREN, LBRACE, RBRACE, LBRACKET, RBRACKET, SEMICOLON, COMMA, COLON,HOOK)) {
+        } else if (!continueReader && eqOR(kind, LPAREN, RPAREN, LBRACE, RBRACE, LBRACKET, RBRACKET, SEMICOLON, COMMA, COLON, HOOK)) {
             String image = input_stream.GetImage().trim();
             if (eqOR(image, SEMICOLON)) {                            //如果是; ，略过
                 input_stream.tokenBegin += 1;
@@ -235,17 +235,17 @@ public class ParserTokenManager extends Utils implements ParserConstants {
             if (image.length() > 1) {
                 input_stream.backup(1);
             }
-            return  getCommon();
+            return getCommon();
         } else if (!continueReader && eqOR(kind, DOT)) {    //. 的处理
             String image = input_stream.GetImage().trim();
             image = image.substring(0, image.length() - 1);
-            if(StringUtil.isNumber(image)){ //如果前面是数字，则直接略过
+            if (StringUtil.isNumber(image)) { //如果前面是数字，则直接略过
                 return 0;
             }
             if (image.length() > 1) {
                 input_stream.backup(1);
             }
-            return  getCommon();
+            return getCommon();
         } else if (!continueReader && eqOR(kind, LT)) { //如果是 < ，可能是<=，<<=,<< 三种情况
             return getSpecial(new char[]{'<'}, '<', '=');
         } else if (!continueReader && eqOR(kind, GT)) {//可能会出现的情况>=，>>，>>>，>>=，>>>=
@@ -264,12 +264,12 @@ public class ParserTokenManager extends Utils implements ParserConstants {
             } else if (c == '*') {                        // /* .... */ 也表示注释
                 readChar();         //读取当前 *
                 int i = input_stream.GetImage().length() - 1;
-                while(true){
+                while (true) {
                     Tuple2<Boolean, Integer> line = readUtilChar('*').getData();
                     i += line.getSecond();
                     char temp = readChar();
-                    if(temp == '/'){
-                        i = i + 1 ;
+                    if (temp == '/') {
+                        i = i + 1;
                         break;
                     }
                 }
@@ -279,7 +279,9 @@ public class ParserTokenManager extends Utils implements ParserConstants {
             return getSpecial(null, '=');
         } else if (!continueReader && eqOR(kind, ASSIGN)) {     // = ,后面只能接 =,如 ==，<=，<<=，>=，>>=，>>>=，!=，+=，-=，*=，/=，&=，|=，^=，%=
             return getSpecial(new char[]{'=', '<', '>', '!', '+', '-', '*', '/', '&', '|', '^', '%'}, '=');
-        } else if (!continueReader && eqOR(kind, BANG, STAR, XOR, MOD)) {     // ! ,*  ,^,% ,后面只能接 =
+        } else if (!continueReader && eqOR(kind, STAR)) {     // ! ,*  ,^,% ,后面只能接 =
+            return getSpecial(new char[]{'*'}, '*','=');
+        } else if (!continueReader && eqOR(kind, BANG, XOR, MOD)) {     // ! ,*  ,^,% ,后面只能接 =
             return getSpecial(null, '=');
         } else if (!continueReader && eqOR(kind, PLUS)) {            // + 号后面能接 +,= 有 ，++ 和+= 两种情况
             return getSpecial(new char[]{'+'}, '+', '=');
@@ -315,14 +317,13 @@ public class ParserTokenManager extends Utils implements ParserConstants {
     }
 
 
-
-    public int getSpecial(char [] preMatches,char... afterMatches) {
+    public int getSpecial(char[] preMatches, char... afterMatches) {
         String image = input_stream.GetImage().trim();
         image = image.substring(0, image.length() - 1);
         boolean preFlag = true;
-        if(preMatches !=null && preMatches.length > 0){
+        if (preMatches != null && preMatches.length > 0) {
             for (char m : preMatches) {
-                if (eq(image,m+"")) {
+                if (eq(image, m + "")) {
                     preFlag = false;
                     break;
                 }
@@ -370,10 +371,10 @@ public class ParserTokenManager extends Utils implements ParserConstants {
                 char c = input_stream.readChar();
                 ++i;
                 if (c == compare) {
-                    return new TSHTuple(true,i);
+                    return new TSHTuple(true, i);
                 }
             } catch (IOException e) {
-                return new TSHTuple(false,i);
+                return new TSHTuple(false, i);
             }
         }
     }
@@ -386,9 +387,9 @@ public class ParserTokenManager extends Utils implements ParserConstants {
             if (StringUtil.isNotBlank(match)) {
                 jjmatchedKind = match;
             } else {
-                if(StringUtil.isNumber(image)){
+                if (StringUtil.isNumber(image)) {
                     jjmatchedKind = NUMBER;
-                }else{
+                } else {
                     jjmatchedKind = IDENTIFIER;
                 }
             }
@@ -460,10 +461,10 @@ public class ParserTokenManager extends Utils implements ParserConstants {
                 } else {
                     flag = jjStartNfaWithStates_0(mapChar.get(new Integer(curChar)));
                 }
-                if (flag > 0 ) {
+                if (flag > 0) {
                     return input_stream.bufpos + 1;
                 }
-                if( flag == -1){
+                if (flag == -1) {
                     return -1;
                 }
                 curChar = input_stream.readChar();

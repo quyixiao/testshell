@@ -1,2 +1,0 @@
-a = "abcdef"
-print(a[0])

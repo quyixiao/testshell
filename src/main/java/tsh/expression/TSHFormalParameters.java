@@ -3,7 +3,9 @@ package tsh.expression;
 import tsh.CallStack;
 import tsh.Interpreter;
 import tsh.SimpleNode;
+import tsh.entity.TVar;
 import tsh.exception.EvalError;
+import tsh.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -11,8 +13,7 @@ import java.util.List;
 
 public class TSHFormalParameters extends SimpleNode {
     public String[] paramNames;
-    public LinkedHashMap<String, Object> defaultValues = new LinkedHashMap<>();
-
+    public TVar[] defaultValues ;
 
     Class[] paramTypes;
 
@@ -30,6 +31,7 @@ public class TSHFormalParameters extends SimpleNode {
 
         this.numArgs = jjtGetNumChildren();
         List<String> names = new ArrayList<>();
+        List<TVar> values = new ArrayList<>();
         int flag = 0;
         for (int i = 0; i < numArgs; i++) {
             SimpleNode parameter = (SimpleNode) jjtGetChild(i);
@@ -37,21 +39,27 @@ public class TSHFormalParameters extends SimpleNode {
                 TSHFormalParameter param = (TSHFormalParameter) parameter;
                 names.add(param.name);
                 flag++;
-                defaultValues.put(param.name, null);
+                TVar var = new TVar(param.name);
+                if(StringUtil.isNotBlank(param.kind)){
+                    var.setKind(param.kind);
+                }
+                values.add(var);
             } else {
                 Object result = parameter.eval(callstack, interpreter);
-                defaultValues.put(names.get(flag - 1), result);
+                TVar var = values.get(flag -1 );
+                var.setValue(result);
             }
         }
         this.numArgs = names.size();
         this.paramNames = names.toArray(new String[names.size()]);
+        this.defaultValues = values.toArray(new TVar[values.size()]);
     }
 
     public String[] getParamNames() {
         return paramNames;
     }
 
-    public LinkedHashMap<String, Object> getParamDefaultValues() {
+    public TVar[] getParamDefaultValues() {
         return defaultValues;
     }
 

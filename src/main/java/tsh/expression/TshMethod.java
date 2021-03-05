@@ -40,8 +40,6 @@ import tsh.util.Utils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * This represents an instance of a bsh method declaration in a particular
@@ -81,16 +79,16 @@ public class TshMethod implements java.io.Serializable {
     // Java Method, for a BshObject that delegates to a real Java method
     private Method javaMethod;
     private Object javaObject;
-    private LinkedHashMap<String,Object> defaultValues;
+    private TVar[] defaultValues;
 
     public TshMethod(TSHMethodDeclaration method, NameSpace declaringNameSpace, Object modifiers) {
-        this(method.methodName, Object.class, method.paramsNode.getParamNames(),  method.paramsNode.paramTypes, method.blockNode,
-                declaringNameSpace,method.paramsNode.getParamDefaultValues());
+        this(method.methodName, Object.class, method.paramsNode.getParamNames(), method.paramsNode.paramTypes, method.blockNode,
+                declaringNameSpace, method.paramsNode.getParamDefaultValues());
     }
 
 
     public TshMethod(String name, Class returnType, String[] paramNames, Class[] paramTypes, TSHBlock methodBody,
-                     NameSpace declaringNameSpace,LinkedHashMap<String,Object> defaultValues) {
+                     NameSpace declaringNameSpace, TVar[] defaultValues) {
         this.name = name;
         this.creturnType = returnType;
         this.paramNames = paramNames;
@@ -109,12 +107,11 @@ public class TshMethod implements java.io.Serializable {
     public TshMethod(Method method, Object object) {
         this(method.getName(), method.getReturnType(), null/*paramNames*/,
                 method.getParameterTypes(), null/*method.block*/,
-                null/*declaringNameSpace*/,null);
+                null/*declaringNameSpace*/, null);
 
         this.javaMethod = method;
         this.javaObject = object;
     }
-
 
 
     public Class[] getParameterTypes() {
@@ -134,11 +131,11 @@ public class TshMethod implements java.io.Serializable {
         return name;
     }
 
-    public Object invokeNew(Object[] argValues, Interpreter interpreter, CallStack callstack,SimpleNode callerInfo)throws EvalError {
+    public Object invokeNew(Object[] argValues, Interpreter interpreter, CallStack callstack, SimpleNode callerInfo) throws EvalError {
         return invokeImplNew(argValues, interpreter, callstack, callerInfo, false);
     }
 
-    private Object invokeImplNew(Object[] argValues, Interpreter interpreter, CallStack callstack,SimpleNode callerInfo, boolean overrideNameSpace) throws EvalError {
+    private Object invokeImplNew(Object[] argValues, Interpreter interpreter, CallStack callstack, SimpleNode callerInfo, boolean overrideNameSpace) throws EvalError {
         Class returnType = getReturnType();
 
         if (callstack == null)
@@ -151,7 +148,7 @@ public class TshMethod implements java.io.Serializable {
         NameSpace localNameSpace;
         if (overrideNameSpace) {
             localNameSpace = callstack.top();
-        }else {
+        } else {
             localNameSpace = new NameSpace(declaringNameSpace, name);
             localNameSpace.isMethod = true;
         }
@@ -161,22 +158,31 @@ public class TshMethod implements java.io.Serializable {
             try {
                 String paramName = paramNames[i];
                 Object argValue = null;
-                if(argValues !=null && argValues.length > 0){
-                    for(Object v : argValues){
-                        if(v instanceof TVar){
-                            if(Utils.eq(paramName,((TVar) v).getName())){
+                if (argValues != null && argValues.length > 0) {
+                    for (Object v : argValues) {
+                        if (v instanceof TVar) {
+                            if (Utils.eq(paramName, ((TVar) v).getName())) {
                                 argValue = ((TVar) v).getValue();
                             }
                         }
                     }
                 }
-                if(argValue == null){
-                    argValue = defaultValues.get(paramName);
+
+                if (argValue == null) {
+                    if (defaultValues != null && defaultValues.length > 0) {
+                        for (TVar v : defaultValues) {
+                            if (Utils.eq(paramName, v.getName())) {
+                                argValue = v.getValue();
+                            }
+                        }
+                    }
                 }
-                if(argValue == null && argValues !=null && argValues.length > 0 && i < argValues.length){
+
+                if (argValue == null && argValues != null && argValues.length > 0 && i < argValues.length) {
                     argValue = argValues[i];
                 }
-                localNameSpace.setLocalVariable(paramName,argValue ,interpreter.getStrictJava());
+
+                localNameSpace.setLocalVariable(paramName, argValue, interpreter.getStrictJava());
             } catch (UtilEvalError e3) {
                 throw e3.toEvalError(callerInfo, callstack);
             }
@@ -212,7 +218,7 @@ public class TshMethod implements java.io.Serializable {
         return invoke(argValues, interpreter, null, null, false);
     }
 
-    public Object invoke(Object[] argValues, Interpreter interpreter, CallStack callstack,SimpleNode callerInfo)throws EvalError {
+    public Object invoke(Object[] argValues, Interpreter interpreter, CallStack callstack, SimpleNode callerInfo) throws EvalError {
         return invoke(argValues, interpreter, callstack, callerInfo, false);
     }
 
@@ -237,7 +243,7 @@ public class TshMethod implements java.io.Serializable {
         return invokeImpl(argValues, interpreter, callstack, callerInfo, overrideNameSpace);
     }
 
-    private Object invokeImpl(Object[] argValues, Interpreter interpreter, CallStack callstack,SimpleNode callerInfo, boolean overrideNameSpace) throws EvalError {
+    private Object invokeImpl(Object[] argValues, Interpreter interpreter, CallStack callstack, SimpleNode callerInfo, boolean overrideNameSpace) throws EvalError {
         Class returnType = getReturnType();
         Class[] paramTypes = getParameterTypes();
 
@@ -251,7 +257,7 @@ public class TshMethod implements java.io.Serializable {
         NameSpace localNameSpace;
         if (overrideNameSpace) {
             localNameSpace = callstack.top();
-        }else {
+        } else {
             localNameSpace = new NameSpace(declaringNameSpace, name);
             localNameSpace.isMethod = true;
         }
@@ -259,7 +265,7 @@ public class TshMethod implements java.io.Serializable {
 
         for (int i = 0; i < numArgs; i++) {
             try {
-                localNameSpace.setLocalVariable(paramNames[i], argValues[i],interpreter.getStrictJava());
+                localNameSpace.setLocalVariable(paramNames[i], argValues[i], interpreter.getStrictJava());
             } catch (UtilEvalError e3) {
                 throw e3.toEvalError(callerInfo, callstack);
             }
@@ -293,12 +299,12 @@ public class TshMethod implements java.io.Serializable {
                 return Primitive.VOID;
 
             try {
-                ret =Types.castObject(ret, returnType, Types.ASSIGNMENT);
+                ret = Types.castObject(ret, returnType, Types.ASSIGNMENT);
             } catch (UtilEvalError e) {
                 SimpleNode node = callerInfo;
                 if (retControl != null)
                     node = retControl.returnPoint;
-                throw e.toEvalError("Incorrect type returned from method: "+ name + e.getMessage(), node, callstack);
+                throw e.toEvalError("Incorrect type returned from method: " + name + e.getMessage(), node, callstack);
             }
         }
 
@@ -314,8 +320,6 @@ public class TshMethod implements java.io.Serializable {
         return "Scripted Method: "
                 + StringUtil.methodString(name, getParameterTypes());
     }
-
-
 
 
 }
