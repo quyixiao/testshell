@@ -1,7 +1,7 @@
 package tsh.expression;
 
 import tsh.*;
-import tsh.constant.TParserConstants;
+import tsh.constant.ParserConstants;
 import tsh.entity.TBigDecimal;
 import tsh.exception.*;
 import tsh.t.TSHTuple;
@@ -15,7 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 
-public class TSHPrimarySuffix extends SimpleNode implements TParserConstants {
+public class TSHPrimarySuffix extends SimpleNode implements ParserConstants {
     public static final int
             INDEX = 1,
             NAME = 2,

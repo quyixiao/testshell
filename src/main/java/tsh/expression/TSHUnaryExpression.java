@@ -4,7 +4,7 @@ import tsh.CallStack;
 import tsh.Interpreter;
 import tsh.LHS;
 import tsh.SimpleNode;
-import tsh.constant.TParserConstants;
+import tsh.constant.ParserConstants;
 import tsh.entity.TBigDecimal;
 import tsh.exception.EvalError;
 import tsh.exception.InterpreterError;
@@ -14,7 +14,7 @@ import tsh.util.Utils;
 
 import java.math.BigDecimal;
 
-public class TSHUnaryExpression extends SimpleNode implements TParserConstants {
+public class TSHUnaryExpression extends SimpleNode implements ParserConstants {
     public String kind;
     public boolean postfix = false;
 

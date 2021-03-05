@@ -27,7 +27,7 @@
 
 package tsh.constant;
 
-public interface TParserTreeConstants {
+public interface ParserTreeConstants {
 
     public final static String T_MethodDeclaration = "MethodDeclaration";
     public final static String T_VariableDeclarator = "VariableDeclarator";

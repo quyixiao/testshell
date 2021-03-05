@@ -28,7 +28,7 @@
 package tsh.expression;
 
 import tsh.Types;
-import tsh.constant.TParserConstants;
+import tsh.constant.ParserConstants;
 import tsh.entity.TBigDecimal;
 import tsh.exception.InterpreterError;
 import tsh.exception.UtilEvalError;
@@ -48,7 +48,7 @@ import java.util.Hashtable;
  * @author Pat Niemeyer
  * @author Daniel Leuck
  */
-public final class Primitive implements TParserConstants, java.io.Serializable {
+public final class Primitive implements ParserConstants, java.io.Serializable {
 
     public static Hashtable wrapperMap = new Hashtable();
 

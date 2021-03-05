@@ -28,7 +28,7 @@
 package tsh;
 
 
-import tsh.constant.TParserConstants;
+import tsh.constant.ParserConstants;
 import tsh.exception.InterpreterError;
 import tsh.exception.ReflectError;
 import tsh.exception.UtilEvalError;
@@ -56,7 +56,7 @@ import java.util.Map;
  * "foo() = 5;").
   <p>
  */
-public class LHS implements TParserConstants, java.io.Serializable {
+public class LHS implements ParserConstants, java.io.Serializable {
     NameSpace nameSpace;
     /**
      * The assignment should be to a local variable

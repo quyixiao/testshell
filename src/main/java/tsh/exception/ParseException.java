@@ -57,7 +57,7 @@
 
 package tsh.exception;
 
-import tsh.constant.TParserConstants;
+import tsh.constant.ParserConstants;
 import tsh.Token;
 import tsh.util.Utils;
 
@@ -72,7 +72,7 @@ import tsh.util.Utils;
  */
 
 // Begin BeanShell Modification - public, extend EvalError
-public class ParseException extends EvalError implements TParserConstants {
+public class ParseException extends EvalError implements ParserConstants {
 // End BeanShell Modification - public, extend EvalError
 
     // Begin BeanShell Modification - sourceFile

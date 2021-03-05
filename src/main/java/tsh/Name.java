@@ -825,21 +825,19 @@ public class Name implements java.io.Serializable {
             throw e.toEvalError("Local method invocation", callerInfo, callstack);
         }
 
-        if (meth != null)
+        if (meth != null) {
             return meth.invokeNew(args, interpreter, callstack, callerInfo);
-
-
-        try {
-            Method mt  =  ClassUtils.getMethod(commandName);
-            if(mt !=null){
-                meth = new TshMethod(mt,mt.getDeclaringClass().newInstance());
+        }else{
+            try {
+                Method mt  =  ClassUtils.getMethod(commandName);
+                if(mt !=null){
+                    meth = new TshMethod(mt,mt.getDeclaringClass().newInstance());
+                    return meth.invoke(args, interpreter, callstack, callerInfo);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
         }
-
 
         Object commandObject;
         try {

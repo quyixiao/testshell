@@ -6,11 +6,15 @@ import tsh.SimpleNode;
 import tsh.exception.EvalError;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public class TSHFormalParameters extends SimpleNode {
     public String[] paramNames;
-    public Object[] defaultValues;
+    public LinkedHashMap<String, Object> defaultValues = new LinkedHashMap<>();
+
+
+    Class[] paramTypes;
 
 
     int numArgs;
@@ -25,10 +29,7 @@ public class TSHFormalParameters extends SimpleNode {
             return;
 
         this.numArgs = jjtGetNumChildren();
-
         List<String> names = new ArrayList<>();
-        List<Object> values = new ArrayList<>();
-
         int flag = 0;
         for (int i = 0; i < numArgs; i++) {
             SimpleNode parameter = (SimpleNode) jjtGetChild(i);
@@ -36,22 +37,21 @@ public class TSHFormalParameters extends SimpleNode {
                 TSHFormalParameter param = (TSHFormalParameter) parameter;
                 names.add(param.name);
                 flag++;
-                values.add(null);
+                defaultValues.put(param.name, null);
             } else {
                 Object result = parameter.eval(callstack, interpreter);
-                values.set(flag - 1, result);
+                defaultValues.put(names.get(flag - 1), result);
             }
         }
         this.numArgs = names.size();
         this.paramNames = names.toArray(new String[names.size()]);
-        this.defaultValues = values.toArray(new Object[values.size()]);
     }
 
     public String[] getParamNames() {
         return paramNames;
     }
 
-    public Object[] getParamDefaultValues() {
+    public LinkedHashMap<String, Object> getParamDefaultValues() {
         return defaultValues;
     }
 
@@ -60,9 +60,14 @@ public class TSHFormalParameters extends SimpleNode {
         insureParsed(callstack, interpreter);
         Class[] paramTypes = new Class[numArgs];
         for (int i = 0; i < numArgs; i++) {
-            TSHFormalParameter param = (TSHFormalParameter) jjtGetChild(i);
-            paramTypes[i] = (Class) param.eval(callstack, interpreter);
+            Object paramTypeNode = jjtGetChild(i);
+            if(paramTypeNode instanceof TSHFormalParameter){
+                TSHFormalParameter param = (TSHFormalParameter) paramTypeNode;
+                paramTypes[i] = (Class) param.eval(callstack, interpreter);
+            }
         }
+
+        this.paramTypes = paramTypes;
         return paramTypes;
     }
 

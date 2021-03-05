@@ -4,14 +4,13 @@ package tsh.expression;
 import tsh.CallStack;
 import tsh.Interpreter;
 import tsh.SimpleNode;
-import tsh.constant.TParserConstants;
+import tsh.constant.ParserConstants;
 import tsh.entity.TBigDecimal;
 import tsh.exception.EvalError;
 import tsh.exception.UtilEvalError;
-import tsh.util.StringUtil;
 import tsh.util.Utils;
 
-public class TSHBinaryExpression extends SimpleNode implements TParserConstants {
+public class TSHBinaryExpression extends SimpleNode implements ParserConstants {
     public String kind;
 
     public TSHBinaryExpression(String id) {

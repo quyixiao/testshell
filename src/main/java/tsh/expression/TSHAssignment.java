@@ -4,14 +4,14 @@ import tsh.CallStack;
 import tsh.Interpreter;
 import tsh.LHS;
 import tsh.SimpleNode;
-import tsh.constant.TParserConstants;
+import tsh.constant.ParserConstants;
 import tsh.entity.TBigDecimal;
 import tsh.exception.EvalError;
 import tsh.exception.InterpreterError;
 import tsh.exception.UtilEvalError;
 import tsh.util.Utils;
 
-public class TSHAssignment extends SimpleNode implements TParserConstants {
+public class TSHAssignment extends SimpleNode implements ParserConstants {
 
 
     public String operator;

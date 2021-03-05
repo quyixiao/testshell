@@ -2,7 +2,7 @@ package tsh.util;
 
 
 import tsh.Token;
-import tsh.constant.TParserConstants;
+import tsh.constant.ParserConstants;
 import tsh.exception.TokenMgrError;
 import tsh.t.TSHTuple;
 import tsh.t.Tuple2;
@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ParserTokenManager extends Utils implements TParserConstants {
+public class ParserTokenManager extends Utils implements ParserConstants {
 
     public static List<char[]> type = new ArrayList<>();
 
@@ -226,7 +226,7 @@ public class ParserTokenManager extends Utils implements TParserConstants {
                     return -1;
                 }
             }
-        } else if (!continueReader && eqOR(kind, LPAREN, RPAREN, LBRACE, RBRACE, LBRACKET, RBRACKET, SEMICOLON, COMMA, COLON)) {
+        } else if (!continueReader && eqOR(kind, LPAREN, RPAREN, LBRACE, RBRACE, LBRACKET, RBRACKET, SEMICOLON, COMMA, COLON,HOOK)) {
             String image = input_stream.GetImage().trim();
             if (eqOR(image, SEMICOLON)) {                            //如果是; ，略过
                 input_stream.tokenBegin += 1;

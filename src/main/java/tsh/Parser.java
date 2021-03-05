@@ -1,7 +1,7 @@
 package tsh;
 
-import tsh.constant.TParserConstants;
-import tsh.constant.TParserTreeConstants;
+import tsh.constant.ParserConstants;
+import tsh.constant.ParserTreeConstants;
 import tsh.entity.TBigDecimal;
 import tsh.exception.ParseException;
 import tsh.expression.*;
@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Parser extends Utils implements TParserConstants, TParserTreeConstants {
+public class Parser extends Utils implements ParserConstants, ParserTreeConstants {
 
 
     public static final Map<String, Integer> idMap = new HashMap<>();
@@ -2340,8 +2340,8 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
         jjtree.openNodeScope(jjtn000);
         jjtreeOpenNodeScope(jjtn000);
         try {
-            AmbiguousName();
-            Arguments();
+            AmbiguousName();                    //方法名称
+            Arguments();                        //参数列表
         } catch (Throwable jjte000) {
             if (jjtc000) {
                 jjtree.clearNodeScope(jjtn000);
@@ -2611,7 +2611,6 @@ public class Parser extends Utils implements TParserConstants, TParserTreeConsta
 
 
     final public void Arguments() throws ParseException {
-        /*@bgen(jjtree) Arguments */
         TSHArguments jjtn000 = new TSHArguments(T_Arguments);
         boolean jjtc000 = true;
         jjtree.openNodeScope(jjtn000);

@@ -48,7 +48,7 @@ public class TSHFormalParameter extends SimpleNode {
 
     public Object eval(CallStack callstack, Interpreter interpreter) throws EvalError {
 
-        return UNTYPED;
+        return Object.class;
     }
 
 

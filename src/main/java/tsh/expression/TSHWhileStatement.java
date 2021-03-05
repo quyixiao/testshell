@@ -3,11 +3,11 @@ package tsh.expression;
 import tsh.CallStack;
 import tsh.Interpreter;
 import tsh.SimpleNode;
-import tsh.constant.TParserConstants;
+import tsh.constant.ParserConstants;
 import tsh.exception.EvalError;
 import tsh.util.StringUtil;
 
-public class TSHWhileStatement extends SimpleNode implements TParserConstants {
+public class TSHWhileStatement extends SimpleNode implements ParserConstants {
 
     /**
      * Set by Parser, default {@code false}

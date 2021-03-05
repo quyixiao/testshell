@@ -28,12 +28,12 @@
 package tsh.expression;
 
 import tsh.SimpleNode;
-import tsh.constant.TParserConstants;
+import tsh.constant.ParserConstants;
 
 /**
  * Represents a Return, Break, or Continue statement
  */
-public class ReturnControl implements TParserConstants {
+public class ReturnControl implements ParserConstants {
     public String kind;
     public Object value;
     public String label;

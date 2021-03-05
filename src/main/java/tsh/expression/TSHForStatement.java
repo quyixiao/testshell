@@ -1,7 +1,7 @@
 package tsh.expression;
 
 import tsh.*;
-import tsh.constant.TParserConstants;
+import tsh.constant.ParserConstants;
 import tsh.exception.EvalError;
 import tsh.exception.UtilEvalError;
 import tsh.interfac.BshIterator;
@@ -10,7 +10,7 @@ import tsh.util.StringUtil;
 
 import java.util.Map;
 
-public class TSHForStatement extends SimpleNode implements TParserConstants {
+public class TSHForStatement extends SimpleNode implements ParserConstants {
 
     public String kOrI;     //可能是 map 的 key ，也可能是 list 的索引
 

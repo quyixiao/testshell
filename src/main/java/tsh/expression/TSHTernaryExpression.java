@@ -28,9 +28,9 @@
 package tsh.expression;
 
 import tsh.CallStack;
-import tsh.exception.EvalError;
 import tsh.Interpreter;
 import tsh.SimpleNode;
+import tsh.exception.EvalError;
 
 /**
  * 三元表达式
@@ -41,15 +41,17 @@ public class TSHTernaryExpression extends SimpleNode {
         super(id + "");
     }
 
-    public Object eval(CallStack callstack, Interpreter interpreter)
-            throws EvalError {
+    public Object eval(CallStack callstack, Interpreter interpreter) throws EvalError {
         SimpleNode
                 cond = (SimpleNode) jjtGetChild(0),
                 evalTrue = (SimpleNode) jjtGetChild(1),
                 evalFalse = (SimpleNode) jjtGetChild(2);
 
-
-        return null;
+        if (TSHIfStatement.evaluateCondition(cond, callstack, interpreter)) {
+            return evalTrue.eval(callstack, interpreter);
+        }else {
+            return evalFalse.eval(callstack, interpreter);
+        }
     }
 
 }

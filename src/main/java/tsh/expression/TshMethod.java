@@ -29,6 +29,7 @@ package tsh.expression;
 
 
 import tsh.*;
+import tsh.entity.TVar;
 import tsh.exception.EvalError;
 import tsh.exception.ReflectError;
 import tsh.exception.TargetError;
@@ -39,6 +40,8 @@ import tsh.util.Utils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * This represents an instance of a bsh method declaration in a particular
@@ -78,14 +81,16 @@ public class TshMethod implements java.io.Serializable {
     // Java Method, for a BshObject that delegates to a real Java method
     private Method javaMethod;
     private Object javaObject;
-    private Object[] defaultValues;
+    private LinkedHashMap<String,Object> defaultValues;
 
     public TshMethod(TSHMethodDeclaration method, NameSpace declaringNameSpace, Object modifiers) {
-        this(method.methodName, null, method.paramsNode.getParamNames(), null, method.blockNode,
+        this(method.methodName, Object.class, method.paramsNode.getParamNames(),  method.paramsNode.paramTypes, method.blockNode,
                 declaringNameSpace,method.paramsNode.getParamDefaultValues());
     }
 
-    public TshMethod(String name, Class returnType, String[] paramNames, Class[] paramTypes, TSHBlock methodBody, NameSpace declaringNameSpace,Object [] defaultValues) {
+
+    public TshMethod(String name, Class returnType, String[] paramNames, Class[] paramTypes, TSHBlock methodBody,
+                     NameSpace declaringNameSpace,LinkedHashMap<String,Object> defaultValues) {
         this.name = name;
         this.creturnType = returnType;
         this.paramNames = paramNames;
@@ -111,15 +116,7 @@ public class TshMethod implements java.io.Serializable {
     }
 
 
-    /**
-     * Get the argument types of this method.
-     * loosely typed (untyped) arguments will be represented by null argument
-     * types.
-     */
-	/*
-		Note: bshmethod needs to re-evaluate arg types here
-		This is broken.
-	*/
+
     public Class[] getParameterTypes() {
         return cparamTypes;
     }
@@ -128,16 +125,6 @@ public class TshMethod implements java.io.Serializable {
         return paramNames;
     }
 
-    /**
-     * Get the return type of the method.
-     *
-     * @return Returns null for a loosely typed return value,
-     * Void.TYPE for a void return type, or the Class of the type.
-     */
-	/*
-		Note: bshmethod needs to re-evaluate the method return type here.
-		This is broken.
-	*/
     public Class getReturnType() {
         return creturnType;
     }
@@ -147,42 +134,12 @@ public class TshMethod implements java.io.Serializable {
         return name;
     }
 
-
-
-    public Object invokeNew(
-            Object[] argValues, Interpreter interpreter, CallStack callstack,
-            SimpleNode callerInfo)
-            throws EvalError {
-        return invokeNew(argValues, interpreter, callstack, callerInfo, false);
+    public Object invokeNew(Object[] argValues, Interpreter interpreter, CallStack callstack,SimpleNode callerInfo)throws EvalError {
+        return invokeImplNew(argValues, interpreter, callstack, callerInfo, false);
     }
-
-
-    Object invokeNew(Object[] argValues, Interpreter interpreter, CallStack callstack, SimpleNode callerInfo, boolean overrideNameSpace)
-            throws EvalError {
-        if (argValues != null)
-            for (int i = 0; i < argValues.length; i++) {
-                if (argValues[i] == null) {
-                    throw new Error("HERE!");
-                }
-            }
-        if (javaMethod != null) {
-            try {
-                return Reflect.invokeMethod(javaMethod, javaObject, argValues);
-            } catch (ReflectError e) {
-                throw new EvalError("Error invoking Java method: " + e, callerInfo, callstack);
-            } catch (InvocationTargetException e2) {
-                throw new TargetError("Exception invoking imported object method.", e2, callerInfo, callstack, true/*isNative*/);
-            }
-        }
-
-        return invokeImplNew(argValues, interpreter, callstack, callerInfo, overrideNameSpace);
-    }
-
-
 
     private Object invokeImplNew(Object[] argValues, Interpreter interpreter, CallStack callstack,SimpleNode callerInfo, boolean overrideNameSpace) throws EvalError {
         Class returnType = getReturnType();
-        Class[] paramTypes = getParameterTypes();
 
         if (callstack == null)
             callstack = new CallStack(declaringNameSpace);
@@ -202,7 +159,26 @@ public class TshMethod implements java.io.Serializable {
 
         for (int i = 0; i < numArgs; i++) {
             try {
-                localNameSpace.setLocalVariable(paramNames[i], argValues[i],interpreter.getStrictJava());
+                String paramName = paramNames[i];
+                Object argValue = null;
+                if(argValues !=null && argValues.length > 0){
+                    for(Object v : argValues){
+                        if(v instanceof TVar){
+                            if(Utils.eq(paramName,((TVar) v).getName())){
+                                argValue = ((TVar) v).getValue();
+                            }
+                        }
+                    }
+                }
+                if(argValue == null){
+                    argValue = defaultValues.get(paramName);
+                }
+
+                if(argValue == null && argValues !=null && argValues.length > 0 && i < argValues.length){
+                    argValue = argValues[i];
+                }
+
+                localNameSpace.setLocalVariable(paramName,argValue ,interpreter.getStrictJava());
             } catch (UtilEvalError e3) {
                 throw e3.toEvalError(callerInfo, callstack);
             }
@@ -232,9 +208,9 @@ public class TshMethod implements java.io.Serializable {
         }
 
         if (returnType != null) {
-            if (returnType == Void.TYPE)
+            if (returnType == Void.TYPE) {
                 return Primitive.VOID;
-
+            }
             try {
                 ret =Types.castObject(ret, returnType, Types.ASSIGNMENT);
             } catch (UtilEvalError e) {
@@ -244,7 +220,6 @@ public class TshMethod implements java.io.Serializable {
                 throw e.toEvalError("Incorrect type returned from method: "+ name + e.getMessage(), node, callstack);
             }
         }
-
         return ret;
     }
 
@@ -254,10 +229,7 @@ public class TshMethod implements java.io.Serializable {
     }
 
 
-    public Object invoke(
-            Object[] argValues, Interpreter interpreter, CallStack callstack,
-            SimpleNode callerInfo)
-            throws EvalError {
+    public Object invoke(Object[] argValues, Interpreter interpreter, CallStack callstack,SimpleNode callerInfo)throws EvalError {
         return invoke(argValues, interpreter, callstack, callerInfo, false);
     }
 
@@ -359,5 +331,8 @@ public class TshMethod implements java.io.Serializable {
         return "Scripted Method: "
                 + StringUtil.methodString(name, getParameterTypes());
     }
+
+
+
 
 }

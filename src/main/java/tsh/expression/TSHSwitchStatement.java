@@ -3,13 +3,13 @@ package tsh.expression;
 import tsh.CallStack;
 import tsh.Interpreter;
 import tsh.SimpleNode;
-import tsh.constant.TParserConstants;
+import tsh.constant.ParserConstants;
 import tsh.entity.TBigDecimal;
 import tsh.exception.EvalError;
 import tsh.exception.UtilEvalError;
 import tsh.util.StringUtil;
 
-public class TSHSwitchStatement extends SimpleNode implements TParserConstants {
+public class TSHSwitchStatement extends SimpleNode implements ParserConstants {
 
     public TSHSwitchStatement(String id) {
         super(id);
@@ -73,7 +73,7 @@ public class TSHSwitchStatement extends SimpleNode implements TParserConstants {
     private boolean primitiveEquals(Object switchVal, Object targetVal, CallStack callstack, SimpleNode switchExp) throws EvalError {
         if (switchVal instanceof Primitive || targetVal instanceof Primitive || switchVal instanceof TBigDecimal || targetVal instanceof TBigDecimal ) {
             try {
-                Object result = Primitive.binaryOperation(switchVal, targetVal, TParserConstants.EQ);
+                Object result = Primitive.binaryOperation(switchVal, targetVal, ParserConstants.EQ);
                 result = Primitive.unwrap(result);
                 return result.equals(Boolean.TRUE);
             } catch (UtilEvalError e) {
