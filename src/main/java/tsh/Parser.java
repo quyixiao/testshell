@@ -2491,7 +2491,6 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
 
 
     final public void Literal() throws ParseException {
-        /*@bgen(jjtree) Literal */
         TSHLiteral jjtn000 = new TSHLiteral(T_Literal);
         boolean jjtc000 = true;
         jjtree.openNodeScope(jjtn000);
@@ -2499,7 +2498,6 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         Token x;
         boolean b;
         String literal;
-        char ch;
         try {
             switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
                 case NUMBER:

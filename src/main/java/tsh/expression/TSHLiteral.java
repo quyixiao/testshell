@@ -40,8 +40,7 @@ public class TSHLiteral extends SimpleNode {
         super(id);
     }
 
-    public Object eval(CallStack callstack, Interpreter interpreter)
-            throws EvalError {
+    public Object eval(CallStack callstack, Interpreter interpreter) throws EvalError {
         if (value == null)
             throw new InterpreterError("Null in bsh literal: " + value);
 
