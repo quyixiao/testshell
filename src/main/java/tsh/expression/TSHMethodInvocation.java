@@ -9,10 +9,10 @@ import tsh.exception.UtilEvalError;
 import java.lang.reflect.InvocationTargetException;
 
 public class TSHMethodInvocation extends SimpleNode {
+
     public TSHMethodInvocation(String id) {
         super(id);
     }
-
 
     TSHAmbiguousName getNameNode() {
         return (TSHAmbiguousName) jjtGetChild(0);

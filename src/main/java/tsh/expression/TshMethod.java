@@ -29,6 +29,7 @@ package tsh.expression;
 
 
 import tsh.*;
+import tsh.constant.ParserConstants;
 import tsh.entity.TVar;
 import tsh.exception.EvalError;
 import tsh.exception.ReflectError;
@@ -40,6 +41,10 @@ import tsh.util.Utils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This represents an instance of a bsh method declaration in a particular
@@ -56,7 +61,7 @@ import java.lang.reflect.Method;
 	Note: this method incorrectly caches the method structure.  It needs to
 	be cleared when the classloader changes.
 */
-public class TshMethod implements java.io.Serializable {
+public class TshMethod implements ParserConstants, java.io.Serializable {
     /*
         This is the namespace in which the method is set.
         It is a back-reference for the node, which needs to execute under this
@@ -154,34 +159,57 @@ public class TshMethod implements java.io.Serializable {
         }
         localNameSpace.setNode(callerInfo);
 
+        List<TVar> dVs = getSortArgValues(defaultValues);
+        List<Object> args = arrayToList(argValues);
+
         for (int i = 0; i < numArgs; i++) {
             try {
-                String paramName = paramNames[i];
+                String paramName = dVs.get(i).getName();
                 Object argValue = null;
-                if (argValues != null && argValues.length > 0) {
-                    for (Object v : argValues) {
-                        if (v instanceof TVar) {
-                            if (Utils.eq(paramName, ((TVar) v).getName())) {
-                                argValue = ((TVar) v).getValue();
+                TVar tVar = dVs.get(i);
+                if (Utils.eq(tVar.getKind(), STAR)) {
+                    List<Object> list = new ArrayList<>();
+                    for (int j = 0; j < args.size(); j++) {
+                        Object o = args.get(j);
+                        if (!(o instanceof TVar)) {
+                            list.add(o);
+                        }
+                    }
+                    argValue = list;
+                } else if (Utils.eq(tVar.getKind(), SSTAR)) {
+                    Map<String, Object> map = new LinkedHashMap<>();
+                    for (Object o : args) {
+                        if (o instanceof TVar) {
+                            map.put(((TVar) o).getName(), ((TVar) o).getValue());
+                        }
+                    }
+                    argValue = map;
+                } else {
+                    int k = 0;
+                    for (int j = 0; j < args.size(); j++) {
+                        Object o = args.get(j);
+                        if (o instanceof TVar) {
+                            if (Utils.eq(((TVar) o).getName(), paramName)) {
+                                argValue = ((TVar) o).getValue();
+                                k = j;
+                                break;
                             }
                         }
                     }
-                }
-
-                if (argValue == null) {
-                    if (defaultValues != null && defaultValues.length > 0) {
-                        for (TVar v : defaultValues) {
-                            if (Utils.eq(paramName, v.getName())) {
-                                argValue = v.getValue();
+                    if (argValue == null) {
+                        for (int j = 0; j < args.size(); j++) {
+                            Object o = args.get(j);
+                            if (!(o instanceof TVar)) {
+                                argValue = o;
+                                k = j;
+                                break;
                             }
                         }
                     }
+                    if (argValue != null) {                 //移除掉 args
+                        args.remove(k);
+                    }
                 }
-
-                if (argValue == null && argValues != null && argValues.length > 0 && i < argValues.length) {
-                    argValue = argValues[i];
-                }
-
                 localNameSpace.setLocalVariable(paramName, argValue, interpreter.getStrictJava());
             } catch (UtilEvalError e3) {
                 throw e3.toEvalError(callerInfo, callstack);
@@ -211,6 +239,47 @@ public class TshMethod implements java.io.Serializable {
         }
 
         return ret;
+    }
+
+
+    private List<TVar> getSortArgValues(TVar[] argValues) {
+        List<TVar> list = new ArrayList<>();
+        if (argValues != null && argValues.length > 0) {
+            int i = 0;
+            int flag1 = -1;
+            int flag2 = -1;
+            for (TVar o : argValues) {
+                String kind = o.getKind();
+                if (StringUtil.isNotBlank(kind)) {
+                    if (Utils.eq(kind, STAR)) {
+                        flag1 = i;
+                    } else if (Utils.eq(kind, SSTAR)) {
+                        flag2 = i;
+                    }
+                } else {
+                    list.add(o);
+                }
+                i++;
+            }
+            if (flag1 > -1) {                //将 * args
+                list.add(argValues[flag1]);
+            }
+            if (flag2 > -1) {
+                list.add(argValues[flag2]);
+            }
+        }
+        return list;
+    }
+
+
+    public List<Object> arrayToList(Object[] arr) {
+        List<Object> list = new ArrayList<>();
+        if (arr != null && arr.length > 0) {
+            for (Object a : arr) {
+                list.add(a);
+            }
+        }
+        return list;
     }
 
 

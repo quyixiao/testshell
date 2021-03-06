@@ -8,15 +8,14 @@ import tsh.exception.EvalError;
 import tsh.util.StringUtil;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 public class TSHFormalParameters extends SimpleNode {
+
     public String[] paramNames;
-    public TVar[] defaultValues ;
+    public TVar[] defaultValues;
 
     Class[] paramTypes;
-
 
     int numArgs;
 
@@ -40,13 +39,13 @@ public class TSHFormalParameters extends SimpleNode {
                 names.add(param.name);
                 flag++;
                 TVar var = new TVar(param.name);
-                if(StringUtil.isNotBlank(param.kind)){
+                if (StringUtil.isNotBlank(param.kind)) {
                     var.setKind(param.kind);
                 }
                 values.add(var);
             } else {
                 Object result = parameter.eval(callstack, interpreter);
-                TVar var = values.get(flag -1 );
+                TVar var = values.get(flag - 1);
                 var.setValue(result);
             }
         }
@@ -69,12 +68,11 @@ public class TSHFormalParameters extends SimpleNode {
         Class[] paramTypes = new Class[numArgs];
         for (int i = 0; i < numArgs; i++) {
             Object paramTypeNode = jjtGetChild(i);
-            if(paramTypeNode instanceof TSHFormalParameter){
+            if (paramTypeNode instanceof TSHFormalParameter) {
                 TSHFormalParameter param = (TSHFormalParameter) paramTypeNode;
                 paramTypes[i] = (Class) param.eval(callstack, interpreter);
             }
         }
-
         this.paramTypes = paramTypes;
         return paramTypes;
     }

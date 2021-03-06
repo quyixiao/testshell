@@ -252,6 +252,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         } else {
             token = token.next = token_source.getNextToken();
         }
+        jj_ntk = default_1;
         return token;
     }
 
@@ -604,7 +605,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
             if (jj_2_33(3, STAR)) {             // def fn(x, y,*args)   一个* 的情况
                 jj_consume_token(STAR);
                 jjtn000.kind = STAR;
-            }else if (jj_2_33(3,SSTAR)){        // def fn(x, y,**kwargs) 2 个 * 的情况
+            } else if (jj_2_33(3, SSTAR)) {        // def fn(x, y,**kwargs) 2 个 * 的情况
                 jj_consume_token(SSTAR);
                 jjtn000.kind = SSTAR;
             }
@@ -614,7 +615,6 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
             jjtc000 = false;
             jjtreeCloseNodeScope(jjtn000);
             jjtn000.name = t.image;
-
             if (jj_2_33(3, ASSIGN)) {           //如果没有扫描到=号，则变量的定义肯定是 a ,b = xxx
                 jj_consume_token(ASSIGN);
                 Expression();
@@ -1293,6 +1293,10 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
                 case LBRACE:
                     MapInitializer();
                     break;
+                case STAR:
+                case SSTAR:
+                    StarArgument();                 // * ,** 表达式处理
+                    break;
                 default:
                     jj_la1[23] = jj_gen;
                     jj_consume_token(default_1);
@@ -1424,7 +1428,6 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
                     break;
                 default:
                     jj_la1[15] = jj_gen;
-                    ;
             }
             jj_consume_token(RBRACE);
         } catch (Throwable jjte000) {
@@ -1455,6 +1458,42 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
+    final public void StarArgument() throws ParseException {
+        TSHStarArgument jjtn000 = new TSHStarArgument(T_StarArgument);
+        boolean jjtc000 = true;
+        jjtree.openNodeScope(jjtn000);
+        jjtreeOpenNodeScope(jjtn000);
+        try {
+            Token t1 = jj_consume_token_next();
+            jjtn000.kind = t1.kind;
+            Expression();
+        } catch (Throwable jjte000) {
+            if (jjtc000) {
+                jjtree.clearNodeScope(jjtn000);
+                jjtc000 = false;
+            } else {
+                jjtree.popNode();
+            }
+            if (jjte000 instanceof RuntimeException) {
+                {
+                    if (true) throw (RuntimeException) jjte000;
+                }
+            }
+            if (jjte000 instanceof ParseException) {
+                {
+                    if (true) throw (ParseException) jjte000;
+                }
+            }
+            {
+                if (true) throw (Error) jjte000;
+            }
+        } finally {
+            if (jjtc000) {
+                jjtree.closeNodeScope(jjtn000, true);
+                jjtreeCloseNodeScope(jjtn000);
+            }
+        }
+    }
 
     final public void Assignment() throws ParseException {
         TSHAssignment jjtn000 = new TSHAssignment(T_Assignment);
@@ -2344,6 +2383,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
+
     final public void MethodInvocation() throws ParseException {
         TSHMethodInvocation jjtn000 = new TSHMethodInvocation(T_MethodInvocation);
         boolean jjtc000 = true;
@@ -2643,6 +2683,8 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
                 case DECR:
                 case PLUS:
                 case MINUS:
+                case STAR:
+                case SSTAR:
                     ArgumentList();
                     break;
                 default:
@@ -3475,11 +3517,9 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
     final private boolean jj_3_8() {
         if (jj_scan_token(IDENTIFIER)) return true;
         jj_3_30();
-        jj_3_29();
         if (jj_3R_34()) return true;
         return false;
     }
-
 
     final private void jj_3_29() {
         Token xsp;

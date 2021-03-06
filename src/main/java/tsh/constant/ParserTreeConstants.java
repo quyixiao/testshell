@@ -46,6 +46,7 @@ public interface ParserTreeConstants {
     public final static String T_PrimarySuffix = "PrimarySuffix";
     public final static String T_Literal = "sun.tools.jstat.Literal";
     public final static String T_Arguments = "Arguments";
+    public final static String T_StarArgument = "StarArgument";
     public final static String T_AllocationExpression = "AllocationExpression";
     public final static String T_ArrayDimensions = "ArrayDimensions";
     public final static String T_Block = "Block";

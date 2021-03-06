@@ -24,7 +24,7 @@ public class PaserTest {
         Reader in = new FileReader("/Users/quyixiao/git/java-python/script/method/method14_args.tsh");
         Parser parser = new Parser(in);
         parser.setRetainComments(true);
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 100; i++) {
             Token token = parser.token_source.getNextToken();
             System.out.println(i + "    "+token.image + "          :           " + (token.kind == "\n" ? "\\n" : token.kind));
         }
