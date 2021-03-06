@@ -14,7 +14,7 @@ public class PaserTest {
 
     @Test
     public void test3() throws Exception {
-        Reader in = new FileReader("/Users/quyixiao/git/java-python/script/kelihua/kelihua6.tsh");
+        Reader in = new FileReader("/Users/quyixiao/git/java-python/script/kelihua/kelihua11.tsh");
         Parser parser = new Parser(in);
         parser.setRetainComments(true);
         for (int i = 0; i < 100; i++) {

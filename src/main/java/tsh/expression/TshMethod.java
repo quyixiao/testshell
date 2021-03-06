@@ -70,7 +70,7 @@ public class TshMethod implements ParserConstants, java.io.Serializable {
     */
     NameSpace declaringNameSpace;
 
-    private String name;
+    public String name;
     private Class creturnType;
 
     // Arguments

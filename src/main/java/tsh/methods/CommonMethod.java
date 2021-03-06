@@ -64,5 +64,16 @@ public class CommonMethod {
     }
 
 
+    public Object sleep(Object ... t ){
+        try {
+            if(t[0] instanceof TBigDecimal){
+                Thread.sleep(NumberUtil.objToInt(((TBigDecimal)t[0]).getValue()));
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
 }
