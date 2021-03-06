@@ -210,7 +210,11 @@ public class TshMethod implements ParserConstants, java.io.Serializable {
                         args.remove(k);
                     }
                 }
-                localNameSpace.setLocalVariable(paramName, argValue, interpreter.getStrictJava());
+                if (argValue instanceof  TshMethod) {
+                    localNameSpace.setMethod(paramName, (TshMethod) argValue);
+                }else{
+                    localNameSpace.setLocalVariable(paramName, argValue, interpreter.getStrictJava());
+                }
             } catch (UtilEvalError e3) {
                 throw e3.toEvalError(callerInfo, callstack);
             }
