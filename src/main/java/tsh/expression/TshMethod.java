@@ -30,6 +30,7 @@ package tsh.expression;
 
 import tsh.*;
 import tsh.constant.ParserConstants;
+import tsh.entity.TMethodData;
 import tsh.entity.TVar;
 import tsh.exception.EvalError;
 import tsh.exception.ReflectError;
@@ -85,13 +86,13 @@ public class TshMethod implements ParserConstants, java.io.Serializable {
     private Method javaMethod;
     private Object javaObject;
     private TVar[] defaultValues;
-    public TSHMethodInvocation invocation;
+    public TMethodData methodData;
 
 
 
-    public TshMethod(TSHMethodDeclaration method, NameSpace declaringNameSpace,TSHMethodInvocation invocation) {
+    public TshMethod(TSHMethodDeclaration method, NameSpace declaringNameSpace,TMethodData methodData) {
         this(method.methodName, Object.class, method.paramsNode.getParamNames(), method.paramsNode.paramTypes, method.blockNode,
-                declaringNameSpace, method.paramsNode.getParamDefaultValues(),invocation);
+                declaringNameSpace, method.paramsNode.getParamDefaultValues(), methodData);
     }
 
     public TshMethod(String name, Class returnType, String[] paramNames, Class[] paramTypes, TSHBlock methodBody,
@@ -100,7 +101,7 @@ public class TshMethod implements ParserConstants, java.io.Serializable {
     }
 
     public TshMethod(String name, Class returnType, String[] paramNames, Class[] paramTypes, TSHBlock methodBody,
-                     NameSpace declaringNameSpace, TVar[] defaultValues,TSHMethodInvocation invocation) {
+                     NameSpace declaringNameSpace, TVar[] defaultValues,TMethodData methodData) {
         this.name = name;
         this.creturnType = returnType;
         this.paramNames = paramNames;
@@ -110,7 +111,7 @@ public class TshMethod implements ParserConstants, java.io.Serializable {
         this.methodBody = methodBody;
         this.declaringNameSpace = declaringNameSpace;
         this.defaultValues = defaultValues;
-        this.invocation = invocation;
+        this.methodData = methodData;
     }
 
     /*

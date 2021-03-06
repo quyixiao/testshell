@@ -1,6 +1,7 @@
 package tsh.expression;
 
 import tsh.*;
+import tsh.entity.TMethodData;
 import tsh.exception.EvalError;
 import tsh.exception.ReflectError;
 import tsh.exception.TargetError;
@@ -35,9 +36,9 @@ public class TSHMethodInvocation extends SimpleNode {
         try {
             Object result = null;
             TshMethod method = namespace.getMethod(nameNode.text.trim(), new Class[]{null});
-            if (method != null && method.invocation != null) {                  // 如果有注解方法调用
-                TSHMethodInvocation methodInvocation = method.invocation;
-                method.invocation = null;                                   // 防止递归调用
+            if (method != null && method.methodData != null && method.methodData.invocation != null) {                  // 如果有注解方法调用
+                TSHMethodInvocation methodInvocation = method.methodData.invocation;
+                method.methodData = null;                                   // 防止递归调用
                 TSHAmbiguousName annotaionName = methodInvocation.getNameNode();    //注解名称
                 result = namespace.getMethod(annotaionName.text.trim(), new Class[]{null});
                 for (int i = 0; i < methodInvocation.jjtGetNumChildren(); i++) {      //
@@ -50,7 +51,7 @@ public class TSHMethodInvocation extends SimpleNode {
                 }
                 Object[] args = this.getArgsNode(1).getArguments(callstack, interpreter);
                 result = ((TshMethod) result).invokeNew(args, interpreter, callstack, this);
-                method.invocation = methodInvocation;                   //防止递归调用，先设置为空，再恢复
+                method.methodData = new TMethodData(methodInvocation);                   //防止递归调用，先设置为空，再恢复
             } else {
                 for (int i = 1; i < jjtGetNumChildren(); i++) {         //处理 a(1) 和 a(1)(2)...(3)类型的方法调用
                     Object[] args = getArgsNode(i).getArguments(callstack, interpreter);

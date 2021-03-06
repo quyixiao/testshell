@@ -2479,17 +2479,6 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         try {
             t = jj_consume_token(IDENTIFIER);
             s = new StringBuffer(t.image);
-            label_5:
-            while (true) {
-                if (jj_2_7(2)) {
-                    ;
-                } else {
-                    break label_5;
-                }
-                jj_consume_token(DOT);
-                t = jj_consume_token(IDENTIFIER);
-                s.append("." + t.image);
-            }
             jjtree.closeNodeScope(jjtn000, true);
             jjtc000 = false;
             jjtreeCloseNodeScope(jjtn000);
@@ -3563,9 +3552,29 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
     final private boolean jj_3_8() {
         if (jj_scan_token(IDENTIFIER)) return true;
         jj_3_30();
+        jj_3_34();
         if (jj_3R_34()) return true;
         return false;
     }
+
+
+    final private void jj_3_34() {
+        Token xsp;
+        while (true) {
+            xsp = jj_scanpos;
+            if (jj_scan_token(DOT)) {
+                jj_scanpos = xsp;
+                break;
+            }
+            xsp = jj_scanpos;
+            if (jj_scan_token(IDENTIFIER)) {
+                jj_scanpos = xsp;
+                break;
+            }
+        }
+    }
+
+
 
     final private void jj_3_29() {
         Token xsp;

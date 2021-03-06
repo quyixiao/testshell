@@ -4,6 +4,7 @@ import tsh.CallStack;
 import tsh.Interpreter;
 import tsh.NameSpace;
 import tsh.SimpleNode;
+import tsh.entity.TMethodData;
 import tsh.exception.EvalError;
 import tsh.exception.UtilEvalError;
 
@@ -31,14 +32,15 @@ public class TSHMethodDeclaration extends SimpleNode {
     }
 
     public Object eval(CallStack callstack, Interpreter interpreter) throws EvalError {
-        return eval(callstack,interpreter,null);
+        return eval(callstack, interpreter, null);
     }
 
 
-    public Object eval(CallStack callstack, Interpreter interpreter,TSHMethodInvocation invocation) throws EvalError {
+    public Object eval(CallStack callstack, Interpreter interpreter, TSHMethodInvocation invocation) throws EvalError {
         evalNodes(callstack, interpreter);
         NameSpace namespace = callstack.top();
-        TshMethod bshMethod = new TshMethod(this, namespace,invocation);
+        TMethodData methodData = new TMethodData(invocation);
+        TshMethod bshMethod = new TshMethod(this, namespace, methodData);
         try {
             namespace.setMethod(methodName, bshMethod);
         } catch (UtilEvalError e) {
