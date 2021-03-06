@@ -34,12 +34,29 @@ public class TSHMethodInvocation extends SimpleNode {
         Name name = nameNode.getName(namespace);
         try {
             Object result = null;
-            for (int i = 1; i < jjtGetNumChildren(); i++) {         //处理 a(1) 和 a(1)(2)...(3)类型的方法调用
-                Object[] args = getArgsNode(i).getArguments(callstack, interpreter);
-                if (i == 1) {
-                    result = name.invokeMethod(interpreter, args, callstack, this);
-                } else {
-                    if (result instanceof TshMethod) {
+            TshMethod method = namespace.getMethod(nameNode.text.trim(), new Class[]{null});
+            if (method != null && method.invocation != null) {                  // 如果有注解方法调用
+                TSHMethodInvocation methodInvocation = method.invocation;
+                method.invocation = null;                                   // 防止递归调用
+                TSHAmbiguousName annotaionName = methodInvocation.getNameNode();    //注解名称
+                result = namespace.getMethod(annotaionName.text.trim(), new Class[]{null});
+                for (int i = 0; i < methodInvocation.jjtGetNumChildren(); i++) {      //
+                    if (i == methodInvocation.jjtGetNumChildren() - 1) {
+                        result = ((TshMethod) result).invokeNew(new Object[]{method}, interpreter, callstack, this);
+                    } else {
+                        Object[] args = methodInvocation.getArgsNode(i + 1).getArguments(callstack, interpreter);
+                        result = ((TshMethod) result).invokeNew(args, interpreter, callstack, this);
+                    }
+                }
+                Object[] args = this.getArgsNode(1).getArguments(callstack, interpreter);
+                result = ((TshMethod) result).invokeNew(args, interpreter, callstack, this);
+                method.invocation = methodInvocation;                   //防止递归调用，先设置为空，再恢复
+            } else {
+                for (int i = 1; i < jjtGetNumChildren(); i++) {         //处理 a(1) 和 a(1)(2)...(3)类型的方法调用
+                    Object[] args = getArgsNode(i).getArguments(callstack, interpreter);
+                    if (i == 1) {
+                        result = name.invokeMethod(interpreter, args, callstack, this);
+                    } else {
                         result = ((TshMethod) result).invokeNew(args, interpreter, callstack, this);
                     }
                 }

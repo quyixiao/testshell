@@ -428,6 +428,8 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
+
+
     final public boolean BlockStatement() throws ParseException {
         jj_consume_token_next_line();
         if (jj_2_33(3, EOF)) return false;
@@ -435,7 +437,9 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
             MethodDeclaration();
         } else if (jj_2_31(2147483647)) {
             VariableDeclarator();
-        } else {
+        }else if (jj_2_33(3, AT)){
+            AnnotationMethodInvocationDeclarator();
+        }else {
             Statement();
         }
         return true;
@@ -1236,6 +1240,8 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
     }
 
 
+
+
     final public void VariableInitializer() throws ParseException {
         switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
             case LBRACKET:
@@ -1265,6 +1271,46 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
                 throw new ParseException();
         }
     }
+
+
+    final public void AnnotationMethodInvocationDeclarator() throws ParseException {
+        TSHAnnotationMethodDeclaration jjtn000 = new TSHAnnotationMethodDeclaration(T_AnnotationMethodDeclaration);
+        boolean jjtc000 = true;
+        jjtree.openNodeScope(jjtn000);
+        jjtreeOpenNodeScope(jjtn000);
+        try {
+            jj_consume_token(AT);
+            MethodInvocation();              //方法调用解析
+            BlockStatement();               // 方法申明解析
+        } catch (Throwable jjte000) {
+            if (jjtc000) {
+                jjtree.clearNodeScope(jjtn000);
+                jjtc000 = false;
+            } else {
+                jjtree.popNode();
+            }
+            if (jjte000 instanceof RuntimeException) {
+                {
+                    if (true) throw (RuntimeException) jjte000;
+                }
+            }
+            if (jjte000 instanceof ParseException) {
+                {
+                    if (true) throw (ParseException) jjte000;
+                }
+            }
+            {
+                if (true) throw (Error) jjte000;
+            }
+        } finally {
+            if (jjtc000) {
+                jjtree.closeNodeScope(jjtn000, true);
+                jjtreeCloseNodeScope(jjtn000);
+            }
+        }
+    }
+
+
 
     final public void Expression() throws ParseException {
         if (jj_2_8(2147483647)) {

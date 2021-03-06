@@ -60,9 +60,10 @@ public interface ParserTreeConstants {
     public final static String T_ReturnStatement = "ReturnStatement";
     public final static String T_ThrowStatement = "ThrowStatement";
     public final static String T_TryStatement = "TryStatement";
-    public final static String T_ListInitializer = "T_ListInitializer";
-    public final static String T_MapInitializer = "T_MapInitializer";
-    public final static String T_LabeledStatement = "T_LabeledStatement";
+    public final static String T_ListInitializer = "ListInitializer";
+    public final static String T_MapInitializer = "MapInitializer";
+    public final static String T_LabeledStatement = "LabeledStatement";
+    public final static String T_AnnotationMethodDeclaration = "AnnotationMethodDeclaration";
 
 
 }

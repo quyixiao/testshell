@@ -85,15 +85,22 @@ public class TshMethod implements ParserConstants, java.io.Serializable {
     private Method javaMethod;
     private Object javaObject;
     private TVar[] defaultValues;
+    public TSHMethodInvocation invocation;
 
-    public TshMethod(TSHMethodDeclaration method, NameSpace declaringNameSpace, Object modifiers) {
+
+
+    public TshMethod(TSHMethodDeclaration method, NameSpace declaringNameSpace,TSHMethodInvocation invocation) {
         this(method.methodName, Object.class, method.paramsNode.getParamNames(), method.paramsNode.paramTypes, method.blockNode,
-                declaringNameSpace, method.paramsNode.getParamDefaultValues());
+                declaringNameSpace, method.paramsNode.getParamDefaultValues(),invocation);
     }
-
 
     public TshMethod(String name, Class returnType, String[] paramNames, Class[] paramTypes, TSHBlock methodBody,
                      NameSpace declaringNameSpace, TVar[] defaultValues) {
+        this(name,returnType,paramNames,paramTypes,methodBody,declaringNameSpace,defaultValues,null);
+    }
+
+    public TshMethod(String name, Class returnType, String[] paramNames, Class[] paramTypes, TSHBlock methodBody,
+                     NameSpace declaringNameSpace, TVar[] defaultValues,TSHMethodInvocation invocation) {
         this.name = name;
         this.creturnType = returnType;
         this.paramNames = paramNames;
@@ -103,6 +110,7 @@ public class TshMethod implements ParserConstants, java.io.Serializable {
         this.methodBody = methodBody;
         this.declaringNameSpace = declaringNameSpace;
         this.defaultValues = defaultValues;
+        this.invocation = invocation;
     }
 
     /*
@@ -161,7 +169,6 @@ public class TshMethod implements ParserConstants, java.io.Serializable {
 
         List<TVar> dVs = getSortArgValues(defaultValues);
         List<Object> args = arrayToList(argValues);
-
         for (int i = 0; i < numArgs; i++) {
             try {
                 String paramName = dVs.get(i).getName();
@@ -209,6 +216,9 @@ public class TshMethod implements ParserConstants, java.io.Serializable {
                     if (argValue != null) {                 //移除掉 args
                         args.remove(k);
                     }
+                }
+                if (argValue == null) {
+                    argValue = dVs.get(i).getValue();                //设置默认值
                 }
                 if (argValue instanceof  TshMethod) {
                     localNameSpace.setMethod(paramName, (TshMethod) argValue);

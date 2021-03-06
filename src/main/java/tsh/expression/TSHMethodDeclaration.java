@@ -30,11 +30,15 @@ public class TSHMethodDeclaration extends SimpleNode {
         blockNode = (TSHBlock) jjtGetChild(1 + numThrows); // skip throws
     }
 
-
     public Object eval(CallStack callstack, Interpreter interpreter) throws EvalError {
+        return eval(callstack,interpreter,null);
+    }
+
+
+    public Object eval(CallStack callstack, Interpreter interpreter,TSHMethodInvocation invocation) throws EvalError {
         evalNodes(callstack, interpreter);
         NameSpace namespace = callstack.top();
-        TshMethod bshMethod = new TshMethod(this, namespace,null);
+        TshMethod bshMethod = new TshMethod(this, namespace,invocation);
         try {
             namespace.setMethod(methodName, bshMethod);
         } catch (UtilEvalError e) {
