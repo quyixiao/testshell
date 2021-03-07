@@ -2,6 +2,7 @@ package tsh.expression;
 
 import tsh.*;
 import tsh.entity.TMethodData;
+import tsh.entity.TVar;
 import tsh.exception.EvalError;
 import tsh.exception.ReflectError;
 import tsh.exception.TargetError;
@@ -37,7 +38,8 @@ public class TSHMethodInvocation extends SimpleNode {
             Object result = null;
             TshMethod method = namespace.getMethod(nameNode.text.trim(), new Class[]{null});
             if (method != null && method.methodData != null && method.methodData.invocation != null) {                  // 如果有注解方法调用
-                result = invoke(method, null, callstack, interpreter);
+                Object[] args = this.getArgsNode(1).getArguments(callstack, interpreter);
+                result = invoke(method, args, callstack, interpreter);
             } else {
                 for (int i = 1; i < jjtGetNumChildren(); i++) {         //处理 a(1) 和 a(1)(2)...(3)类型的方法调用
                     Object[] args = getArgsNode(i).getArguments(callstack, interpreter);
@@ -74,19 +76,31 @@ public class TSHMethodInvocation extends SimpleNode {
             method.methodData = null;                                   // 防止递归调用
             String methodName = getMethodName(methodInvocation);
             try {
-                NameSpace namespace = new NameSpace(method.declaringNameSpace, methodName);
+                NameSpace parent = callstack.top();
+                TVar tVars[] = method.defaultValues;
+                if(tVars !=null && tVars.length > 0){
+                    for(int i = 0 ;i < tVars.length;i ++){
+                        if(i < argValues.length ){
+                            if(argValues[i] instanceof  TshMethod){
+                                parent.setMethod(tVars[i].getName(),(TshMethod) argValues[i]);
+                            }else{
+                                parent.setVariable(tVars[i].getName(),argValues[i],false);
+                            }
+                        }
+                    }
+                }
+                NameSpace namespace = new NameSpace(parent, methodName);
                 callstack.push(namespace);
                 result = namespace.getMethod(methodName, new Class[]{null});
                 for (int i = 0; i < methodInvocation.jjtGetNumChildren(); i++) {      //
                     if (i == methodInvocation.jjtGetNumChildren() - 1) {
-                        result = ((TshMethod) result).invokeNew(new Object[]{method}, interpreter, callstack, this, true);
+                        result = invoke(((TshMethod) result), new Object[]{method}, callstack, interpreter);
                     } else {
                         Object[] args = methodInvocation.getArgsNode(i + 1).getArguments(callstack, interpreter);
                         result = invoke(((TshMethod) result), args, callstack, interpreter);
                     }
                 }
-                Object[] args = this.getArgsNode(1).getArguments(callstack, interpreter);
-                result = invoke(((TshMethod) result), args, callstack, interpreter);
+                result = invoke(((TshMethod) result), argValues, callstack, interpreter);
             } catch (UtilEvalError utilEvalError) {
                 utilEvalError.printStackTrace();
             } catch (EvalError evalError) {

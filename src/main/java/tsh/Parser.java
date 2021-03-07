@@ -2479,11 +2479,22 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         try {
             t = jj_consume_token(IDENTIFIER);
             s = new StringBuffer(t.image);
+            label_5:
+            while (true) {
+                if (jj_2_7(2)) {
+                    ;
+                } else {
+                    break label_5;
+                }
+                jj_consume_token(DOT);
+                t = jj_consume_token(IDENTIFIER);
+                s.append("." + t.image);
+            }
             jjtree.closeNodeScope(jjtn000, true);
             jjtc000 = false;
             jjtreeCloseNodeScope(jjtn000);
             jjtn000.text = s.toString();
-        } finally {
+        }  finally {
             if (jjtc000) {
                 jjtree.closeNodeScope(jjtn000, true);
                 jjtreeCloseNodeScope(jjtn000);

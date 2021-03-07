@@ -85,7 +85,7 @@ public class TshMethod implements ParserConstants, java.io.Serializable {
     // Java Method, for a BshObject that delegates to a real Java method
     private Method javaMethod;
     private Object javaObject;
-    private TVar[] defaultValues;
+    public TVar[] defaultValues;
     public TMethodData methodData;
 
 
