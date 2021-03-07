@@ -149,6 +149,11 @@ public class TshMethod implements ParserConstants, java.io.Serializable {
         return invokeImplNew(argValues, interpreter, callstack, callerInfo, false);
     }
 
+
+    public Object invokeNew(Object[] argValues, Interpreter interpreter, CallStack callstack, SimpleNode callerInfo,boolean overrideNameSpace) throws EvalError {
+        return invokeImplNew(argValues, interpreter, callstack, callerInfo, overrideNameSpace);
+    }
+
     private Object invokeImplNew(Object[] argValues, Interpreter interpreter, CallStack callstack, SimpleNode callerInfo, boolean overrideNameSpace) throws EvalError {
         Class returnType = getReturnType();
 
