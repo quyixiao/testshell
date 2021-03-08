@@ -82,7 +82,7 @@ public class TSHMethodInvocation extends SimpleNode {
                 NameSpace namespace = new NameSpace(callstack.top(), methodName);
                 callstack.push(namespace);
                 result = namespace.getMethod(methodName, new Class[]{null});
-                for (int i = 0; i < methodInvocation.jjtGetNumChildren(); i++) {      //
+                for (int i = 0; i < methodInvocation.jjtGetNumChildren(); i++) {
                     if (i == methodInvocation.jjtGetNumChildren() - 1) {
                         result = invoke(((TshMethod) result), new Object[]{method}, callstack, interpreter, true);
                         removeNotNeed(callstack.top(), aMethodNames, aVariableNames);
