@@ -215,7 +215,7 @@ public class Name implements java.io.Serializable {
             obj = namespace.getMethod(methodName, new Class[]{null});
         }
         if (obj == null)
-            throw new InterpreterError("【 " + methodName + " 】method is null value in toObject()");
+            throw new InterpreterError("【 " + methodName + " 】method or variable is null value in toObject()");
 
         return obj;
     }
