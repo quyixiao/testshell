@@ -131,6 +131,7 @@ public class Utils {
                     }
                 }
             }
+            return new TSHTuple(allVariable(nameSpace), global, retVal);
         } catch (Exception e) {
             throw e;
         } finally {
@@ -140,11 +141,10 @@ public class Utils {
                 throw e;
             }
         }
-        return null;
     }
 
     public static Map<String, Object> allVariable(NameSpace nameSpace) throws Exception {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new LinkedHashMap<>();
         for (String name : nameSpace.getVariableNames()) {
             Object value = nameSpace.getVariable(name);
             if (value != null) {
@@ -152,7 +152,7 @@ public class Utils {
             }
         }
         for (String name : nameSpace.getMethodNames()) {
-            Object value = nameSpace.getVariable(name);
+            Object value = nameSpace.getMethod(name,new Class[]{null});
             if (value != null) {
                 map.put(name, value);
             }

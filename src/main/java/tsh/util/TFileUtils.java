@@ -1,6 +1,8 @@
 package tsh.util;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TFileUtils {
 
@@ -28,6 +30,17 @@ public class TFileUtils {
         }
     }
 
+    public static List<File> getFiles (String path){
+        File file = new File(path);
+        File[] tempList = file.listFiles();
+        List<File> result = new ArrayList<>();
+        for (int i = 0; i < tempList.length; i++) {
+            if (tempList[i].isFile()) {
+                result.add(tempList[i]);
+            }
+        }
+        return result;
+    }
     public static void main(String[] args) {
         System.out.println(readToStr("/Users/quyixiao/git/java-python/script/export.tsh"));
     }

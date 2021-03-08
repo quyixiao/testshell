@@ -33,7 +33,7 @@ public interface ParserConstants {
     String TRY = "try";                           //  try
     String WHILE = "while";                     //  while
     String DEF = "def";                            //  def
-    String METHOD = "method";                            //方法
+
     String VAR = "var";                            //变量
     String IN = "in";                            //变量
     String EXPORT = "export";                            // 变量导出
@@ -133,7 +133,7 @@ public interface ParserConstants {
 
     public static final List<String> tempType = Arrays.asList(new String[]{
             BREAK, CASE, CATCH, CONTINUE, _DEFAULT, DO, ELSE, FALSE, FINALLY, FOR, IF, NULL, RETURN, SWITCH, THROW, THROWS,
-            TRUE, TRY, WHILE, DEF, METHOD, VAR, EXPORT,
+            TRUE, TRY, WHILE, DEF, VAR, EXPORT,
             LPAREN,
             RPAREN,
             LBRACE,
