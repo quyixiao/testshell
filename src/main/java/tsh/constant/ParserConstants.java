@@ -40,6 +40,7 @@ public interface ParserConstants {
     String NEW = "new";                            //  创建
 
 
+
     String IDENTIFIER = "identifier";                            // 字符字面量
     String BOOL = "bool";                            // bool 数据类型
     String STR = "str";                            // 字符串数据类型

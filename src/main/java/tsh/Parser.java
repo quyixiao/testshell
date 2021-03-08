@@ -711,6 +711,9 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
                         case TRY:
                             TryStatement();
                             break;
+                        case EXPORT:
+                            ExportStatement();
+                            break;
                         default:
                             jj_la1[70] = jj_gen;
                             jj_consume_token(default_1);
@@ -1136,24 +1139,10 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         jjtreeOpenNodeScope(jjtn000);
         try {
             jj_consume_token(RETURN);
-            switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
-                case FALSE:
-                case NULL:
-                case TRUE:
-                case STR:
-                case IDENTIFIER:
-                case LPAREN:
-                case BANG:
-                case TILDE:
-                case INCR:
-                case DECR:
-                case PLUS:
-                case MINUS:
-                    Expression();
-                    break;
-                default:
-                    jj_la1[85] = jj_gen;
-                    ;
+            Expression();
+            while (jj_2_33(3, COMMA)) {
+                jj_consume_token(COMMA);
+                Expression();
             }
             jjtree.closeNodeScope(jjtn000, true);
             jjtc000 = false;
@@ -1266,6 +1255,50 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
             if (!closed) {
                 if (true) throw new ParseException();
             }
+        } catch (Throwable jjte000) {
+            if (jjtc000) {
+                jjtree.clearNodeScope(jjtn000);
+                jjtc000 = false;
+            } else {
+                jjtree.popNode();
+            }
+            if (jjte000 instanceof RuntimeException) {
+                {
+                    if (true) throw (RuntimeException) jjte000;
+                }
+            }
+            if (jjte000 instanceof ParseException) {
+                {
+                    if (true) throw (ParseException) jjte000;
+                }
+            }
+            {
+                if (true) throw (Error) jjte000;
+            }
+        } finally {
+            if (jjtc000) {
+                jjtree.closeNodeScope(jjtn000, true);
+                jjtreeCloseNodeScope(jjtn000);
+            }
+        }
+    }
+
+    final public void ExportStatement() throws ParseException {
+        TSHExportStatement jjtn000 = new TSHExportStatement(T_ExportStatement);
+        boolean jjtc000 = true;
+        jjtree.openNodeScope(jjtn000);
+        jjtreeOpenNodeScope(jjtn000);
+        try {
+            jj_consume_token(EXPORT);
+            Expression();
+            while (jj_2_33(3, COMMA)) {
+                jj_consume_token(COMMA);
+                Expression();
+            }
+            jjtree.closeNodeScope(jjtn000, true);
+            jjtc000 = false;
+            jjtreeCloseNodeScope(jjtn000);
+            jjtn000.kind = RETURN;
         } catch (Throwable jjte000) {
             if (jjtc000) {
                 jjtree.clearNodeScope(jjtn000);

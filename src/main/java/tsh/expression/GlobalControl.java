@@ -25,53 +25,20 @@
  *****************************************************************************/
 
 
-package tsh.util;
+package tsh.expression;
 
-import tsh.Capabilities;
-import tsh.Interpreter;
-import tsh.exception.EvalError;
-
-import java.util.List;
+import tsh.constant.ParserConstants;
 
 /**
- * Console startup class.
+ * Represents a Return, Break, or Continue statement
  */
-public class Console {
+public class GlobalControl implements ParserConstants {
+    public String name;
+    public Object value;
 
-
-    public static ThreadLocal<List<String>> log = new ThreadLocal<>();
-
-
-    public static String info() {
-        StringBuilder sb = new StringBuilder();
-        List<String> list = log.get();
-        if (list != null) {
-            for (String s : list) {
-                sb.append(s).append("\n");
-            }
-            list.clear();
-            log.set(list);
-        }
-        return sb.toString();
-    }
-
-    public static void main(String args[]) {
-
-        if (!Capabilities.classExists("tsh.util.Util"))
-            System.out.println("Can't find the BeanShell utilities...");
-
-        if (Capabilities.haveSwing()) {
-            Utils.startSplashScreen();
-            try {
-                new Interpreter().eval("desktop()");
-            } catch (EvalError e) {
-                System.err.println("Couldn't start desktop: " + e);
-            }
-        } else {
-            System.err.println(
-                    "Can't find javax.swing package: "
-                            + " An AWT based Console is available but not built by default.");
-            //AWTConsole.main( args );
-        }
+    public GlobalControl(String name, Object value) {
+        this.name = name;
+        this.value = value;
     }
 }
+

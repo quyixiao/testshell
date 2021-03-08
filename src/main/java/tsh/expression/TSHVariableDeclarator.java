@@ -8,7 +8,6 @@ import tsh.exception.EvalError;
 import tsh.exception.UtilEvalError;
 
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 public class TSHVariableDeclarator extends SimpleNode {
@@ -29,14 +28,19 @@ public class TSHVariableDeclarator extends SimpleNode {
                 throw new EvalError("Void initializer.", this, callstack);
             }
             try {
-                if (initializer instanceof TSHListInitializer || value instanceof  List) {//如果是集合类型
+                if (initializer instanceof TSHListInitializer || value instanceof List) {//如果是集合类型
                     List<Object> objectList = (List<Object>) value;
                     for (int i = 0; i < names.length; i++) {
                         if (objectList.size() > i) {
                             if (i < names.length - 1) {
                                 namespace.setVariable(names[i], objectList.get(i), false);
                             } else {
-                                namespace.setVariable(names[i], objectList.subList(i, objectList.size()), false);
+                                List<Object> list = objectList.subList(i, objectList.size());
+                                if (list.size() == 1) {
+                                    namespace.setVariable(names[i], list.get(0), false);
+                                } else {
+                                    namespace.setVariable(names[i], list, false);
+                                }
                             }
                         } else {
                             namespace.setVariable(names[i], null, false);

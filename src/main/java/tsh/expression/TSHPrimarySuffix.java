@@ -179,7 +179,11 @@ public class TSHPrimarySuffix extends SimpleNode implements ParserConstants {
                     if (obj instanceof List) {
                         beginIndex = getRealIndex(((List) obj).size(), getInt(data.getSecond()));
                         endIndex = getRealIndex(((List) obj).size(), getInt(data.getThird()));
-                        return ((List) obj).subList(beginIndex, endIndex);
+                        List<Object> list =  ((List) obj).subList(beginIndex, endIndex);
+                        if(list.size() == 1 ){
+                            return list.get(0);
+                        }
+                        return list;
                     } else if (obj instanceof String) {
                         beginIndex = getRealIndex(((String) obj).length(), getInt(data.getSecond()));
                         endIndex = getRealIndex(((String) obj).length(), getInt(data.getThird()));

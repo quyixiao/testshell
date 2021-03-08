@@ -58,6 +58,7 @@ public interface ParserTreeConstants {
     public final static String T_TypedVariableDeclaration = "TypedVariableDeclaration";
     public final static String T_StatementExpressionList = "StatementExpressionList";
     public final static String T_ReturnStatement = "ReturnStatement";
+    public final static String T_ExportStatement = "ExportStatement";
     public final static String T_ThrowStatement = "ThrowStatement";
     public final static String T_TryStatement = "TryStatement";
     public final static String T_ListInitializer = "ListInitializer";
