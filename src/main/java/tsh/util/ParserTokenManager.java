@@ -243,7 +243,7 @@ public class ParserTokenManager extends Utils implements ParserConstants {
             if (StringUtil.isNumber(image)) { //如果前面是数字，则直接略过
                 return 0;
             }
-            if (image.length() > 1) {
+            if (image.length() > 0) {
                 input_stream.backup(1);
             }
             return getCommon();

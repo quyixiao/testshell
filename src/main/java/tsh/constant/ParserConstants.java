@@ -37,6 +37,8 @@ public interface ParserConstants {
     String VAR = "var";                            //变量
     String IN = "in";                            //变量
     String EXPORT = "export";                            // 变量导出
+    String NEW = "new";                            //  创建
+
 
     String IDENTIFIER = "identifier";                            // 字符字面量
     String BOOL = "bool";                            // bool 数据类型
@@ -144,6 +146,7 @@ public interface ParserConstants {
             HOOK,
             SSTAR,
             AT,
+            NEW,
             ASSIGN, GT, LT, BANG, OR, AND, PLUS, MINUS, STAR, SLASH, XOR, MOD,
             EQ, LE, GE, NE, INCR, DECR, BOOL_AND, BOOL_OR, LSHIFT, RSIGNEDSHIFT, RUNSIGNEDSHIFT, PLUSASSIGN, MINUSASSIGN,
             STARASSIGN, SLASHASSIGN, ANDASSIGN, ORASSIGN, XORASSIGN, MODASSIGN, LSHIFTASSIGN, RSIGNEDSHIFTASSIGN, RUNSIGNEDSHIFTASSIGN,

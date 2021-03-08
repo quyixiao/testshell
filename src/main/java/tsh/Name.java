@@ -486,7 +486,7 @@ public class Name implements java.io.Serializable {
     /**
      * @return the enclosing class body namespace or null if not in a class.
      */
-    static NameSpace getClassNameSpace(NameSpace thisNameSpace) {
+    public static NameSpace getClassNameSpace(NameSpace thisNameSpace) {
         // is a class instance
         //if ( thisNameSpace.classInstance != null )
         if (thisNameSpace.isClass)

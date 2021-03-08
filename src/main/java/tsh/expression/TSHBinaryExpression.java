@@ -42,17 +42,11 @@ public class TSHBinaryExpression extends SimpleNode implements ParserConstants {
         Object rhs = ((SimpleNode) jjtGetChild(1)).eval(callstack, interpreter);
         boolean isRhsWrapper = isWrapper(rhs);
         if ((isLhsWrapper || isPrimitiveValue(lhs)) && (isRhsWrapper || isPrimitiveValue(rhs))) {
-            if ((isLhsWrapper && isRhsWrapper &&Utils.eq( kind, EQ))) {
-				/*
-					Don't auto-unwrap wrappers (preserve identity semantics)
-					FALL THROUGH TO OBJECT OPERATIONS BELOW.
-				*/
-            } else
-                try {
-                    return Primitive.binaryOperation(lhs, rhs, kind);
-                } catch (UtilEvalError e) {
-                    throw e.toEvalError(this, callstack);
-                }
+            try {
+                return Primitive.binaryOperation(lhs, rhs, kind);
+            } catch (UtilEvalError e) {
+                throw e.toEvalError(this, callstack);
+            }
         }
 
         switch (kind) {

@@ -241,7 +241,8 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
         token = oldToken;
         jj_kind = kind;
-        throw new ParseException();
+        String message = token.beginLine + "行," + token.beginColumn + "列,代码书写有误";
+        throw new ParseException(message);
     }
 
 
@@ -429,7 +430,6 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
     }
 
 
-
     final public boolean BlockStatement() throws ParseException {
         jj_consume_token_next_line();
         if (jj_2_33(3, EOF)) return false;
@@ -437,9 +437,9 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
             MethodDeclaration();
         } else if (jj_2_31(2147483647)) {
             VariableDeclarator();
-        }else if (jj_2_33(3, AT)){
+        } else if (jj_2_33(3, AT)) {
             AnnotationMethodInvocationDeclarator();
-        }else {
+        } else {
             Statement();
         }
         return true;
@@ -704,6 +704,12 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
                             break;
                         case RETURN:
                             ReturnStatement();
+                            break;
+                        case THROW:
+                            ThrowStatement();
+                            break;
+                        case TRY:
+                            TryStatement();
                             break;
                         default:
                             jj_la1[70] = jj_gen;
@@ -1182,6 +1188,113 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
     }
 
 
+    final public void ThrowStatement() throws ParseException {
+        TSHThrowStatement jjtn000 = new TSHThrowStatement(T_ThrowStatement);
+        boolean jjtc000 = true;
+        jjtree.openNodeScope(jjtn000);
+        jjtreeOpenNodeScope(jjtn000);
+        try {
+            jj_consume_token(THROW);
+            Expression();
+        } catch (Throwable jjte000) {
+            if (jjtc000) {
+                jjtree.clearNodeScope(jjtn000);
+                jjtc000 = false;
+            } else {
+                jjtree.popNode();
+            }
+            if (jjte000 instanceof RuntimeException) {
+                {
+                    if (true) throw (RuntimeException) jjte000;
+                }
+            }
+            if (jjte000 instanceof ParseException) {
+                {
+                    if (true) throw (ParseException) jjte000;
+                }
+            }
+            {
+                if (true) throw (Error) jjte000;
+            }
+        } finally {
+            if (jjtc000) {
+                jjtree.closeNodeScope(jjtn000, true);
+                jjtreeCloseNodeScope(jjtn000);
+            }
+        }
+    }
+
+
+    final public void TryStatement() throws ParseException {
+        TSHTryStatement jjtn000 = new TSHTryStatement(T_TryStatement);
+        boolean jjtc000 = true;
+        jjtree.openNodeScope(jjtn000);
+        jjtreeOpenNodeScope(jjtn000);
+        boolean closed = false;
+        try {
+            jj_consume_token(TRY);
+            Block();
+            label_27:
+            while (true) {
+                switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
+                    case CATCH:
+                        ;
+                        break;
+                    default:
+                        jj_la1[86] = jj_gen;
+                        break label_27;
+                }
+                jj_consume_token(CATCH);
+                jj_consume_token(LPAREN);
+                FormalParameter();
+                jj_consume_token(RPAREN);
+                Block();
+                closed = true;
+            }
+            switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
+                case FINALLY:
+                    jj_consume_token(FINALLY);
+                    Block();
+                    closed = true;
+                    break;
+                default:
+                    jj_la1[87] = jj_gen;
+            }
+            jjtree.closeNodeScope(jjtn000, true);
+            jjtc000 = false;
+            jjtreeCloseNodeScope(jjtn000);
+            if (!closed) {
+                if (true) throw new ParseException();
+            }
+        } catch (Throwable jjte000) {
+            if (jjtc000) {
+                jjtree.clearNodeScope(jjtn000);
+                jjtc000 = false;
+            } else {
+                jjtree.popNode();
+            }
+            if (jjte000 instanceof RuntimeException) {
+                {
+                    if (true) throw (RuntimeException) jjte000;
+                }
+            }
+            if (jjte000 instanceof ParseException) {
+                {
+                    if (true) throw (ParseException) jjte000;
+                }
+            }
+            {
+                if (true) throw (Error) jjte000;
+            }
+        } finally {
+            if (jjtc000) {
+                jjtree.closeNodeScope(jjtn000, true);
+                jjtreeCloseNodeScope(jjtn000);
+            }
+        }
+    }
+
+
     final public void VariableDeclarator() throws ParseException {
         TSHVariableDeclarator jjtn000 = new TSHVariableDeclarator(T_VariableDeclarator);
         boolean jjtc000 = true;
@@ -1238,8 +1351,6 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
             }
         }
     }
-
-
 
 
     final public void VariableInitializer() throws ParseException {
@@ -1311,7 +1422,6 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
     }
 
 
-
     final public void Expression() throws ParseException {
         if (jj_2_8(2147483647)) {
             Assignment();
@@ -1329,6 +1439,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
                 case TILDE:
                 case INCR:
                 case DECR:
+                case NEW:
                 case PLUS:
                 case MINUS:
                     ConditionalExpression();
@@ -2186,6 +2297,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
             case LPAREN:
             case BANG:
             case TILDE:
+            case NEW:
                 UnaryExpressionNotPlusMinus();
                 break;
             default:
@@ -2285,6 +2397,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
                     case IDENTIFIER:
                     case NUMBER:
                     case LPAREN:
+                    case NEW:
                         PostfixExpression();
                         break;
                     default:
@@ -2337,6 +2450,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
                 case NUMBER:
                 case IDENTIFIER:
                 case LPAREN:
+                case NEW:
                     PrimaryExpression();
                     break;
                 default:
@@ -2410,6 +2524,9 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
                 jj_consume_token(LPAREN);
                 Expression();
                 jj_consume_token(RPAREN);
+                break;
+            case NEW:
+                AllocationExpression();
                 break;
             default:
                 jj_la1[57] = jj_gen;
@@ -2494,7 +2611,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
             jjtc000 = false;
             jjtreeCloseNodeScope(jjtn000);
             jjtn000.text = s.toString();
-        }  finally {
+        } finally {
             if (jjtc000) {
                 jjtree.closeNodeScope(jjtn000, true);
                 jjtreeCloseNodeScope(jjtn000);
@@ -2781,6 +2898,60 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
             }
             jj_consume_token(COMMA);
             Expression();
+        }
+    }
+
+
+    final public void AllocationExpression() throws ParseException {
+        TSHAllocationExpression jjtn000 = new TSHAllocationExpression(T_AllocationExpression);
+        boolean jjtc000 = true;
+        jjtree.openNodeScope(jjtn000);
+        jjtreeOpenNodeScope(jjtn000);
+        try {
+            switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
+                case NEW:
+                    jj_consume_token(NEW);
+                    AmbiguousName();
+                    switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
+                        case LPAREN:
+                            Arguments();
+                            break;
+                        default:
+                            jj_la1[65] = jj_gen;
+                            jj_consume_token(default_1);
+                            throw new ParseException();
+                    }
+                    break;
+                default:
+                    jj_la1[66] = jj_gen;
+                    jj_consume_token(default_1);
+                    throw new ParseException();
+            }
+        } catch (Throwable jjte000) {
+            if (jjtc000) {
+                jjtree.clearNodeScope(jjtn000);
+                jjtc000 = false;
+            } else {
+                jjtree.popNode();
+            }
+            if (jjte000 instanceof RuntimeException) {
+                {
+                    if (true) throw (RuntimeException) jjte000;
+                }
+            }
+            if (jjte000 instanceof ParseException) {
+                {
+                    if (true) throw (ParseException) jjte000;
+                }
+            }
+            {
+                if (true) throw (Error) jjte000;
+            }
+        } finally {
+            if (jjtc000) {
+                jjtree.closeNodeScope(jjtn000, true);
+                jjtreeCloseNodeScope(jjtn000);
+            }
         }
     }
 
@@ -3584,7 +3755,6 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
             }
         }
     }
-
 
 
     final private void jj_3_29() {
