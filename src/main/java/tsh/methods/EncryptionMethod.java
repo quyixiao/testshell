@@ -10,7 +10,7 @@ public class EncryptionMethod {
 
 
 
-    public static Object sha256(Object ... t) throws Exception {
+    public static Object sha256(Object ... t)  {
         try {
             String signStrBefore = (String)t[0];
             MessageDigest md = MessageDigest.getInstance("SHA-256");
@@ -29,9 +29,10 @@ public class EncryptionMethod {
 
             }
             return stb.toString();
-        } catch (NoSuchAlgorithmException e) {
-            throw new NoSuchAlgorithmException();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return null;
     }
 
     public static String md5(Object ... t) {

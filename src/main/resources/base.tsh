@@ -1,9 +1,7 @@
 def open(url,method='POST',headers,data){
     if( headers !=null){
-        return http1(url,method,header,data)
+        return http1(url,method,headers,data)
     }else {
         return http2(url,method,data)
     }
 }
-
-
