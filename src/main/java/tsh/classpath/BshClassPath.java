@@ -29,7 +29,7 @@ package tsh.classpath;
 
 import tsh.NameSource;
 import tsh.exception.ClassPathException;
-import tsh.util.StringUtil;
+import tsh.util.TStringUtil;
 
 import java.io.*;
 import java.lang.ref.WeakReference;
@@ -570,7 +570,7 @@ public class BshClassPath
             return userClassPathComp;
 
         String cp = System.getProperty("java.class.path");
-        String[] paths = StringUtil.split(cp, File.pathSeparator);
+        String[] paths = TStringUtil.split(cp, File.pathSeparator);
 
         URL[] urls = new URL[paths.length];
         try {

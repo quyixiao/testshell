@@ -5,7 +5,7 @@ import tsh.Interpreter;
 import tsh.SimpleNode;
 import tsh.entity.TVar;
 import tsh.exception.EvalError;
-import tsh.util.StringUtil;
+import tsh.util.TStringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +39,7 @@ public class TSHFormalParameters extends SimpleNode {
                 names.add(param.name);
                 flag++;
                 TVar var = new TVar(param.name);
-                if (StringUtil.isNotBlank(param.kind)) {
+                if (TStringUtil.isNotBlank(param.kind)) {
                     var.setKind(param.kind);
                 }
                 values.add(var);

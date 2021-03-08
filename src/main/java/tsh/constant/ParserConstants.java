@@ -49,6 +49,7 @@ public interface ParserConstants {
     String SET = "set";                            // set 数据类型
     String MAP = "map";                              // map 类型
     String TUPLE = "tuple";                          //元组类型
+    String IMPORT = "import";                          //
 
 
     String LPAREN = "(";                        //  (

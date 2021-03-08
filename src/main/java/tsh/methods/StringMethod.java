@@ -1,6 +1,6 @@
 package tsh.methods;
 
-import tsh.util.StringUtil;
+import tsh.util.TStringUtil;
 
 public class StringMethod {
 
@@ -11,7 +11,7 @@ public class StringMethod {
         if (t[0] == null) {
             return true;
         }
-        if (StringUtil.isBlank(t[0].toString())) {
+        if (TStringUtil.isBlank(t[0].toString())) {
             return true;
         }
         return false;

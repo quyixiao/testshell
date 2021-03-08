@@ -7,7 +7,7 @@ import tsh.constant.ParserConstants;
 import tsh.entity.TBigDecimal;
 import tsh.exception.EvalError;
 import tsh.exception.UtilEvalError;
-import tsh.util.StringUtil;
+import tsh.util.TStringUtil;
 
 public class TSHSwitchStatement extends SimpleNode implements ParserConstants {
 
@@ -59,7 +59,7 @@ public class TSHSwitchStatement extends SimpleNode implements ParserConstants {
                 }
             }
         }
-        if (returnControl != null && (returnControl.kind == RETURN || StringUtil.isNotBlank(returnControl.label))) {
+        if (returnControl != null && (returnControl.kind == RETURN || TStringUtil.isNotBlank(returnControl.label))) {
             return returnControl;
         } else {
             return Primitive.VOID;

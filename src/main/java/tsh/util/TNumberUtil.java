@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
  * 类NumberUtil.java的实现描述： 数字相关的工具类
  * @author 陈金虎 2015年12月20日 下午2:56:09
  */
-public class NumberUtil {
+public class TNumberUtil {
 
     /**
      * <p>
@@ -56,7 +56,7 @@ public class NumberUtil {
      * @return
      */
     public static int strToIntWithDefault(String str, int def) {
-        if (StringUtil.isBlank(str)) {
+        if (TStringUtil.isBlank(str)) {
             return def;
         }
         try {
@@ -67,7 +67,7 @@ public class NumberUtil {
     }
     
     public static Integer strToIntWithDefault(String str, Integer def) {
-        if (StringUtil.isBlank(str)) {
+        if (TStringUtil.isBlank(str)) {
             return def;
         }
         try {
@@ -184,7 +184,7 @@ public class NumberUtil {
     }
 
     public static long strToLongWithDefault(String str, long def) {
-        if (StringUtil.isBlank(str)) {
+        if (TStringUtil.isBlank(str)) {
             return def;
         }
         try {
@@ -199,7 +199,7 @@ public class NumberUtil {
     }
 
     public static double strToDoubleWithDefault(String str, double def) {
-        if (StringUtil.isBlank(str)) {
+        if (TStringUtil.isBlank(str)) {
             return def;
         }
         try {
@@ -301,7 +301,7 @@ public class NumberUtil {
     }
 
 
-    public NumberUtil() {
+    public TNumberUtil() {
     }
 
     public static double format(double d, String format) {
@@ -371,7 +371,7 @@ public class NumberUtil {
     }
 
     public static long getLong(String str) {
-        if (StringUtil.isBlank(str)) {
+        if (TStringUtil.isBlank(str)) {
             return 0L;
         } else {
             long ret = 0L;
@@ -387,7 +387,7 @@ public class NumberUtil {
     }
 
     public static int getInt(String str) {
-        if (StringUtil.isBlank(str)) {
+        if (TStringUtil.isBlank(str)) {
             return 0;
         } else {
             boolean var1 = false;
@@ -404,7 +404,7 @@ public class NumberUtil {
     }
 
     public static double getDouble(String str) {
-        if (StringUtil.isBlank(str)) {
+        if (TStringUtil.isBlank(str)) {
             return 0.0D;
         } else {
             double ret = 0.0D;

@@ -9,7 +9,7 @@ import tsh.entity.TBigDecimal;
 import tsh.exception.EvalError;
 import tsh.exception.InterpreterError;
 import tsh.exception.UtilEvalError;
-import tsh.util.NumberUtil;
+import tsh.util.TNumberUtil;
 import tsh.util.Utils;
 
 import java.math.BigDecimal;
@@ -62,12 +62,12 @@ public class TSHUnaryExpression extends SimpleNode implements ParserConstants {
             Object obj  = ((TBigDecimal) op).getValue();
             int precision = ((TBigDecimal) op).getPrecision();
             if(((TBigDecimal) op).getPrecision() > 0){
-                op = NumberUtil.objToDoubleWithDefault(obj,0.0d);
+                op = TNumberUtil.objToDoubleWithDefault(obj,0.0d);
             }else{
-                op = NumberUtil.objToInt(obj);
+                op = TNumberUtil.objToInt(obj);
             }
             Object result =  primitiveWrapperUnaryOperation(op, kind);
-            return new TBigDecimal(NumberUtil.objToBigDecimalDefault(result,BigDecimal.ZERO),precision);
+            return new TBigDecimal(TNumberUtil.objToBigDecimalDefault(result,BigDecimal.ZERO),precision);
         }
         if (!(op instanceof Primitive)) {
             throw new UtilEvalError("Unary operation " + id + " inappropriate for object");

@@ -6,10 +6,7 @@ import tsh.NameSpace;
 import tsh.SimpleNode;
 import tsh.exception.InterpreterError;
 import tsh.exception.ParseException;
-import tsh.expression.ExportControl;
-import tsh.expression.GlobalControl;
-import tsh.expression.ReturnControl;
-import tsh.expression.TSHImportDeclaration;
+import tsh.expression.*;
 import tsh.service.ImportHelpService;
 import tsh.t.TSHTuple;
 
@@ -83,8 +80,7 @@ public class Utils {
         return false;
     }
 
-
-    public static TSHTuple run(String script, Map<String, Object> imports, ImportHelpService helpService) throws Exception {
+    public static TSHTuple run(String script, Map<String, Object> init, Map<String, Object> imports, ImportHelpService helpService) throws Exception {
         Object retVal = null;
         Reader in = null;
         Map<String, Object> global = new LinkedHashMap<>();
@@ -94,6 +90,7 @@ public class Utils {
             BshClassManager bcm = BshClassManager.createClassManager(localInterpreter);
             NameSpace nameSpace = new NameSpace(bcm, "global");
             CallStack callstack = new CallStack(nameSpace);
+            Utils.batchInitVariable(nameSpace, init);
             boolean eof = false;
             while (!eof) {
                 SimpleNode node = null;
@@ -103,7 +100,7 @@ public class Utils {
                         node = (SimpleNode) localInterpreter.get_jjtree().rootNode();
                         node.setSourceFile(script);
                         if (node instanceof TSHImportDeclaration) {
-                            ((TSHImportDeclaration) node).eval(imports,helpService,callstack,localInterpreter);
+                            ((TSHImportDeclaration) node).eval(imports, helpService, callstack, localInterpreter);
                         } else {
                             retVal = node.eval(callstack, localInterpreter);
 
@@ -162,5 +159,26 @@ public class Utils {
         }
         return map;
     }
+
+    public static void batchInitVariable(NameSpace nameSpace, Map<String, Object> map) throws Exception {
+        if (map == null) {
+            return;
+        }
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            setVariable(nameSpace, entry.getKey(), entry.getValue());
+        }
+    }
+
+    public static void setVariable(NameSpace nameSpace, String name, Object value) throws Exception {
+        if (value == null) {
+            return;
+        }
+        if (value instanceof TshMethod) {
+            nameSpace.setMethod(name, (TshMethod) value);
+        } else {
+            nameSpace.setVariable(name, value, false);
+        }
+    }
+
 
 }

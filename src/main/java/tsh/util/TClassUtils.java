@@ -11,7 +11,7 @@ import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-public class ClassUtils {
+public class TClassUtils {
 
 
     public static Map<String,Method> methodMap = new HashMap<>();
@@ -146,7 +146,7 @@ public class ClassUtils {
         if(methodMap.size() > 0){
             return methodMap.get(methodName);
         }
-        Set<Class<?>> classSet = ClassUtils.getClasses("tsh.methods");
+        Set<Class<?>> classSet = TClassUtils.getClasses("tsh.methods");
         for (Class c : classSet) {
             Method method[] = c.getDeclaredMethods();
             for (Method m : method) {
@@ -156,6 +156,31 @@ public class ClassUtils {
         return methodMap.get(methodName);
     }
 
+
+
+    public static ClassLoader getDefaultClassLoader() {
+        ClassLoader cl = null;
+        try {
+            cl = Thread.currentThread().getContextClassLoader();
+        }
+        catch (Throwable ex) {
+            // Cannot access thread context ClassLoader - falling back...
+        }
+        if (cl == null) {
+            // No thread context class loader -> use class loader of this class.
+            cl = TClassUtils.class.getClassLoader();
+            if (cl == null) {
+                // getClassLoader() returning null indicates the bootstrap ClassLoader
+                try {
+                    cl = ClassLoader.getSystemClassLoader();
+                }
+                catch (Throwable ex) {
+                    // Cannot access system ClassLoader - oh well, maybe the caller can live with null...
+                }
+            }
+        }
+        return cl;
+    }
 
 }
 

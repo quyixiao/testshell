@@ -740,7 +740,7 @@ public class Name implements java.io.Serializable {
             return meth.invokeNew(args, interpreter, callstack, callerInfo);
         } else {
             try {
-                Method mt = ClassUtils.getMethod(commandName);
+                Method mt = TClassUtils.getMethod(commandName);
                 if (mt != null) {
                     meth = new TshMethod(mt, mt.getDeclaringClass().newInstance());
                     return meth.invoke(args, interpreter, callstack, callerInfo);
@@ -768,7 +768,7 @@ public class Name implements java.io.Serializable {
             if (invokeMethod != null)
                 return invokeMethod.invoke(new Object[]{commandName, args}, interpreter, callstack, callerInfo);
 
-            throw new EvalError("Command not found: " + StringUtil.methodString(commandName, argTypes), callerInfo, callstack);
+            throw new EvalError("Command not found: " + TStringUtil.methodString(commandName, argTypes), callerInfo, callstack);
         }
 
         if (commandObject instanceof TshMethod)

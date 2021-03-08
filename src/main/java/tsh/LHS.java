@@ -36,7 +36,7 @@ import tsh.exception.UtilTargetError;
 import tsh.expression.Primitive;
 import tsh.expression.TshMethod;
 import tsh.util.CollectionManager;
-import tsh.util.NumberUtil;
+import tsh.util.TNumberUtil;
 import tsh.util.Reflect;
 import tsh.util.ReflectManager;
 
@@ -172,9 +172,9 @@ public class LHS implements ParserConstants, java.io.Serializable {
         if (type == INDEX)
             try {
                 if (object instanceof List) {
-                    return ((List) object).get(NumberUtil.objToInt(index));
+                    return ((List) object).get(TNumberUtil.objToInt(index));
                 } else {
-                    return Reflect.getIndex(object, NumberUtil.objToInt(index));
+                    return Reflect.getIndex(object, TNumberUtil.objToInt(index));
                 }
             } catch (Exception e) {
                 throw new UtilEvalError("Array access: " + e);
@@ -233,11 +233,11 @@ public class LHS implements ParserConstants, java.io.Serializable {
         } else if (type == INDEX) {
             try {
                 if (object instanceof List) {
-                    ((List) object).set(NumberUtil.objToInt(index), val);
+                    ((List) object).set(TNumberUtil.objToInt(index), val);
                 } else if (object instanceof Map) {
                     ((Map) object).put(index, val);
                 } else {
-                    Reflect.setIndex(object, NumberUtil.objToInt(index), val);
+                    Reflect.setIndex(object, TNumberUtil.objToInt(index), val);
                 }
             } catch (UtilTargetError e1) { // pass along target error
                 throw e1;

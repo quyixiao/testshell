@@ -143,7 +143,7 @@ public class Reflect {
             return Primitive.wrap(returnValue, returnType);
         } catch (IllegalAccessException e) {
             throw new ReflectError("Cannot access method "
-                    + StringUtil.methodString(
+                    + TStringUtil.methodString(
                     method.getName(), method.getParameterTypes())
                     + " in '" + method.getDeclaringClass() + "' :" + e);
         }
@@ -375,7 +375,7 @@ public class Reflect {
         if (method == null)
             throw new ReflectError(
                     (staticOnly ? "Static method " : "Method ")
-                            + StringUtil.methodString(name, types) +
+                            + TStringUtil.methodString(name, types) +
                             " not found in class'" + clas.getName() + "'");
 
         return method;
@@ -458,7 +458,7 @@ public class Reflect {
     private static Method findOverloadedMethod(
             Class baseClass, String methodName, Class[] types, boolean publicOnly) {
         if (Interpreter.DEBUG)
-            Interpreter.debug("Searching for method: " +StringUtil.methodString(methodName, types)+ " in '" + baseClass.getName() + "'");
+            Interpreter.debug("Searching for method: " + TStringUtil.methodString(methodName, types)+ " in '" + baseClass.getName() + "'");
 
         Method[] methods = getCandidateMethods(baseClass, methodName, types.length, publicOnly);
 
@@ -880,7 +880,7 @@ public class Reflect {
         if (method != null && staticOnly && !isStatic(method))
             throw new UtilEvalError(
                     "Cannot reach instance method: "
-                            + StringUtil.methodString(
+                            + TStringUtil.methodString(
                             method.getName(), method.getParameterTypes())
                             + " from static context: " + clas.getName());
     }
@@ -893,7 +893,7 @@ public class Reflect {
         else
             return new ReflectError(
                     "Can't find constructor: "
-                            + StringUtil.methodString(clas.getName(), types)
+                            + TStringUtil.methodString(clas.getName(), types)
                             + " in class: " + clas.getName());
     }
 

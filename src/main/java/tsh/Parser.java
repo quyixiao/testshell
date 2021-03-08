@@ -439,7 +439,9 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
             VariableDeclarator();
         } else if (jj_2_33(3, AT)) {
             AnnotationMethodInvocationDeclarator();
-        } else {
+        } else if (jj_2_33(3, IMPORT)){
+            ImportDeclaration();
+        }else {
             Statement();
         }
         return true;
@@ -1454,6 +1456,60 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
+
+    final public void ImportDeclaration() throws ParseException {
+        TSHImportDeclaration jjtn000 = new TSHImportDeclaration(T_ImportDeclaration);
+        boolean jjtc000 = true;
+        jjtree.openNodeScope(jjtn000);
+        jjtreeOpenNodeScope(jjtn000);
+        Token t = null;
+        StringBuffer s = null;
+        try {
+            jj_consume_token(IMPORT);
+            t = jj_consume_token(IDENTIFIER);
+            s = new StringBuffer(t.image);
+            label_5:
+            while (true) {
+                if (jj_2_7(2)) {
+                    ;
+                } else {
+                    break label_5;
+                }
+                jj_consume_token(DOT);
+                t = jj_consume_token(IDENTIFIER);
+                s.append("." + t.image);
+            }
+            jjtree.closeNodeScope(jjtn000, true);
+            jjtc000 = false;
+            jjtreeCloseNodeScope(jjtn000);
+            jjtn000.text = s.toString();
+        } catch (Throwable jjte000) {
+            if (jjtc000) {
+                jjtree.clearNodeScope(jjtn000);
+                jjtc000 = false;
+            } else {
+                jjtree.popNode();
+            }
+            if (jjte000 instanceof RuntimeException) {
+                {
+                    if (true) throw (RuntimeException) jjte000;
+                }
+            }
+            if (jjte000 instanceof ParseException) {
+                {
+                    if (true) throw (ParseException) jjte000;
+                }
+            }
+            {
+                if (true) throw (Error) jjte000;
+            }
+        } finally {
+            if (jjtc000) {
+                jjtree.closeNodeScope(jjtn000, true);
+                jjtreeCloseNodeScope(jjtn000);
+            }
+        }
+    }
 
     final public void Expression() throws ParseException {
         if (jj_2_8(2147483647)) {
@@ -2667,8 +2723,8 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
                     jjtc000 = false;
                     jjtreeCloseNodeScope(jjtn000);
                     TBigDecimal tBigDecimal = new TBigDecimal();
-                    tBigDecimal.setValue(NumberUtil.objToBigDecimalDefault(literal, BigDecimal.ZERO));
-                    tBigDecimal.setPrecision(NumberUtil.getPrecision(literal));
+                    tBigDecimal.setValue(TNumberUtil.objToBigDecimalDefault(literal, BigDecimal.ZERO));
+                    tBigDecimal.setPrecision(TNumberUtil.getPrecision(literal));
                     try {
                         jjtn000.value = tBigDecimal;
                     } catch (NumberFormatException e) {
@@ -2692,7 +2748,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
                     break;
                 case FALSE:
                 case TRUE:
-                    b = NumberUtil.objToBooleanDefault(value, false);
+                    b = TNumberUtil.objToBooleanDefault(value, false);
                     jjtree.closeNodeScope(jjtn000, true);
                     jjtc000 = false;
                     jjtreeCloseNodeScope(jjtn000);
@@ -2755,8 +2811,8 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
                     jjtreeCloseNodeScope(jjtn000);
                     literal = x.image;
                     TBigDecimal tBigDecimal = new TBigDecimal();
-                    tBigDecimal.setValue(NumberUtil.objToBigDecimalDefault(literal, BigDecimal.ZERO));
-                    tBigDecimal.setPrecision(NumberUtil.getPrecision(literal));
+                    tBigDecimal.setValue(TNumberUtil.objToBigDecimalDefault(literal, BigDecimal.ZERO));
+                    tBigDecimal.setPrecision(TNumberUtil.getPrecision(literal));
                     try {
                         jjtn000.value = tBigDecimal;
                     } catch (NumberFormatException e) {
@@ -3190,7 +3246,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
     final private int jj_3R_28() {
         while (true) {
             Token t = jj_scan_token_next();
-            if (StringUtil.isNotBlank(t.image)) {   // },和 case 的情况，表示本次终止掉
+            if (TStringUtil.isNotBlank(t.image)) {   // },和 case 的情况，表示本次终止掉
                 if (eqOR(t.kind, RBRACE, CASE)) {
                     return 0;
                 } else if (eqOR(t.kind, BREAK)) {      // break 表示下一次终止掉
@@ -3205,7 +3261,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
     final private boolean jj_3_23() {
         while (true) {
             Token t = jj_scan_token_next();
-            if (StringUtil.isNotBlank(t.image)) {
+            if (TStringUtil.isNotBlank(t.image)) {
                 if (eq(t.kind, RBRACE)) {
                     return true;
                 } else {

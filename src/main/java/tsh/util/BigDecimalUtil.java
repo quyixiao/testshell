@@ -295,7 +295,7 @@ public class BigDecimalUtil {
     }
 
     public static double round(String v) {
-        if (StringUtil.isBlank(v)) {
+        if (TStringUtil.isBlank(v)) {
             return 0.0D;
         } else {
             BigDecimal b = new BigDecimal(v);
@@ -315,7 +315,7 @@ public class BigDecimalUtil {
     }
 
     public static BigDecimal getBigDecimal(String str) {
-        if (!StringUtil.isNumber(str)) {
+        if (!TStringUtil.isNumber(str)) {
             str = "0";
         }
 

@@ -2,7 +2,7 @@ package tsh.util;
 
 import java.io.*;
 
-public class FileUtils {
+public class TFileUtils {
 
 
     public static String readToStr(String fileName) {

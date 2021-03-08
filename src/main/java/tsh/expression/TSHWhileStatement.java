@@ -5,7 +5,7 @@ import tsh.Interpreter;
 import tsh.SimpleNode;
 import tsh.constant.ParserConstants;
 import tsh.exception.EvalError;
-import tsh.util.StringUtil;
+import tsh.util.TStringUtil;
 
 public class TSHWhileStatement extends SimpleNode implements ParserConstants {
 
@@ -49,7 +49,7 @@ public class TSHWhileStatement extends SimpleNode implements ParserConstants {
             Object ret = body.eval(callstack, interpreter);
             if (ret instanceof ReturnControl) {
                 String retLabel = ((ReturnControl) ret).label;
-                if (StringUtil.isNotBlank(retLabel)) {                //处理 break label 的情况
+                if (TStringUtil.isNotBlank(retLabel)) {                //处理 break label 的情况
                     if (!retLabel.equals(label)) {
                         return ret;
                     }

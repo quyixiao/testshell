@@ -120,7 +120,7 @@ public class NameCompletionTable extends ArrayList
         // Find the max common prefix
         String maxCommon = (String) found.get(0);
         for (int i = 1; i < found.size() && maxCommon.length() > 0; i++) {
-            maxCommon = StringUtil.maxCommonPrefix(
+            maxCommon = TStringUtil.maxCommonPrefix(
                     maxCommon, (String) found.get(i));
 
             // if maxCommon gets as small as part, stop trying

@@ -103,7 +103,7 @@ public class ParserTokenManager extends Utils implements ParserConstants {
         Token t = new Token();
         t.kind = jjmatchedKind;
         t.image = input_stream.GetImage().trim();
-        if (jjmatchedKind.equals(EOF) && StringUtil.isNotBlank(t.image)) {
+        if (jjmatchedKind.equals(EOF) && TStringUtil.isNotBlank(t.image)) {
             if (TRUE.equals(t.image.trim())) {
                 t.kind = TRUE;
             } else if (FALSE.equals(t.image.trim())) {
@@ -214,7 +214,7 @@ public class ParserTokenManager extends Utils implements ParserConstants {
                 input_stream.backup(1);
             }
             String temp = c + "";
-            if (c == 0 || StringUtil.isBlank(temp)) {
+            if (c == 0 || TStringUtil.isBlank(temp)) {
                 String image = input_stream.GetImage().trim();
                 if (image.length() > 1) {
                     input_stream.backup(1);
@@ -240,7 +240,7 @@ public class ParserTokenManager extends Utils implements ParserConstants {
         } else if (!continueReader && eqOR(kind, DOT)) {    //. 的处理
             String image = input_stream.GetImage().trim();
             image = image.substring(0, image.length() - 1);
-            if (StringUtil.isNumber(image)) { //如果前面是数字，则直接略过
+            if (TStringUtil.isNumber(image)) { //如果前面是数字，则直接略过
                 return 0;
             }
             if (image.length() > 0) {
@@ -382,13 +382,13 @@ public class ParserTokenManager extends Utils implements ParserConstants {
 
     public int getCommon() {
         String image = input_stream.GetImage().trim();
-        if (StringUtil.isNotBlank(image)) {       //表明前面有非空格，tab，的字符
+        if (TStringUtil.isNotBlank(image)) {       //表明前面有非空格，tab，的字符
             String match = matchs(image.trim().toCharArray());
             jjmatchedPos = input_stream.bufpos;
-            if (StringUtil.isNotBlank(match)) {
+            if (TStringUtil.isNotBlank(match)) {
                 jjmatchedKind = match;
             } else {
-                if (StringUtil.isNumber(image)) {
+                if (TStringUtil.isNumber(image)) {
                     jjmatchedKind = NUMBER;
                 } else {
                     jjmatchedKind = IDENTIFIER;
@@ -411,7 +411,7 @@ public class ParserTokenManager extends Utils implements ParserConstants {
             if (a == 0) {
                 break;
             }
-            if (StringUtil.isBlank(buf + "")) {
+            if (TStringUtil.isBlank(buf + "")) {
                 continue;
             }
             List<Integer> tempLocations = new ArrayList<>();

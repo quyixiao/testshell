@@ -95,7 +95,7 @@ public class ClassBrowser extends JSplitPane implements ListSelectionListener, C
     String[] toSortedStrings(Collection c) {
         List l = new ArrayList(c);
         String[] sa = (String[]) (l.toArray(new String[0]));
-        return StringUtil.bubbleSort(sa);
+        return TStringUtil.bubbleSort(sa);
     }
 
     void setClist(String packagename) {
@@ -123,7 +123,7 @@ public class ClassBrowser extends JSplitPane implements ListSelectionListener, C
         String[] sa = new String[constructors.length];
         for (int i = 0; i < sa.length; i++) {
             Constructor con = constructors[i];
-            sa[i] = StringUtil.methodString(
+            sa[i] = TStringUtil.methodString(
                     con.getName(), con.getParameterTypes());
         }
         //return bubbleSort(sa);
@@ -133,7 +133,7 @@ public class ClassBrowser extends JSplitPane implements ListSelectionListener, C
     String[] parseMethods(Method[] methods) {
         String[] sa = new String[methods.length];
         for (int i = 0; i < sa.length; i++)
-            sa[i] = StringUtil.methodString(
+            sa[i] = TStringUtil.methodString(
                     methods[i].getName(), methods[i].getParameterTypes());
         //return bubbleSort(sa);
         return sa;
@@ -514,7 +514,7 @@ public class ClassBrowser extends JSplitPane implements ListSelectionListener, C
             Iterator it = packages.iterator();
             while (it.hasNext()) {
                 String pack = (String) (it.next());
-                String[] sa = StringUtil.split(pack, ".");
+                String[] sa = TStringUtil.split(pack, ".");
                 Map level = packageTree;
                 for (int i = 0; i < sa.length; i++) {
                     String name = sa[i];

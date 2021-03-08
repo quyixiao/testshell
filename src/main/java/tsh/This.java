@@ -34,7 +34,7 @@ import tsh.exception.UtilEvalError;
 import tsh.expression.Primitive;
 import tsh.expression.TshMethod;
 import tsh.util.Reflect;
-import tsh.util.StringUtil;
+import tsh.util.TStringUtil;
 
 /**
  * 'This' is the type of bsh scripted objects.
@@ -286,7 +286,7 @@ public class This implements java.io.Serializable, Runnable {
                     interpreter, callstack, callerInfo);
 
         throw new EvalError("Method " +
-                StringUtil.methodString(methodName, types) +
+                TStringUtil.methodString(methodName, types) +
                 " not found in bsh scripted object: " + namespace.getName(),
                 callerInfo, callstack);
     }

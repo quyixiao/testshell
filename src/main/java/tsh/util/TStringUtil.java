@@ -30,7 +30,7 @@ package tsh.util;
 import java.io.File;
 import java.util.*;
 
-public class StringUtil {
+public class TStringUtil {
 
     public static String[] split(String s, String delim) {
         Vector v = new Vector();

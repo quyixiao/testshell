@@ -6,7 +6,7 @@ import tsh.exception.EvalError;
 import tsh.exception.UtilEvalError;
 import tsh.interfac.BshIterator;
 import tsh.util.CollectionManager;
-import tsh.util.StringUtil;
+import tsh.util.TStringUtil;
 
 import java.util.Map;
 
@@ -63,7 +63,7 @@ public class TSHForStatement extends SimpleNode implements ParserConstants {
                     value = Primitive.NULL;
                 }
 
-                if (StringUtil.isNotBlank(kOrI)) {
+                if (TStringUtil.isNotBlank(kOrI)) {
                     eachNameSpace.setVariable(kOrI, i, false);
                 }
 
@@ -81,7 +81,7 @@ public class TSHForStatement extends SimpleNode implements ParserConstants {
                 Object ret = statement.eval(callstack, interpreter);
                 if (ret instanceof ReturnControl) {
                     String retLabel = ((ReturnControl) ret).label;
-                    if (StringUtil.isNotBlank(retLabel)) {                //处理 break label 的情况
+                    if (TStringUtil.isNotBlank(retLabel)) {                //处理 break label 的情况
                         if (!retLabel.equals(label)) {
                             returnControl = ret;
                         }
@@ -127,7 +127,7 @@ public class TSHForStatement extends SimpleNode implements ParserConstants {
                 Object ret = statement.eval(callstack, interpreter);
                 if (ret instanceof ReturnControl) {
                     String retLabel = ((ReturnControl) ret).label;
-                    if (StringUtil.isNotBlank(retLabel)) {                //处理 break label 的情况
+                    if (TStringUtil.isNotBlank(retLabel)) {                //处理 break label 的情况
                         if (!retLabel.equals(label)) {
                             returnControl = ret;
                         }

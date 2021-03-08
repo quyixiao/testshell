@@ -65,6 +65,7 @@ public interface ParserTreeConstants {
     public final static String T_MapInitializer = "MapInitializer";
     public final static String T_LabeledStatement = "LabeledStatement";
     public final static String T_AnnotationMethodDeclaration = "AnnotationMethodDeclaration";
+    public final static String T_ImportDeclaration = "ImportDeclaration";
 
 
 }

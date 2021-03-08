@@ -7,7 +7,7 @@ import tsh.exception.*;
 import tsh.t.TSHTuple;
 import tsh.t.Tuple3;
 import tsh.util.CollectionManager;
-import tsh.util.NumberUtil;
+import tsh.util.TNumberUtil;
 import tsh.util.Reflect;
 
 import java.lang.reflect.Array;
@@ -153,7 +153,7 @@ public class TSHPrimarySuffix extends SimpleNode implements ParserConstants {
     public static Object getIndex(Object indexVal) throws UtilEvalError {
         if (!(indexVal instanceof Primitive)) {
             if (indexVal instanceof TBigDecimal) {
-                indexVal = NumberUtil.objToInt(((TBigDecimal) indexVal).getValue());
+                indexVal = TNumberUtil.objToInt(((TBigDecimal) indexVal).getValue());
             } else {
                 if (!(indexVal instanceof String)) {
                     indexVal = Types.castObject(indexVal, Integer.TYPE, Types.ASSIGNMENT);
@@ -208,7 +208,7 @@ public class TSHPrimarySuffix extends SimpleNode implements ParserConstants {
     }
 
     public int getInt(Object value) {
-        return NumberUtil.objToInt(value);
+        return TNumberUtil.objToInt(value);
     }
 
     public int getRealIndex(int size, int position) {

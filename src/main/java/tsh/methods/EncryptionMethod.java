@@ -1,7 +1,7 @@
 package tsh.methods;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import tsh.util.StringUtil;
+import tsh.util.TStringUtil;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -36,7 +36,7 @@ public class EncryptionMethod {
 
     public static String md5(Object ... t) {
         String md5Str = (String)t[0];
-        if (StringUtil.isBlank(md5Str)) {
+        if (TStringUtil.isBlank(md5Str)) {
             return null;
         }
         return DigestUtils.md5Hex(md5Str);

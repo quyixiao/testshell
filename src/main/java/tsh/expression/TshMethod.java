@@ -37,7 +37,7 @@ import tsh.exception.ReflectError;
 import tsh.exception.TargetError;
 import tsh.exception.UtilEvalError;
 import tsh.util.Reflect;
-import tsh.util.StringUtil;
+import tsh.util.TStringUtil;
 import tsh.util.Utils;
 
 import java.lang.reflect.InvocationTargetException;
@@ -270,7 +270,7 @@ public class TshMethod implements ParserConstants, java.io.Serializable {
             int flag2 = -1;
             for (TVar o : argValues) {
                 String kind = o.getKind();
-                if (StringUtil.isNotBlank(kind)) {
+                if (TStringUtil.isNotBlank(kind)) {
                     if (Utils.eq(kind, STAR)) {
                         flag1 = i;
                     } else if (Utils.eq(kind, SSTAR)) {
@@ -407,7 +407,7 @@ public class TshMethod implements ParserConstants, java.io.Serializable {
 
     public String toString() {
         return "Scripted Method: "
-                + StringUtil.methodString(name, getParameterTypes());
+                + TStringUtil.methodString(name, getParameterTypes());
     }
 
 

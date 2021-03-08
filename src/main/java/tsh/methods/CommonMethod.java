@@ -2,8 +2,8 @@ package tsh.methods;
 
 import tsh.entity.TBigDecimal;
 import tsh.util.Console;
-import tsh.util.NumberUtil;
-import tsh.util.StringUtil;
+import tsh.util.TNumberUtil;
+import tsh.util.TStringUtil;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -17,7 +17,7 @@ public class CommonMethod {
     public void print(Object... t) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < t.length; i++) {
-            sb.append(StringUtil.getString(t[i]));
+            sb.append(TStringUtil.getString(t[i]));
             if (i < t.length - 1) {
                 sb.append(" ");
             }
@@ -44,7 +44,7 @@ public class CommonMethod {
         String v1 = (String) t[0];
         if (t[1] instanceof TBigDecimal) {
             TBigDecimal v2 = (TBigDecimal) t[1];
-            return new SimpleDateFormat(v1).format(new Date(NumberUtil.strToLong(v2.getValue() + "")));
+            return new SimpleDateFormat(v1).format(new Date(TNumberUtil.strToLong(v2.getValue() + "")));
         } else if (t[1] instanceof Date) {
             return new SimpleDateFormat(v1).format((Date) t[1]);
         }
@@ -74,7 +74,7 @@ public class CommonMethod {
     public Object sleep(Object... t) {
         try {
             if (t[0] instanceof TBigDecimal) {
-                Thread.sleep(NumberUtil.objToInt(((TBigDecimal) t[0]).getValue()));
+                Thread.sleep(TNumberUtil.objToInt(((TBigDecimal) t[0]).getValue()));
             }
         } catch (InterruptedException e) {
             e.printStackTrace();

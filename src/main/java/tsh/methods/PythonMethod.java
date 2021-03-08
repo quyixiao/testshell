@@ -1,7 +1,7 @@
 package tsh.methods;
 
 import tsh.entity.TBigDecimal;
-import tsh.util.NumberUtil;
+import tsh.util.TNumberUtil;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ public class PythonMethod {
                     list.add(new TBigDecimal(new BigDecimal(i), 0));
                 }
             } else if (t0 instanceof String && t1 instanceof String) {
-                for (int i = NumberUtil.objToInt(t0); i < NumberUtil.objToInt(t1); i++) {
+                for (int i = TNumberUtil.objToInt(t0); i < TNumberUtil.objToInt(t1); i++) {
                     list.add(new TBigDecimal(new BigDecimal(i), 0));
                 }
             }
@@ -31,7 +31,7 @@ public class PythonMethod {
                     list.add(new TBigDecimal(new BigDecimal(i), 0));
                 }
             } else if (t0 instanceof String) {
-                for (int i = 0; i < NumberUtil.objToInt(t0); i++) {
+                for (int i = 0; i < TNumberUtil.objToInt(t0); i++) {
                     list.add(new TBigDecimal(new BigDecimal(i), 0));
                 }
             }
