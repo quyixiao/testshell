@@ -1,11 +1,11 @@
 package tsh.t;
 
-public class Tuple8<A, B, C, D, E, F, G, H> extends Tuple7<A, B, C, D, E, F, G> {
+public class TTuple8<A, B, C, D, E, F, G, H> extends TTuple7<A, B, C, D, E, F, G> {
 
 
     private H eight;
 
-    public Tuple8(A a, B b, C c, D d, E e, F f, G g, H h) {
+    public TTuple8(A a, B b, C c, D d, E e, F f, G g, H h) {
         super(a, b, c, d, e, f, g);
         eight = h;
     }

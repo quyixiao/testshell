@@ -12,10 +12,10 @@ package tsh.t;
  * @param <D>
  * @param <E>
  */
-public class Tuple5<A, B, C, D, E> extends Tuple4<A, B, C, D> {
+public class TTuple5<A, B, C, D, E> extends TTuple4<A, B, C, D> {
     private E fifth;
 
-    public Tuple5(A a, B b, C c, D d, E e) {
+    public TTuple5(A a, B b, C c, D d, E e) {
         super(a, b, c, d);
         fifth = e;
     }

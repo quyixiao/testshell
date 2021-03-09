@@ -2,10 +2,10 @@ package tsh.t;
 
 import java.io.Serializable;
 
-public class Tuple1<A> implements Serializable {
+public class TTuple1<A> implements Serializable {
     private A first;
 
-    public Tuple1(A a) {
+    public TTuple1(A a) {
         first = a;
     }
 

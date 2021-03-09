@@ -2,16 +2,25 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="bf17aaba-8d77-4716-bfb7-937d90bf1bb7" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/test/java/test/MethodTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tsh/Parser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tsh/Parser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tsh/constant/ParserConstants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tsh/constant/ParserConstants.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tsh/constant/ParserTreeConstants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tsh/constant/ParserTreeConstants.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tsh/expression/TSHGlobalStatement.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tsh/expression/TSHGlobalStatement.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/tsh/expression/TSHImportDeclaration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tsh/expression/TSHImportDeclaration.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tsh/methods/CommonMethod.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tsh/methods/CommonMethod.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tsh/util/Utils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tsh/util/Utils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/test/GetVericode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/test/GetVericode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tsh/expression/TSHPrimarySuffix.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tsh/expression/TSHPrimarySuffix.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tsh/t/TSHTuple.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tsh/t/TSHTuple.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tsh/t/Tuple1.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tsh/t/TTuple1.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tsh/t/Tuple10.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tsh/t/TTuple10.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tsh/t/Tuple11.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tsh/t/TTuple11.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tsh/t/Tuple2.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tsh/t/TTuple2.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tsh/t/Tuple3.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tsh/t/TTuple3.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tsh/t/Tuple4.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tsh/t/TTuple4.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tsh/t/Tuple5.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tsh/t/TTuple5.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tsh/t/Tuple6.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tsh/t/TTuple6.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tsh/t/Tuple7.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tsh/t/TTuple7.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tsh/t/Tuple8.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tsh/t/TTuple8.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tsh/t/Tuple9.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tsh/t/TTuple9.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tsh/util/ParserTokenManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tsh/util/ParserTokenManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/base.tsh" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/base.tsh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/test/MethodTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/test/MethodTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/test/RunTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/test/RunTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -294,7 +303,9 @@
       <workItem from="1615226250457" duration="937000" />
       <workItem from="1615253239745" duration="2015000" />
       <workItem from="1615255445526" duration="5773000" />
-      <workItem from="1615266308802" duration="623000" />
+      <workItem from="1615266308802" duration="2700000" />
+      <workItem from="1615274505211" duration="6301000" />
+      <workItem from="1615298200401" duration="320000" />
     </task>
     <servers />
   </component>

@@ -2,8 +2,8 @@ package test;
 
 import org.junit.Test;
 import tsh.service.impl.ResouceHelp;
-import tsh.t.Tuple1;
-import tsh.t.Tuple3;
+import tsh.t.TTuple1;
+import tsh.t.TTuple3;
 import tsh.util.TClassUtils;
 import tsh.util.TFileUtils;
 import tsh.util.Utils;
@@ -29,7 +29,7 @@ public class RunTest {
         Map<String, Object> init = new LinkedHashMap<>();
         for (File file : TFileUtils.getFiles(path)) {
             String content = TFileUtils.readToStr(file.getPath());
-            Tuple1<Map<String, Object>> baseVarible = Utils.run(content, null, null, null, resouceHelp).getData();
+            TTuple1<Map<String, Object>> baseVarible = Utils.run(content, null, null, null, resouceHelp).getData();
             init.putAll(baseVarible.getFirst());
         }
 
@@ -40,7 +40,7 @@ public class RunTest {
                 "/Users/quyixiao/git/java-python/script/yijie/get_verify_code.tsh",
                 "/Users/quyixiao/git/java-python/script/yijie/login.tsh"});
 
-        Tuple3<Map<String, Object>, Map<String, Object>, Map<String, Object>> data = null;
+        TTuple3<Map<String, Object>, Map<String, Object>, Map<String, Object>> data = null;
         for (String f : files) {
             String content = TFileUtils.readToStr(f);
             data = Utils.run(content, init, globals, imports, resouceHelp).getData();
@@ -69,7 +69,7 @@ public class RunTest {
         Map<String, Object> init = new LinkedHashMap<>();
         for (File file : TFileUtils.getFiles(path)) {
             String content = TFileUtils.readToStr(file.getPath());
-            Tuple1<Map<String, Object>> baseVarible = Utils.run(content, null, null, null, resouceHelp).getData();
+            TTuple1<Map<String, Object>> baseVarible = Utils.run(content, null, null, null, resouceHelp).getData();
             init.putAll(baseVarible.getFirst());
         }
 
@@ -82,7 +82,7 @@ public class RunTest {
                 "/Users/quyixiao/git/java-python/script/test/global3.tsh"});
 
 
-        Tuple3<Map<String, Object>, Map<String, Object>, Map<String, Object>> data = null;
+        TTuple3<Map<String, Object>, Map<String, Object>, Map<String, Object>> data = null;
         for (String f : files) {
             String content = TFileUtils.readToStr(f);
             data = Utils.run(content, init, globals, imports, resouceHelp).getData();

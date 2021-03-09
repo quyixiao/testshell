@@ -5,7 +5,7 @@ import tsh.constant.ParserConstants;
 import tsh.entity.TBigDecimal;
 import tsh.exception.*;
 import tsh.t.TSHTuple;
-import tsh.t.Tuple3;
+import tsh.t.TTuple3;
 import tsh.util.CollectionManager;
 import tsh.util.TNumberUtil;
 import tsh.util.Reflect;
@@ -168,7 +168,7 @@ public class TSHPrimarySuffix extends SimpleNode implements ParserConstants {
      * Must handle toLHS case.
      */
     private Object doIndex(Object obj, boolean toLHS, CallStack callstack, Interpreter interpreter) throws EvalError, ReflectError {
-        Tuple3<Boolean, Object, Object> data = getIndexAux(callstack, interpreter, this).getData();
+        TTuple3<Boolean, Object, Object> data = getIndexAux(callstack, interpreter, this).getData();
         if (toLHS) {
             return new LHS(obj, data.getSecond());
         } else {

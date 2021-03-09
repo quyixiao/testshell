@@ -2,11 +2,11 @@ package tsh.t;
 
 import java.io.Serializable;
 
-public class Tuple10<A, B, C, D, E, F, G, H, I, J> extends Tuple9<A, B, C, D, E, F, G, H, I> implements Serializable {
+public class TTuple10<A, B, C, D, E, F, G, H, I, J> extends TTuple9<A, B, C, D, E, F, G, H, I> implements Serializable {
 
     private J ten;
 
-    public Tuple10(A a, B b, C c, D d, E e, F f, G g, H h, I i, J j) {
+    public TTuple10(A a, B b, C c, D d, E e, F f, G g, H h, I i, J j) {
         super(a, b, c, d, e, f, g, h, i);
         ten = j;
     }

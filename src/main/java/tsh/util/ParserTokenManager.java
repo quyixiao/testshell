@@ -5,7 +5,7 @@ import tsh.Token;
 import tsh.constant.ParserConstants;
 import tsh.exception.TokenMgrError;
 import tsh.t.TSHTuple;
-import tsh.t.Tuple2;
+import tsh.t.TTuple2;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -220,7 +220,7 @@ public class ParserTokenManager extends Utils implements ParserConstants {
                     input_stream.backup(1);
                     return getCommon();
                 } else {
-                    Tuple2<Boolean, Integer> line = readUtilChar('\n').getData();
+                    TTuple2<Boolean, Integer> line = readUtilChar('\n').getData();
                     int i = line.getSecond() + input_stream.GetImage().length() - 1;
                     input_stream.tokenBegin += i;
                     return -1;
@@ -255,7 +255,7 @@ public class ParserTokenManager extends Utils implements ParserConstants {
             char c = readChar();
             input_stream.backup(1);
             if (c == '/') {       //表示注释
-                Tuple2<Boolean, Integer> line = readUtilChar('\n').getData();
+                TTuple2<Boolean, Integer> line = readUtilChar('\n').getData();
                 if (line.getFirst()) {
                     input_stream.backup(1);
                 }
@@ -266,7 +266,7 @@ public class ParserTokenManager extends Utils implements ParserConstants {
                 readChar();         //读取当前 *
                 int i = input_stream.GetImage().length() - 1;
                 while (true) {
-                    Tuple2<Boolean, Integer> line = readUtilChar('*').getData();
+                    TTuple2<Boolean, Integer> line = readUtilChar('*').getData();
                     i += line.getSecond();
                     char temp = readChar();
                     if (temp == '/') {

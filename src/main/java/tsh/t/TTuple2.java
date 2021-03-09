@@ -1,9 +1,9 @@
 package tsh.t;
 
-public class Tuple2<A, B> extends Tuple1<A> {
+public class TTuple2<A, B> extends TTuple1<A> {
     private B second;
 
-    public Tuple2(A a, B b) {
+    public TTuple2(A a, B b) {
         super(a);
         second = b;
     }

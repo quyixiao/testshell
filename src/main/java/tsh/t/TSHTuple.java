@@ -6,73 +6,73 @@ import java.io.Serializable;
 
 public class TSHTuple implements Serializable {
 
-    private Tuple11 data;
+    private TTuple11 data;
 
 
     public TSHTuple() {
-        this.data = new Tuple11(null, null, null, null, null, null, null, null, null, null, null);
+        this.data = new TTuple11(null, null, null, null, null, null, null, null, null, null, null);
     }
 
 
     public TSHTuple(Object a) {
-        this.data = new Tuple11(a, null, null, null, null, null, null, null, null, null, null);
+        this.data = new TTuple11(a, null, null, null, null, null, null, null, null, null, null);
     }
 
 
     public TSHTuple(Object a, Object b) {
-        this.data = new Tuple11(a, b, null, null, null, null, null, null, null, null, null);
+        this.data = new TTuple11(a, b, null, null, null, null, null, null, null, null, null);
     }
 
     public TSHTuple(Object a, Object b, Object c) {
-        this.data = new Tuple11(a, b, c, null, null, null, null, null, null, null, null);
+        this.data = new TTuple11(a, b, c, null, null, null, null, null, null, null, null);
     }
 
 
     public TSHTuple(Object a, Object b, Object c, Object d) {
-        this.data = new Tuple11(a, b, c, d, null, null, null, null, null, null, null);
+        this.data = new TTuple11(a, b, c, d, null, null, null, null, null, null, null);
     }
 
     public TSHTuple(Object a, Object b, Object c, Object d, Object e) {
-        this.data = new Tuple11(a, b, c, d, e, null, null, null, null, null, null);
+        this.data = new TTuple11(a, b, c, d, e, null, null, null, null, null, null);
     }
 
     public TSHTuple(Object a, Object b, Object c, Object d, Object e, Object f) {
-        this.data = new Tuple11(a, b, c, d, e, f, null, null, null, null, null);
+        this.data = new TTuple11(a, b, c, d, e, f, null, null, null, null, null);
     }
 
     public TSHTuple(Object a, Object b, Object c, Object d, Object e, Object f, Object g) {
-        this.data = new Tuple11(a, b, c, d, e, f, g, null, null, null, null);
+        this.data = new TTuple11(a, b, c, d, e, f, g, null, null, null, null);
     }
 
 
     public TSHTuple(Object a, Object b, Object c, Object d, Object e, Object f, Object g, Object h) {
-        this.data = new Tuple11(a, b, c, d, e, f, g, h, null, null, null);
+        this.data = new TTuple11(a, b, c, d, e, f, g, h, null, null, null);
     }
 
     public TSHTuple(Object a, Object b, Object c, Object d, Object e, Object f, Object g, Object h, Object i) {
-        this.data = new Tuple11(a, b, c, d, e, f, g, h, i, null, null);
+        this.data = new TTuple11(a, b, c, d, e, f, g, h, i, null, null);
     }
 
 
     public TSHTuple(Object a, Object b, Object c, Object d, Object e, Object f, Object g, Object h, Object i, Object j) {
-        this.data = new Tuple11(a, b, c, d, e, f, g, h, i, j, null);
+        this.data = new TTuple11(a, b, c, d, e, f, g, h, i, j, null);
     }
 
     public TSHTuple(Object a, Object b, Object c, Object d, Object e, Object f, Object g, Object h, Object i, Object j, Object k) {
-        this.data = new Tuple11(a, b, c, d, e, f, g, h, i, j, k);
+        this.data = new TTuple11(a, b, c, d, e, f, g, h, i, j, k);
     }
 
-    public Tuple11 getData() {
+    public TTuple11 getData() {
         return data;
     }
 
-    public void setData(Tuple11 data) {
+    public void setData(TTuple11 data) {
         this.data = data;
     }
 
 
     public void add(Object object) {
-        Tuple11<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object> data = this.getData();
+        TTuple11<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object> data = this.getData();
         if (data.getFirst() == null) {
             data.setFirst(object);
             this.setData(data);
@@ -126,12 +126,12 @@ public class TSHTuple implements Serializable {
     }
 
     public TSHTuple(TSHTuple tuple) {
-        this.data = new Tuple11(null, null, null, null, null, null, null, null, null, null, null);
+        this.data = new TTuple11(null, null, null, null, null, null, null, null, null, null, null);
         if (tuple == null || tuple.getData() == null) {
             return;
         }
 
-        Tuple11 elevent = tuple.getData();
+        TTuple11 elevent = tuple.getData();
         if (elevent.getFirst() != null) {
             this.data.setFirst(elevent.getFirst());
             this.setData(data);
@@ -197,7 +197,7 @@ public class TSHTuple implements Serializable {
 
     public static String getString(TSHTuple tuple) {
         StringBuilder sb = new StringBuilder("  ");
-        Tuple11 elevent = tuple.getData();
+        TTuple11 elevent = tuple.getData();
         if (elevent.getFirst() != null) {
             sb.append(elevent.getFirst()).append("  ");
         }else{
