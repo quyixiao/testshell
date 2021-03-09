@@ -439,9 +439,11 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
             VariableDeclarator();
         } else if (jj_2_33(3, AT)) {
             AnnotationMethodInvocationDeclarator();
-        } else if (jj_2_33(3, IMPORT)){
+        } else if (jj_2_33(3, IMPORT)) {
             ImportDeclaration();
-        }else {
+        } else if (jj_2_33(3, GLOBAL)) {
+            GlobalDeclaration();
+        } else {
             Statement();
         }
         return true;
@@ -542,7 +544,6 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
-
     final public void FormalParameters() throws ParseException {
         TSHFormalParameters jjtn000 = new TSHFormalParameters(T_FormalParameters);
         boolean jjtc000 = true;
@@ -615,7 +616,6 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
                 jj_consume_token(SSTAR);
                 jjtn000.kind = SSTAR;
             }
-
             t = jj_consume_token(IDENTIFIER);
             jjtree.closeNodeScope(jjtn000, true);
             jjtc000 = false;
@@ -653,10 +653,6 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
-
-    /*
-     * Statement syntax follows.
-     */
     final public void Statement() throws ParseException {
         if (jj_3_40(3)) {
             LabeledStatement();                         // break lable_;的情况
@@ -1510,6 +1506,43 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
             }
         }
     }
+
+    final public void GlobalDeclaration() throws ParseException {
+        TSHGlobalStatement jjtn000 = new TSHGlobalStatement(T_GlobalDeclaration);
+        boolean jjtc000 = true;
+        jjtree.openNodeScope(jjtn000);
+        jjtreeOpenNodeScope(jjtn000);
+        try {
+            jj_consume_token(GLOBAL);
+            Expression();
+        } catch (Throwable jjte000) {
+            if (jjtc000) {
+                jjtree.clearNodeScope(jjtn000);
+                jjtc000 = false;
+            } else {
+                jjtree.popNode();
+            }
+            if (jjte000 instanceof RuntimeException) {
+                {
+                    if (true) throw (RuntimeException) jjte000;
+                }
+            }
+            if (jjte000 instanceof ParseException) {
+                {
+                    if (true) throw (ParseException) jjte000;
+                }
+            }
+            {
+                if (true) throw (Error) jjte000;
+            }
+        } finally {
+            if (jjtc000) {
+                jjtree.closeNodeScope(jjtn000, true);
+                jjtreeCloseNodeScope(jjtn000);
+            }
+        }
+    }
+
 
     final public void Expression() throws ParseException {
         if (jj_2_8(2147483647)) {

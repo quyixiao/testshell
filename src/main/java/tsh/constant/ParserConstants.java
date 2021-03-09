@@ -50,6 +50,7 @@ public interface ParserConstants {
     String MAP = "map";                              // map 类型
     String TUPLE = "tuple";                          //元组类型
     String IMPORT = "import";                          //
+    String GLOBAL = "global";                          //
 
 
     String LPAREN = "(";                        //  (
@@ -149,6 +150,8 @@ public interface ParserConstants {
             SSTAR,
             AT,
             NEW,
+            IMPORT,
+            GLOBAL,
             ASSIGN, GT, LT, BANG, OR, AND, PLUS, MINUS, STAR, SLASH, XOR, MOD,
             EQ, LE, GE, NE, INCR, DECR, BOOL_AND, BOOL_OR, LSHIFT, RSIGNEDSHIFT, RUNSIGNEDSHIFT, PLUSASSIGN, MINUSASSIGN,
             STARASSIGN, SLASHASSIGN, ANDASSIGN, ORASSIGN, XORASSIGN, MODASSIGN, LSHIFTASSIGN, RSIGNEDSHIFTASSIGN, RUNSIGNEDSHIFTASSIGN,

@@ -1,5 +1,7 @@
 package tsh.methods;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import tsh.entity.TBigDecimal;
 import tsh.util.Console;
 import tsh.util.TNumberUtil;
@@ -7,10 +9,7 @@ import tsh.util.TStringUtil;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CommonMethod {
 
@@ -82,5 +81,11 @@ public class CommonMethod {
         return null;
     }
 
+    public Object json(Object ... t){
+        if(t[0] instanceof  String){
+            return JSONObject.parseObject(t[0].toString(),LinkedHashMap.class);
+        }
+        return new LinkedHashMap<>();
+    }
 
 }

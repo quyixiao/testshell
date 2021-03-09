@@ -15,7 +15,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -80,10 +79,10 @@ public class Utils {
         return false;
     }
 
-    public static TSHTuple run(String script, Map<String, Object> init, Map<String, Object> imports, ImportHelpService helpService) throws Exception {
+    public static TSHTuple run(String script, Map<String, Object> init, Map<String, Object> oldGlobals, Map<String, Object> imports, ImportHelpService helpService) throws Exception {
         Object retVal = null;
         Reader in = null;
-        Map<String, Object> global = new LinkedHashMap<>();
+        Map<String, Object> newGlobals = new LinkedHashMap<>();
         try {
             in = new BufferedReader(new StringReader(script));
             Interpreter localInterpreter = new Interpreter(in, System.out, System.err, false, null, null, script);
@@ -100,22 +99,22 @@ public class Utils {
                         node = (SimpleNode) localInterpreter.get_jjtree().rootNode();
                         node.setSourceFile(script);
                         if (node instanceof TSHImportDeclaration) {
-                            ((TSHImportDeclaration) node).eval(imports, helpService, callstack, localInterpreter);
+                            ((TSHImportDeclaration) node).eval(oldGlobals, imports, helpService, callstack, localInterpreter);
                         } else {
                             retVal = node.eval(callstack, localInterpreter);
-
                             if (callstack.depth() > 1)
                                 throw new InterpreterError("Callstack growing: " + callstack);
                             if (retVal instanceof ReturnControl) {
-                                retVal = ((ReturnControl) retVal).value;
-                                return new TSHTuple(allVariable(nameSpace), global, retVal);
+                                Map<String, Object> map = new LinkedHashMap<>();
+                                map.put(((ReturnControl) retVal).label, ((ReturnControl) retVal).value);
+                                return new TSHTuple(allVariable(nameSpace), getGlobals(nameSpace, oldGlobals, newGlobals), map);
                             }
                             if (retVal instanceof GlobalControl) {
-                                global.put(((GlobalControl) retVal).name, ((GlobalControl) retVal).value);
+                                newGlobals.put(((GlobalControl) retVal).name, ((GlobalControl) retVal).value);
                             }
                             if (retVal instanceof ExportControl) {
                                 retVal = ((ExportControl) retVal).export;
-                                return new TSHTuple(allVariable(nameSpace), global, retVal);
+                                return new TSHTuple(allVariable(nameSpace), getGlobals(nameSpace, oldGlobals, newGlobals), retVal);
                             }
                         }
                     }
@@ -131,7 +130,7 @@ public class Utils {
                     }
                 }
             }
-            return new TSHTuple(allVariable(nameSpace), global, retVal);
+            return new TSHTuple(allVariable(nameSpace), getGlobals(nameSpace, oldGlobals, newGlobals), new LinkedHashMap<>());
         } catch (Exception e) {
             throw e;
         } finally {
@@ -140,6 +139,33 @@ public class Utils {
             } catch (IOException e) {
                 throw e;
             }
+        }
+    }
+
+
+    public static Map<String, Object> getGlobals(NameSpace nameSpace, Map<String, Object> old, Map<String, Object> current) throws Exception {
+        Map<String, Object> map = new LinkedHashMap<>();
+        if (old != null) {
+            for (Map.Entry<String, Object> m : old.entrySet()) {
+                Object obj = m.getValue();
+                if (obj instanceof TshMethod) {
+                    Object newObj = nameSpace.getMethod(m.getKey(), new Class[]{null});
+                    putNotNull(map, m.getKey(), obj, newObj);
+                } else {
+                    Object newObj = nameSpace.getVariable(m.getKey());
+                    putNotNull(map, m.getKey(), obj, newObj);
+                }
+            }
+        }
+        map.putAll(current);
+        return map;
+    }
+
+    public static void putNotNull(Map<String, Object> map, String key, Object old, Object newObj) {
+        if (newObj != null) {
+            map.put(key, newObj);
+        } else {
+            map.put(key, old);
         }
     }
 
@@ -152,7 +178,7 @@ public class Utils {
             }
         }
         for (String name : nameSpace.getMethodNames()) {
-            Object value = nameSpace.getMethod(name,new Class[]{null});
+            Object value = nameSpace.getMethod(name, new Class[]{null});
             if (value != null) {
                 map.put(name, value);
             }
@@ -180,5 +206,7 @@ public class Utils {
         }
     }
 
-
+    public static Object getFromMap(Map<String, Object> map, String name) {
+        return map == null ? null : map.get(name);
+    }
 }
