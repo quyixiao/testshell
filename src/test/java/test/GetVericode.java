@@ -1,6 +1,6 @@
 package test;
 
-import tsh.util.HttpUtil;
+import tsh.util.THttpUtil;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -20,7 +20,7 @@ public class GetVericode {
         data.put("mobile", userName);
         data.put("type", "L");
         data.put("geetest", "0");
-        String result = HttpUtil.post(get_verify_code_url, headers, data);
+        String result = THttpUtil.post(get_verify_code_url, headers, data);
         System.out.println(result);
     }
 }

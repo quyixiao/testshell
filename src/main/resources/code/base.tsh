@@ -5,5 +5,3 @@ def open(url,method='POST',headers,data){
         return http2(url,method,data)
     }
 }
-
-

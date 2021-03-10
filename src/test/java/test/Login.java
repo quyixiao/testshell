@@ -2,7 +2,7 @@ package test;
 
 import com.alibaba.fastjson.JSON;
 import tsh.methods.EncryptionMethod;
-import tsh.util.HttpUtil;
+import tsh.util.THttpUtil;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -43,7 +43,7 @@ public class Login {
         data.put("verifyCode","888888");
         data.put("userName",userName);
         data.put("envData", "eyJwaG9uZVR5cGUiOiJvcyIsImRldk9TVmVyc2lvbiI6IjEwLjIifQ==");
-        String result = HttpUtil.post(login_register_url, headers, data);
+        String result = THttpUtil.post(login_register_url, headers, data);
         System.out.println(result);
 
     }
