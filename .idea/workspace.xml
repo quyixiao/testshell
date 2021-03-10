@@ -3,23 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="bf17aaba-8d77-4716-bfb7-937d90bf1bb7" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tsh/expression/TSHImportDeclaration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tsh/expression/TSHImportDeclaration.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tsh/expression/TSHPrimarySuffix.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tsh/expression/TSHPrimarySuffix.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tsh/t/TSHTuple.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tsh/t/TSHTuple.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tsh/t/Tuple1.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tsh/t/TTuple1.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tsh/t/Tuple10.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tsh/t/TTuple10.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tsh/t/Tuple11.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tsh/t/TTuple11.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tsh/t/Tuple2.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tsh/t/TTuple2.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tsh/t/Tuple3.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tsh/t/TTuple3.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tsh/t/Tuple4.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tsh/t/TTuple4.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tsh/t/Tuple5.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tsh/t/TTuple5.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tsh/t/Tuple6.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tsh/t/TTuple6.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tsh/t/Tuple7.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tsh/t/TTuple7.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tsh/t/Tuple8.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tsh/t/TTuple8.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tsh/t/Tuple9.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tsh/t/TTuple9.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tsh/util/ParserTokenManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tsh/util/ParserTokenManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/base.tsh" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/base.tsh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tsh/methods/CommonMethod.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tsh/methods/CommonMethod.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tsh/util/TFileUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tsh/util/TFileUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/base.tsh" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/code/base.tsh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/test/MethodTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/test/MethodTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/test/RunTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/test/RunTest.java" afterDir="false" />
     </list>
@@ -69,6 +55,9 @@
     <selection>jr</selection>
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/main/resources/code" />
+    </key>
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="test" />
       <recent name="tsh.util" />
@@ -305,7 +294,8 @@
       <workItem from="1615255445526" duration="5773000" />
       <workItem from="1615266308802" duration="2700000" />
       <workItem from="1615274505211" duration="6301000" />
-      <workItem from="1615298200401" duration="320000" />
+      <workItem from="1615298200401" duration="1759000" />
+      <workItem from="1615339154952" duration="667000" />
     </task>
     <servers />
   </component>
@@ -958,8 +948,8 @@
     </state>
     <state x="625" y="-290" key="run.anything.popup/47.0.1393.900/-1080.-1954.1080.1920/0.-1080.1920.1080@0.-1080.1920.1080" timestamp="1614736273892" />
     <state x="625" y="-290" key="run.anything.popup/49.0.1391.900/-1080.-1954.1080.1920/0.-1080.1920.1080@0.-1080.1920.1080" timestamp="1614513359679" />
-    <state x="665" y="241" width="670" height="676" key="search.everywhere.popup" timestamp="1615261489527">
-      <screen x="60" y="0" width="1860" height="1080" />
+    <state x="499" y="201" width="670" height="564" key="search.everywhere.popup" timestamp="1615299900579">
+      <screen x="46" y="0" width="1394" height="900" />
     </state>
     <state x="625" y="-839" width="670" height="676" key="search.everywhere.popup/40.0.1400.900/-1080.-1954.1080.1920/0.-1080.1920.1080@0.-1080.1920.1080" timestamp="1613718059248" />
     <state x="625" y="-839" width="670" height="676" key="search.everywhere.popup/42.0.1398.900/-1080.-1954.1080.1920/0.-1080.1920.1080@0.-1080.1920.1080" timestamp="1614937940877" />
@@ -967,6 +957,7 @@
     <state x="625" y="-839" width="670" height="676" key="search.everywhere.popup/44.0.1396.900/-1080.-1954.1080.1920/0.-1080.1920.1080@0.-1080.1920.1080" timestamp="1614924354712" />
     <state x="625" y="-839" width="670" height="676" key="search.everywhere.popup/46.0.1394.900/-1080.-1954.1080.1920/0.-1080.1920.1080@0.-1080.1920.1080" timestamp="1615193122866" />
     <state x="-1295" y="-839" width="670" height="676" key="search.everywhere.popup/46.0.1394.900/-1920.-1080.1920.1080@-1920.-1080.1920.1080" timestamp="1615123783989" />
+    <state x="499" y="201" width="670" height="564" key="search.everywhere.popup/46.0.1394.900@46.0.1394.900" timestamp="1615299900579" />
     <state x="625" y="-839" width="670" height="676" key="search.everywhere.popup/47.0.1393.900/-1080.-1954.1080.1920/0.-1080.1920.1080@0.-1080.1920.1080" timestamp="1615207492651" />
     <state x="500" y="201" width="670" height="564" key="search.everywhere.popup/47.0.1393.900@47.0.1393.900" timestamp="1614175745162" />
     <state x="625" y="-839" width="670" height="676" key="search.everywhere.popup/49.0.1391.900/-1080.-1954.1080.1920/0.-1080.1920.1080@0.-1080.1920.1080" timestamp="1615255145834" />

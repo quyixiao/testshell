@@ -22,7 +22,7 @@ public class MethodTest {
     @Test
     public void test1() throws Exception {
         ClassLoader classLoader = TClassUtils.getDefaultClassLoader();
-        URL url = classLoader.getResource("base.tsh");
+        URL url = classLoader.getResource("code/base.tsh");
         String path = url.getPath();
         int a = path.lastIndexOf("/");
         path = path.substring(0, a);
