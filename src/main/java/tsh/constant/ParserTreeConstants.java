@@ -67,6 +67,7 @@ public interface ParserTreeConstants {
     public final static String T_AnnotationMethodDeclaration = "AnnotationMethodDeclaration";
     public final static String T_ImportDeclaration = "ImportDeclaration";
     public final static String T_GlobalDeclaration = "GlobalDeclaration";
+    public final static String T_LambdaDeclaration = "LambdaDeclaration";
 
 
 }

@@ -117,6 +117,17 @@ public class ParserTokenManager extends Utils implements ParserConstants {
         return t;
     }
 
+    public static Token jjTempFillToken() {
+        Token t = new Token();
+        t.kind = default_1;
+        t.image = "";
+        t.beginLine = 0;
+        t.beginColumn =0;
+        t.endLine = 0;
+        t.endColumn = 0;
+        return t;
+    }
+
     protected Token jjFillTokenEof() {
         Token t = new Token();
         t.kind = jjmatchedKind;

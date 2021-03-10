@@ -544,6 +544,51 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
+    final public void LambdaBlock() throws ParseException {
+        TSHBlock jjtn000 = new TSHBlock(T_Block);
+        boolean jjtc000 = true;
+        jjtree.openNodeScope(jjtn000);
+        jjtreeOpenNodeScope(jjtn000);
+        Token s = null;
+        try {
+            jj_consume_token(COLON);
+            label_22:
+            while (true) {
+                if (jj_2_24(1)) {
+                    ;
+                } else {
+                    break label_22;
+                }
+                BlockStatement();
+            }
+            jjtree.closeNodeScope(jjtn000, true);
+            jjtc000 = false;
+            jjtreeCloseNodeScope(jjtn000);
+        } catch (Throwable jjte000) {
+            if (jjtc000) {
+                jjtree.clearNodeScope(jjtn000);
+                jjtc000 = false;
+            } else {
+                jjtree.popNode();
+            }
+            if (jjte000 instanceof RuntimeException) {
+                throw (RuntimeException) jjte000;
+            }
+            if (jjte000 instanceof ParseException) {
+                throw (ParseException) jjte000;
+            }
+            {
+                if (true) throw (Error) jjte000;
+            }
+        } finally {
+            if (jjtc000) {
+                jjtree.closeNodeScope(jjtn000, true);
+                jjtreeCloseNodeScope(jjtn000);
+            }
+        }
+    }
+
+
     final public void FormalParameters() throws ParseException {
         TSHFormalParameters jjtn000 = new TSHFormalParameters(T_FormalParameters);
         boolean jjtc000 = true;
@@ -602,6 +647,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
+
     final public void FormalParameter() throws ParseException {
         TSHFormalParameter jjtn000 = new TSHFormalParameter(T_FormalParameter);
         boolean jjtc000 = true;
@@ -624,6 +670,62 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
             if (jj_2_33(3, ASSIGN)) {           //如果没有扫描到=号，则变量的定义肯定是 a ,b = xxx
                 jj_consume_token(ASSIGN);
                 Expression();
+            }
+        } catch (Throwable jjte000) {
+            if (jjtc000) {
+                jjtree.clearNodeScope(jjtn000);
+                jjtc000 = false;
+            } else {
+                jjtree.popNode();
+            }
+            if (jjte000 instanceof RuntimeException) {
+                {
+                    if (true) throw (RuntimeException) jjte000;
+                }
+            }
+            if (jjte000 instanceof ParseException) {
+                {
+                    if (true) throw (ParseException) jjte000;
+                }
+            }
+            {
+                if (true) throw (Error) jjte000;
+            }
+        } finally {
+            if (jjtc000) {
+                jjtree.closeNodeScope(jjtn000, true);
+                jjtreeCloseNodeScope(jjtn000);
+            }
+        }
+    }
+
+    final public void LambdaFormalParameters() throws ParseException {
+        TSHFormalParameters jjtn000 = new TSHFormalParameters(T_FormalParameters);
+        boolean jjtc000 = true;
+        jjtree.openNodeScope(jjtn000);
+        jjtreeOpenNodeScope(jjtn000);
+        try {
+            switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
+                case STAR:
+                case SSTAR:
+                case IDENTIFIER:
+                    FormalParameter();
+                    label_3:
+                    while (true) {
+                        switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
+                            case COMMA:
+                                ;
+                                break;
+                            default:
+                                jj_la1[16] = jj_gen;
+                                break label_3;
+                        }
+                        jj_consume_token(COMMA);
+                        FormalParameter();
+                    }
+                    break;
+                default:
+                    jj_la1[17] = jj_gen;
             }
         } catch (Throwable jjte000) {
             if (jjtc000) {
@@ -1576,6 +1678,9 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
                 case SSTAR:
                     StarArgument();                 // * ,** 表达式处理
                     break;
+                case LAMBDA:
+                    LambdaDeclaration();
+                    break;
                 default:
                     jj_la1[23] = jj_gen;
                     jj_consume_token(default_1);
@@ -1773,6 +1878,62 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
             }
         }
     }
+
+    private void LambdaDeclaration() throws ParseException {
+        TSHLambdaDeclaration jjtn000 = new TSHLambdaDeclaration(T_LambdaDeclaration);
+        boolean jjtc000 = true;
+        jjtree.openNodeScope(jjtn000);
+        jjtreeOpenNodeScope(jjtn000);
+        try {
+            jj_consume_token(LAMBDA);
+            jjtn000.methodName = TOrderUtil.getMethodName();
+            LambdaFormalParameters();
+            switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
+                case COLON:
+                    LambdaBlock();
+                    break;
+                default:
+                    jj_la1[8] = jj_gen;
+                    jj_consume_token(default_1);
+                    throw new ParseException();
+            }
+
+            if (jj_2_33(3, RPAREN)) {
+                jj_consume_token(RPAREN);
+                if (jj_2_33(3, LPAREN)) {
+                    Token t = LambdaMethodInvocation(jjtn000.methodName);
+                    token = ParserTokenManager.jjTempFillToken();
+                    token.next = t;
+                }
+            }
+        } catch (Throwable jjte000) {
+            if (jjtc000) {
+                jjtree.clearNodeScope(jjtn000);
+                jjtc000 = false;
+            } else {
+                jjtree.popNode();
+            }
+            if (jjte000 instanceof RuntimeException) {
+                {
+                    if (true) throw (RuntimeException) jjte000;
+                }
+            }
+            if (jjte000 instanceof ParseException) {
+                {
+                    if (true) throw (ParseException) jjte000;
+                }
+            }
+            {
+                if (true) throw (Error) jjte000;
+            }
+        } finally {
+            if (jjtc000) {
+                jjtree.closeNodeScope(jjtn000, true);
+                jjtreeCloseNodeScope(jjtn000);
+            }
+        }
+    }
+
 
     final public void Assignment() throws ParseException {
         TSHAssignment jjtn000 = new TSHAssignment(T_Assignment);
@@ -2668,6 +2829,45 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
+    final public Token LambdaMethodInvocation(String methodName) throws ParseException {
+        TSHMethodInvocation jjtn000 = new TSHMethodInvocation(T_MethodInvocation);
+        boolean jjtc000 = true;
+        jjtree.openNodeScope(jjtn000);
+        jjtreeOpenNodeScope(jjtn000);
+        Token t = null;
+        try {
+            AmbiguousName(methodName);                    //方法名称
+            while (jj_2_33(3, LPAREN)) {   //如果存在 a()()形式的方法调用
+                t = Arguments();
+            }
+        } catch (Throwable jjte000) {
+            if (jjtc000) {
+                jjtree.clearNodeScope(jjtn000);
+                jjtc000 = false;
+            } else {
+                jjtree.popNode();
+            }
+            if (jjte000 instanceof RuntimeException) {
+                {
+                    if (true) throw (RuntimeException) jjte000;
+                }
+            }
+            if (jjte000 instanceof ParseException) {
+                {
+                    if (true) throw (ParseException) jjte000;
+                }
+            }
+            {
+                if (true) throw (Error) jjte000;
+            }
+        } finally {
+            if (jjtc000) {
+                jjtree.closeNodeScope(jjtn000, true);
+                jjtreeCloseNodeScope(jjtn000);
+            }
+        }
+        return t;
+    }
 
     final public void MethodInvocation() throws ParseException {
         TSHMethodInvocation jjtn000 = new TSHMethodInvocation(T_MethodInvocation);
@@ -2699,6 +2899,24 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
             {
                 if (true) throw (Error) jjte000;
             }
+        } finally {
+            if (jjtc000) {
+                jjtree.closeNodeScope(jjtn000, true);
+                jjtreeCloseNodeScope(jjtn000);
+            }
+        }
+    }
+
+    final public void AmbiguousName(String name) {
+        TSHAmbiguousName jjtn000 = new TSHAmbiguousName(T_AmbiguousName);
+        boolean jjtc000 = true;
+        jjtree.openNodeScope(jjtn000);
+        jjtreeOpenNodeScope(jjtn000);
+        try {
+            jjtree.closeNodeScope(jjtn000, true);
+            jjtc000 = false;
+            jjtreeCloseNodeScope(jjtn000);
+            jjtn000.text = name;
         } finally {
             if (jjtc000) {
                 jjtree.closeNodeScope(jjtn000, true);
@@ -2945,11 +3163,12 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
     }
 
 
-    final public void Arguments() throws ParseException {
+    final public Token Arguments() throws ParseException {
         TSHArguments jjtn000 = new TSHArguments(T_Arguments);
         boolean jjtc000 = true;
         jjtree.openNodeScope(jjtn000);
         jjtreeOpenNodeScope(jjtn000);
+        Token t = null;
         try {
             jj_consume_token(LPAREN);
             switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
@@ -2976,7 +3195,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
                     jj_la1[63] = jj_gen;
                     ;
             }
-            jj_consume_token(RPAREN);
+            t = jj_consume_token(RPAREN);
         } catch (Throwable jjte000) {
             if (jjtc000) {
                 jjtree.clearNodeScope(jjtn000);
@@ -3003,6 +3222,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
                 jjtreeCloseNodeScope(jjtn000);
             }
         }
+        return t;
     }
 
     // leave these on the stack for Arguments() to handle
@@ -3304,6 +3524,18 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
+    final private boolean jj_3_24() {
+        while (true) {
+            Token t = jj_scan_token_next();
+            if (TStringUtil.isNotBlank(t.image)) {
+                if (eq(t.kind, RPAREN)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
+    }
 
     final private boolean jj_3R_180() {
         if (jj_scan_token(ASSIGN)) return true;
@@ -4005,6 +4237,19 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         jj_lastpos = jj_scanpos = token;
         try {
             return !jj_3_23();
+        } catch (Parser.LookaheadSuccess ls) {
+            return true;
+        } finally {
+            jj_save(22, xla);
+        }
+    }
+
+
+    final private boolean jj_2_24(int xla) {
+        jj_la = xla;
+        jj_lastpos = jj_scanpos = token;
+        try {
+            return !jj_3_24();
         } catch (Parser.LookaheadSuccess ls) {
             return true;
         } finally {

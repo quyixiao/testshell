@@ -12,18 +12,19 @@ public class TSHMethodDeclaration extends SimpleNode {
 
     public String methodName;//方法名称
 
-    TSHFormalParameters paramsNode;
+    public TSHFormalParameters paramsNode;
 
-    int firstThrowsClause;
+    public int firstThrowsClause;
 
-    TSHBlock blockNode;
-    int numThrows = 0;
+    public TSHBlock blockNode;
+
+    public int numThrows = 0;
 
     public TSHMethodDeclaration(String id) {
         super(id);
     }
 
-    synchronized void insureNodesParsed() {
+    public synchronized void insureNodesParsed() {
         if (paramsNode != null) {
             return;
         }
@@ -49,7 +50,7 @@ public class TSHMethodDeclaration extends SimpleNode {
         return Primitive.VOID;
     }
 
-    private void evalNodes(CallStack callstack, Interpreter interpreter) throws EvalError {
+    public void evalNodes(CallStack callstack, Interpreter interpreter) throws EvalError {
         insureNodesParsed();
         for (int i = firstThrowsClause; i < numThrows + firstThrowsClause; i++) {
             ((TSHAmbiguousName) jjtGetChild(i)).toClass(callstack, interpreter);

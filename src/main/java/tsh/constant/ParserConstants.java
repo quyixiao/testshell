@@ -51,6 +51,7 @@ public interface ParserConstants {
     String TUPLE = "tuple";                          //元组类型
     String IMPORT = "import";                          //
     String GLOBAL = "global";                          //
+    String LAMBDA = "lambda";                          //lambda
 
 
     String LPAREN = "(";                        //  (
@@ -151,6 +152,7 @@ public interface ParserConstants {
             AT,
             NEW,
             IMPORT,
+            LAMBDA,
             GLOBAL,
             ASSIGN, GT, LT, BANG, OR, AND, PLUS, MINUS, STAR, SLASH, XOR, MOD,
             EQ, LE, GE, NE, INCR, DECR, BOOL_AND, BOOL_OR, LSHIFT, RSIGNEDSHIFT, RUNSIGNEDSHIFT, PLUSASSIGN, MINUSASSIGN,
