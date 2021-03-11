@@ -50,11 +50,13 @@ public interface ParserTreeConstants {
     public final static String T_AllocationExpression = "AllocationExpression";
     public final static String T_ArrayDimensions = "ArrayDimensions";
     public final static String T_Block = "Block";
+    public final static String T_LambdaBlock = "LambdaBlock";
     public final static String T_SwitchStatement = "sun.tools.tree.SwitchStatement";
     public final static String T_SwitchLabel = "SwitchLabel";
     public final static String T_IfStatement = "sun.tools.tree.IfStatement";
     public final static String T_WhileStatement = "sun.tools.tree.WhileStatement";
     public final static String T_ForStatement = "sun.tools.tree.ForStatement";
+    public final static String T_BeforeForStatement = "BeforeForStatement";
     public final static String T_TypedVariableDeclaration = "TypedVariableDeclaration";
     public final static String T_StatementExpressionList = "StatementExpressionList";
     public final static String T_ReturnStatement = "ReturnStatement";
@@ -68,6 +70,7 @@ public interface ParserTreeConstants {
     public final static String T_ImportDeclaration = "ImportDeclaration";
     public final static String T_GlobalDeclaration = "GlobalDeclaration";
     public final static String T_LambdaDeclaration = "LambdaDeclaration";
+    public final static String T_MapInvocation = "MapInvocation";
 
 
 }

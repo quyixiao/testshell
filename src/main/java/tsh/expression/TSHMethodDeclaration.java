@@ -47,7 +47,7 @@ public class TSHMethodDeclaration extends SimpleNode {
         } catch (UtilEvalError e) {
             throw e.toEvalError(this, callstack);
         }
-        return Primitive.VOID;
+        return bshMethod;
     }
 
     public void evalNodes(CallStack callstack, Interpreter interpreter) throws EvalError {

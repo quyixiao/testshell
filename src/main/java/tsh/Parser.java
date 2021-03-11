@@ -545,22 +545,12 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
     }
 
     final public void LambdaBlock() throws ParseException {
-        TSHBlock jjtn000 = new TSHBlock(T_Block);
+        TSHLambdaBlock jjtn000 = new TSHLambdaBlock(T_LambdaBlock);
         boolean jjtc000 = true;
         jjtree.openNodeScope(jjtn000);
         jjtreeOpenNodeScope(jjtn000);
-        Token s = null;
         try {
-            jj_consume_token(COLON);
-            label_22:
-            while (true) {
-                if (jj_2_24(1)) {
-                    ;
-                } else {
-                    break label_22;
-                }
-                BlockStatement();
-            }
+            BlockStatement();
             jjtree.closeNodeScope(jjtn000, true);
             jjtc000 = false;
             jjtreeCloseNodeScope(jjtn000);
@@ -699,6 +689,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
+
     final public void LambdaFormalParameters() throws ParseException {
         TSHFormalParameters jjtn000 = new TSHFormalParameters(T_FormalParameters);
         boolean jjtc000 = true;
@@ -755,71 +746,81 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
+
     final public void Statement() throws ParseException {
+        jj_consume_token_next_line();
         if (jj_3_40(3)) {
             LabeledStatement();                         // break lable_;的情况
         } else {
-            switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
-                case LBRACE:
-                    Block();
-                    break;
-                case FALSE:
-                case NULL:
-                case TRUE:
-                case STR:
-                case IDENTIFIER:
-                case LPAREN:
-                case LBRACKET:
-                case BANG:
-                case TILDE:
-                case INCR:
-                case DECR:
-                case PLUS:
-                case MINUS:
-                    StatementExpression();
-                    break;
-                case SWITCH:
-                    SwitchStatement();
-                    break;
-                case IF:
-                    IfStatement();
-                    break;
-                case WHILE:
-                    WhileStatement();
-                    break;
-                case DO:
-                    DoStatement();
-                    break;
-                default:
-                    jj_la1[69] = jj_gen;
-                    switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
-                        case FOR:
-                            ForStatement();
-                            break;
-                        case BREAK:
-                            BreakStatement();
-                            break;
-                        case CONTINUE:
-                            ContinueStatement();
-                            break;
-                        case RETURN:
-                            ReturnStatement();
-                            break;
-                        case THROW:
-                            ThrowStatement();
-                            break;
-                        case TRY:
-                            TryStatement();
-                            break;
-                        case EXPORT:
-                            ExportStatement();
-                            break;
-                        default:
-                            jj_la1[70] = jj_gen;
-                            jj_consume_token(default_1);
-                            throw new ParseException();
-                    }
-            }
+            doStatement();
+        }
+    }
+
+
+    final public void doStatement() throws ParseException {
+        switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
+            case LBRACE:
+                Block();
+                break;
+            case FALSE:
+            case NULL:
+            case TRUE:
+            case STR:
+            case IDENTIFIER:
+            case LPAREN:
+            case LBRACKET:
+            case BANG:
+            case TILDE:
+            case INCR:
+            case DECR:
+            case PLUS:
+            case MINUS:
+            case MAP:
+                StatementExpression();
+                break;
+            case SWITCH:
+                SwitchStatement();
+                break;
+            case IF:
+                IfStatement();
+                break;
+            case WHILE:
+                WhileStatement();
+                break;
+            case DO:
+                DoStatement();
+                break;
+            default:
+                jj_la1[69] = jj_gen;
+                switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
+                    case FOR:
+                        ForAfterStatement();
+                        break;
+                    case BREAK:
+                        BreakStatement();
+                        break;
+                    case CONTINUE:
+                        ContinueStatement();
+                        break;
+                    case RETURN:
+                        ReturnStatement();
+                        break;
+                    case THROW:
+                        ThrowStatement();
+                        break;
+                    case TRY:
+                        TryStatement();
+                        break;
+                    case EXPORT:
+                        ExportStatement();
+                        break;
+                    case EOF:
+                        break;
+                    default:
+                        jj_la1[70] = jj_gen;
+                        jj_consume_token(default_1);
+                        throw new ParseException();
+                }
         }
     }
 
@@ -1121,8 +1122,61 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
+    final public void ForBeforeStatement() throws ParseException {
+        TSHBeforeForStatement jjtn000 = new TSHBeforeForStatement(T_BeforeForStatement);
+        boolean jjtc000 = true;
+        jjtree.openNodeScope(jjtn000);
+        jjtreeOpenNodeScope(jjtn000);
+        Token t = null;
+        try {
+            doStatement();
+            jj_consume_token(FOR);                  // for
+            jj_consume_token(LPAREN);               // (
+            t = jj_consume_token(IDENTIFIER);       // i
+            Token t1 = jj_consume_token_next();
+            if (eq(t1.kind, COMMA)) {              // for(i,item in range(1,5)){} 的情况
+                jjtn000.kOrI = t.image;
+                Token t2 = jj_consume_token(IDENTIFIER);       // i
+                jjtn000.varName = t2.image;
+                jj_consume_token(IN);      // in
+            } else {                                        //如果没有消费到, 的话，肯定消费了 in
+                jjtn000.varName = t.image;
+            }
+            Expression();                           // range(1,10)
+            jj_consume_token(RPAREN);               // )
+            jjtree.closeNodeScope(jjtn000, true);
+            jjtc000 = false;
+            jjtreeCloseNodeScope(jjtn000);
+        } catch (Throwable jjte000) {
+            if (jjtc000) {
+                jjtree.clearNodeScope(jjtn000);
+                jjtc000 = false;
+            } else {
+                jjtree.popNode();
+            }
+            if (jjte000 instanceof RuntimeException) {
+                {
+                    if (true) throw (RuntimeException) jjte000;
+                }
+            }
+            if (jjte000 instanceof ParseException) {
+                {
+                    if (true) throw (ParseException) jjte000;
+                }
+            }
+            {
+                if (true) throw (Error) jjte000;
+            }
+        } finally {
+            if (jjtc000) {
+                jjtree.closeNodeScope(jjtn000, true);
+                jjtreeCloseNodeScope(jjtn000);
+            }
+        }
+    }
 
-    final public void ForStatement() throws ParseException {
+
+    final public void ForAfterStatement() throws ParseException {
         TSHForStatement jjtn000 = new TSHForStatement(T_ForStatement);
         boolean jjtc000 = true;
         jjtree.openNodeScope(jjtn000);
@@ -1507,7 +1561,11 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
             case DECR:
             case PLUS:
             case MINUS:
-                Expression();
+                if (jj_3_42(10)) {
+                    ForBeforeStatement();
+                } else {
+                    Expression();
+                }
                 break;
             default:
                 jj_la1[13] = jj_gen;
@@ -1680,6 +1738,9 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
                     break;
                 case LAMBDA:
                     LambdaDeclaration();
+                    break;
+                case MAP:
+                    MapInvocation();
                     break;
                 default:
                     jj_la1[23] = jj_gen;
@@ -1890,7 +1951,12 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
             LambdaFormalParameters();
             switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
                 case COLON:
-                    LambdaBlock();
+                    jj_consume_token(COLON);
+                    if (jj_2_33(3, EOF)) {
+                        Block();
+                    } else {
+                        LambdaBlock();
+                    }
                     break;
                 default:
                     jj_la1[8] = jj_gen;
@@ -1899,11 +1965,14 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
             }
 
             if (jj_2_33(3, RPAREN)) {
-                jj_consume_token(RPAREN);
+                Token t2 = jj_consume_token(RPAREN);
                 if (jj_2_33(3, LPAREN)) {
                     Token t = LambdaMethodInvocation(jjtn000.methodName);
                     token = ParserTokenManager.jjTempFillToken();
                     token.next = t;
+                } else {
+                    token = ParserTokenManager.jjTempFillToken();
+                    token.next = t2;
                 }
             }
         } catch (Throwable jjte000) {
@@ -1934,6 +2003,53 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
+
+    private void MapInvocation() throws ParseException {
+        TSHMapInvocation jjtn000 = new TSHMapInvocation(T_MapInvocation);
+        boolean jjtc000 = true;
+        jjtree.openNodeScope(jjtn000);
+        jjtreeOpenNodeScope(jjtn000);
+        try {
+            jj_consume_token(MAP);
+            jj_consume_token(LPAREN);
+            Expression();
+            label_33:
+            while (true) {
+                if (jj_2_33(3, COMMA)) {
+                    jj_consume_token(COMMA);
+                    Expression();
+                } else {
+                    break label_33;
+                }
+            }
+            jj_consume_token(RPAREN);
+        } catch (Throwable jjte000) {
+            if (jjtc000) {
+                jjtree.clearNodeScope(jjtn000);
+                jjtc000 = false;
+            } else {
+                jjtree.popNode();
+            }
+            if (jjte000 instanceof RuntimeException) {
+                {
+                    if (true) throw (RuntimeException) jjte000;
+                }
+            }
+            if (jjte000 instanceof ParseException) {
+                {
+                    if (true) throw (ParseException) jjte000;
+                }
+            }
+            {
+                if (true) throw (Error) jjte000;
+            }
+        } finally {
+            if (jjtc000) {
+                jjtree.closeNodeScope(jjtn000, true);
+                jjtreeCloseNodeScope(jjtn000);
+            }
+        }
+    }
 
     final public void Assignment() throws ParseException {
         TSHAssignment jjtn000 = new TSHAssignment(T_Assignment);
@@ -3189,6 +3305,8 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
                 case MINUS:
                 case STAR:
                 case SSTAR:
+                case LAMBDA:
+                case MAP:
                     ArgumentList();
                     break;
                 default:
@@ -3441,6 +3559,39 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
+    final private boolean jj_3_42(int xla) {
+        jj_la = xla;
+        jj_lastpos = jj_scanpos = token;
+        try {
+            return !jj_3R_42();
+        } catch (Parser.LookaheadSuccess ls) {
+            return false;
+        } finally {
+            jj_save(28, xla);
+        }
+    }
+
+    final private boolean jj_3R_42() {              // i for (i in range(5)) 的情况，第一个不是 for ,一行中，后面肯定有 for
+        if (!jj_scan_token(FOR)) return true;
+        Token xsp;
+        while (true) {
+            xsp = jj_scanpos;
+            if(jj_scan_token(EOF)){
+                jj_scanpos = xsp;
+            }else{
+                return true;
+            }
+            if (!jj_scan_token(FOR)) return false;      //
+            xsp = jj_scanpos;
+            if (jj_scan_token(NEXT_LINE)) {
+                jj_scanpos = xsp;
+            } else {
+                return true;
+            }
+        }
+    }
+
+
     final private boolean jj_3R_40() {
         if (jj_scan_token(IDENTIFIER)) return true;         //  identifier
         if (jj_scan_token(COLON)) return true;              //  :
@@ -3524,14 +3675,17 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
-    final private boolean jj_3_24() {
+    final private int jj_3_24() {
         while (true) {
             Token t = jj_scan_token_next();
+            if (eq(t.kind, NEXT_LINE)) {
+                return 0;
+            }
             if (TStringUtil.isNotBlank(t.image)) {
                 if (eq(t.kind, RPAREN)) {
-                    return true;
+                    return 0;
                 } else {
-                    return false;
+                    return 1;
                 }
             }
         }
@@ -4245,13 +4399,13 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
     }
 
 
-    final private boolean jj_2_24(int xla) {
+    final private int jj_2_24(int xla) {
         jj_la = xla;
         jj_lastpos = jj_scanpos = token;
         try {
-            return !jj_3_24();
+            return jj_3_24();
         } catch (Parser.LookaheadSuccess ls) {
-            return true;
+            return 0;
         } finally {
             jj_save(22, xla);
         }
@@ -4339,7 +4493,6 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
             jj_3_29();
         }
         if (jj_scan_token(ASSIGN)) return true;
-        //if (jj_3_32()) return true;
         return false;
     }
 

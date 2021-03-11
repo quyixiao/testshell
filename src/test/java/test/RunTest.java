@@ -51,13 +51,6 @@ public class RunTest {
     }
 
 
-
-
-
-
-
-
-
     @Test
     public void test1() throws Exception {
         ClassLoader classLoader = TClassUtils.getDefaultClassLoader();
@@ -95,23 +88,12 @@ public class RunTest {
 
     @Test
     public void test2() throws Exception {
-        ClassLoader classLoader = TClassUtils.getDefaultClassLoader();
-        URL url = classLoader.getResource("code/base.tsh");
-        String path = url.getPath();
-        int a = path.lastIndexOf("/");
-        path = path.substring(0, a);
         ResouceHelp resouceHelp = new ResouceHelp();
         Map<String, Object> init = new LinkedHashMap<>();
-        for (File file : TFileUtils.getFiles(path)) {
-            String content = TFileUtils.readToStr(file.getPath());
-            TTuple1<Map<String, Object>> baseVarible = Utils.run(content, null, null, null, resouceHelp).getData();
-            init.putAll(baseVarible.getFirst());
-        }
-
         Map<String, Object> globals = new LinkedHashMap<>();
         Map<String, Object> imports = new LinkedHashMap<>();
         List<String> files = Arrays.asList(new String[]{
-                "/Users/quyixiao/git/java-python/script/lambda/lambda.tsh"});
+                "/Users/quyixiao/git/java-python/script/lambda/lambda4.tsh"});
 
         TTuple3<Map<String, Object>, Map<String, Object>, Map<String, Object>> data = null;
         for (String f : files) {

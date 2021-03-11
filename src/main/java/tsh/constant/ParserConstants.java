@@ -152,6 +152,7 @@ public interface ParserConstants {
             AT,
             NEW,
             IMPORT,
+            MAP,
             LAMBDA,
             GLOBAL,
             ASSIGN, GT, LT, BANG, OR, AND, PLUS, MINUS, STAR, SLASH, XOR, MOD,

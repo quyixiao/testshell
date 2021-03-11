@@ -5,6 +5,8 @@ import tsh.Interpreter;
 import tsh.SimpleNode;
 import tsh.exception.EvalError;
 
+import java.util.ArrayList;
+
 public class TSHLambdaDeclaration extends TSHMethodDeclaration {
 
     public TSHLambdaDeclaration(String id) {
@@ -20,7 +22,6 @@ public class TSHLambdaDeclaration extends TSHMethodDeclaration {
         }
         return result;
     }
-
 
     public String toString() {
         return "TSHLambdaDeclaration: " + id;

@@ -80,9 +80,9 @@ public class CommonMethod {
         return null;
     }
 
-    public Object json(Object ... t){
-        if(t[0] instanceof  String){
-            return JSONObject.parseObject(t[0].toString(),LinkedHashMap.class);
+    public Object json(Object... t) {
+        if (t[0] instanceof String) {
+            return JSONObject.parseObject(t[0].toString(), LinkedHashMap.class);
         }
         return new LinkedHashMap<>();
     }
