@@ -1,0 +1,14 @@
+def out2(){
+    o = 65
+    def inner(){
+        o = 97
+        print('11111',o)
+    }
+    inner()
+    print('222222',o)
+}
+
+// 测试 局部变量问题
+out2()
+
+

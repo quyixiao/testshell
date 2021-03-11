@@ -1,0 +1,38 @@
+userName = "1xxx53"
+
+token = ''
+url_pre = 'https://xxxx/xxxx'
+login_register_url = url_pre + '/app/user/loginOrRegister'  //用户登陆 url
+header = {"appVersion": "1xxx", \
+        "time": "1612xxx713", \
+        "id": "i_abaxxx428713_appStore",  \
+        "netType": "xxx", \
+        "userName":  userName,  \
+        "uuid": "abab73xxxxx753de27b",  \
+        "channel": "appStore","token":  token , \
+        "sign": "3402511929xxxxx18e234b2d1c43034", \
+        "idfa": "3C80xxx125D2F"}
+
+signStrBefore = "xxxx=" + header['xxxx'] + "&xxx=" + userName + "&xxx="  \
+    + header['xxx'] + "&xxx=" + header['xxx'] + header['xxx']
+
+sign = sha256(signStrBefore)
+header['sign'] = sign
+print(header)
+
+def loginOrRegister(mobile, verifyCode){
+    xx = {'Content-Type': 'application/json;charset=UTF-8', 'xxx': header}
+    print(xx)
+    return open(login_register_url, headers=xx, \
+                         data={"mobile":mobile, \
+                         "xx":xxx,\
+                         "xxx":xxx,\
+                         "xxx":"eyJwaG9uZVR5cGxxxvbiI6IjEwLjIifQ=="});
+}
+
+resp = loginOrRegister(userName, 'xxxx')
+print(resp)
+d = json(resp)
+token = d['data']['token']
+print('token',token)
+

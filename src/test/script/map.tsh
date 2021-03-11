@@ -1,0 +1,42 @@
+map1 = {'username':'zhangsan','age':18}
+
+
+
+
+// 1. 打印张三的名字，result : zhangsan
+print(map1['username'])
+
+// 2.修改 map1 中的值 , result  : {'username': 'lisi','age': 18}
+map1['username'] =  'lisi'
+print(map1)
+
+//3.向 map 中添加值 ,result : {'username': 'lisi','age': 18,'sex': '男'}
+map1.put('sex','男')
+print(map1)
+
+
+//4. 遍历 map1
+// result :
+/**
+username lisi
+age 18
+*/
+for(k ,v in map1){
+    if(k == 'sex'){
+        break
+    }
+    print(k,v)
+}
+
+
+// 对 key 遍历
+for(k in map1.keySet()){
+    print(k)
+}
+
+// 对 value 遍历
+for(v in map1.values()){
+    print(v)
+}
+
+

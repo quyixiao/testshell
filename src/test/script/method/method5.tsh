@@ -1,0 +1,15 @@
+def add(x){
+    def _fn(y){
+        return x + y
+    }
+    return _fn
+}
+
+// 处理返回值是方法的处理
+t = add(4)(5)
+// result : 9
+print(t)
+
+
+
+

@@ -1,0 +1,7 @@
+def foo(w ,u = 'abc',z = 123){
+    u  = 'xyz'
+    z = 789
+    print(w,u,z)
+}
+
+foo('mage')

@@ -1,0 +1,9 @@
+def xx(){
+    a = 1
+    if(a == 1){
+         print('xxxxxxxxxxxx')
+         throw new Exception('可能有错')
+    }
+}
+xx()
+print('xxxxx')

@@ -1,0 +1,6 @@
+def a (x,y){
+    return x , y
+}
+
+a,b = a (1,2)
+print(a,b)

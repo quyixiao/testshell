@@ -1,0 +1,17 @@
+//a = time()
+
+// 1.打印当前时间毫秒值
+//print(a)
+
+// 2.格式化日期
+//print(sdf('yyyy-MM-dd HH:mm:ss',a))
+
+// 3.获取当前时间的毫秒值
+b = date().getTime()
+print(b)
+
+
+
+
+
+

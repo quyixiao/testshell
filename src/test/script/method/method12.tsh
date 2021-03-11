@@ -1,0 +1,11 @@
+def foo(xyz=null,u = 'abc',z = 123){
+    if (xyz == null){
+        xyz = []
+    }
+    xyz.add(1)
+    print(xyz)
+    return xyz
+}
+
+foo(xyz = [10,5])
+

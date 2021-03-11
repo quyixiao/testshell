@@ -1,0 +1,19 @@
+a = [1,2,3]
+b = "abc"
+c = 1
+d = true
+e = {'a':'哈哈'}
+f = date()
+
+// 1. 打印list 类型
+print(type(a))
+// 2. 打印str类型
+print(type(b))
+// 3. 打印 number 类型
+print(type(c))
+// 4.打印 boolean 类型
+print(type(d))
+// 5.打印 map 类型
+print(type(e))
+// 6.打印 date 类型
+print(type(f))

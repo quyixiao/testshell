@@ -1,0 +1,8 @@
+print(map(lambda x,y,z: x + y + z  , [1, 2, 3, 4, 5],[6, 7, 8, 9, 10],[10,20,30,40,50]))
+
+print('9',[x for ( x in (lambda *args: map(lambda x: x + 1, args))(*range(5))) ])
+
+print('10',[x for ( x in  (lambda *args: map(lambda x ,y : x + y, args, args))(*range(5)))])
+
+
+

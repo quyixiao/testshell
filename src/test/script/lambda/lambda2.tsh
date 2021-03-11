@@ -1,0 +1,5 @@
+a = [x for (x in range(5))]
+print(a)
+
+print('7',(lambda *args: [x + 1 for (x in args)])(*range(5)))
+

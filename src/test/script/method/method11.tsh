@@ -1,0 +1,9 @@
+def foo(xyz=[]){
+    xyz.add(1)
+    print('++++++',xyz)
+    return xyz
+}
+
+// 覆盖掉 xyz
+foo(xyz=[10])
+

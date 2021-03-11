@@ -1,0 +1,14 @@
+def findMax(a,b,max){
+    return max(a,b)
+}
+
+def max(a ,b ){
+    return a > b ? a : b
+}
+
+
+//1. 将方法作为参数传递进另外一个方法
+print(findMax(a = 1 ,b = 5,max))
+
+
+

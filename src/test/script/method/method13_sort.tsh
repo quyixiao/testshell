@@ -1,0 +1,19 @@
+def bubble_sort(nums){
+    for (i in range(len(nums) - 1)){        // len 函数，计算list 的长度
+        for(j in range(len(nums) - i - 1)){
+            if (nums[j] > nums[j + 1]){
+                temp = nums[j]
+                nums[j] = nums[j+1]
+                nums[j+1] = temp
+            }
+        }
+    }
+    return nums
+}
+
+// 对list进行排序
+print(bubble_sort([1,2,8,3,4,5]))
+
+b = range(30)
+
+print(b)

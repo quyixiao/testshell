@@ -1,0 +1,13 @@
+def counter(){
+    c = [0]
+    def inc(){
+        c[0] += 1
+        return c[0]
+    }
+    return inc
+}
+
+foo = counter()
+
+print(foo(), foo())
+print(foo())

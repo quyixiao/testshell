@@ -1,0 +1,19 @@
+def logger(fn){
+    def wrapper(*args, **kwargs){
+        print('before', *args)
+        ret = fn(*args, **kwargs)
+        print('end ', ret)
+        return ret
+    }
+    return wrapper
+}
+
+@logger
+def add1(x, y,z=6){
+    return x + y + z
+}
+
+
+add1(4, 5)
+
+add1(4, 5,9)

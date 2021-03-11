@@ -1,0 +1,55 @@
+// 2. 取大于等于x的最小的整数值，如果x是一个整数，则返回x  , result:5
+print(ceil(4.12))
+
+// 3. 把y的正负号加到x前面，可以使用0 , result:   -2
+print(copysign(2,-3))
+
+// 4. 求x的余弦，x必须是弧度  , result:0.7071067811865476
+print(cos(3.14159265358979323846/4))
+
+// 5. 把x从弧度转换成角度    , result:45.0
+print(degrees(3.14159265358979323846/4))
+
+// 7. exp()返回math.e(其值为2.71828)的x次方 ,result : 7.3890560989306504
+print(exp(2))
+
+// 8. expm1()返回math.e的x(其值为2.71828)次方的值减１, result : 6.3890560989306504
+print(expm1(2))
+
+// 9. fabs()返回x的绝对值 , result :0.03
+print(fabs(-0.03))
+
+// 10. factorial()取x的阶乘的值,result : 3628800
+print(factorial(10))
+
+// 11. floor()取小于等于x的最大的整数值，如果x是一个整数，则返回自身 ,result : 4
+print(floor(4.999))
+
+// 12. fmod()得到x/y的余数，其值是一个浮点数 ,result : 2.0
+print(fmod(20,3))
+
+// 14. 对迭代器里的每个元素进行求和操作 ,result : 6
+print(fsum([1,2,3]))
+
+// 26. pow()返回x的y次方，即x**y , result : 81
+print(pow(3,4))
+
+// 27. radians()把角度x转换成弧度 , result : 0.7853981633974483
+print(radians(45))
+
+// 28. sin()求x(x为弧度)的正弦值 ,result : 0.7071067811865475
+print(sin(3.14159265358979323846/4))
+
+// 29. sqrt()求x的平方根
+print(sqrt(100))
+
+// 30. tan()返回x(x为弧度)的正切值 , result : 0.9999999999999999
+print(tan(3.14159265358979323846/4))
+
+
+
+
+
+
+
+

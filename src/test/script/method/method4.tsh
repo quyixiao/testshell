@@ -1,0 +1,13 @@
+def max (){
+    def realMax (a,b){
+        return a > b ? a : b
+    }
+    return realMax
+}
+
+fun = max()
+
+
+//1.获取一个方法，并调用这个方法
+print(fun(1,2))
+

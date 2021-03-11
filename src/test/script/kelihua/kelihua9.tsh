@@ -1,0 +1,21 @@
+def copy_properties(src){
+    def inner(dest){
+        print(src)
+        print(dest)
+        return dest
+    }
+    return inner
+}
+
+def b (){
+    x = 1
+    return x
+}
+
+@copy_properties(b)
+def add(x ,y ){
+    return x + y
+}
+
+print(add(4,5))
+

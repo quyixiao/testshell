@@ -1,0 +1,34 @@
+def logger(x){
+    def _logger(fn){
+        def wrapper(*args, **kwargs){
+            print('before', *args)
+            preTime = time()
+            ret = fn(*args, **kwargs)
+            afterTime = time()
+            print('end ', ret)
+            if(afterTime - preTime > 2000){
+                print(fn , '超时')
+            }
+            return ret
+        }
+        return wrapper
+    }
+    return _logger
+}
+
+
+@logger(2000)
+def add1(x,y){
+    sleep(1000)
+    return x + y
+}
+
+
+@logger(3000)
+def add2(x,y,z){
+    sleep(3000)
+    return x + y + z
+}
+
+add1(4,5)
+add2(4,5,6)

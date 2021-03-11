@@ -1,0 +1,17 @@
+userName = "16657136053"
+
+url_pre = 'https://xxx'
+get_verify_code_url = url_pre + "/xxx/xxx/xxx"
+
+
+
+def getVerifyCode(mobile){
+    headers = {'Content-Type': 'application/json;charset=UTF-8'}
+    return open(get_verify_code_url,'POST',headers, \
+                         {"mobile": mobile }  )
+}
+
+
+resp = getVerifyCode(userName)
+
+

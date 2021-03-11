@@ -1,0 +1,4 @@
+def max(a =5 ,b ){
+    return a > b ? a : b
+}
+print(max( b = 3 ))

@@ -1,0 +1,28 @@
+a = null
+b = null
+
+// 1.判断一个字符串是不是空
+if(isBlank(b)){
+    print('b is null')
+}
+
+c = ''
+if(isBlank(c)){
+    print('c is blank')
+}
+
+//2.判断一个字符串不是空
+if(!isBlank(c)){
+    print('2222 c is blank')
+}else{
+    print('333 c is blank')
+}
+
+
+//3.判断一个字符串不是空
+if(isNotBlank(c)){
+    print('4444 c is blank')
+}else{
+    print('55555 c is blank')
+}
+

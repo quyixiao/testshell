@@ -1,0 +1,40 @@
+def add(x, y){
+    return x + y
+}
+
+def add1(x, y, z=6){
+    return x + y + z
+}
+
+
+def logger(fn, *args, **kwargs){
+    print('before', args)
+    print('before', *args)
+    print('before',**kwargs)
+    ret = fn(*args, **kwargs)
+    print('end ', ret)
+    return ret
+}
+
+logger(add, 4, 5)
+
+logger(add1, 4, 5, z=7)
+
+
+print("*"*30)
+
+def funx(*args, **kwargs){
+    print('----',*args)
+    print('++++',**kwargs)
+}
+
+funx(1,2,3,4,5,6)
+
+
+
+
+
+
+
+
+

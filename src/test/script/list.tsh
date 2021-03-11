@@ -1,0 +1,60 @@
+list = [1,2,3,"zhangsan",{"username":"瞿贻晓","age":28}]
+// 1. 打印 list , result : [1 ,2 ,3 ,'zhangsan' ,{'username': '瞿贻晓','age': 28}]
+print(list)
+
+// 2. 打印索引为3的元素， result : zhangsan
+print(list[3])
+
+// 3. 打印索引为5的元，result : {'username': '瞿贻晓','age': 28}
+print(list[4])
+
+// 4. 索引为2到索引为5的元素，不包含5 ，result : [3 ,'zhangsan' ,{'username': '瞿贻晓','age': 28}]
+print(list[2:5])
+
+// 5. 截取索引从2开始，一直到最后的元素 ,result : [3 ,'zhangsan' ,{'username': '瞿贻晓','age': 28}]
+print(list[2:])
+
+// 6.取集合中最后一个元素,result : {'username': '瞿贻晓','age': 28}
+print(list[-1])
+
+// 7.取从0个元素到倒数第二个元素的,result : [1 ,2 ,3 ,'zhangsan']
+print(list[:-1])
+
+// 8.为数组赋值，result : [1 ,2 ,'lisi' ,'zhangsan' ,{'username': '瞿贻晓','age': 28}]
+list[2] = 'lisi'
+print(list)
+
+// 9. 对 list进行拆分 , result : [2 ,'lisi' ,'zhangsan' ,{'username': '瞿贻晓','age': 28}]
+a,b = list
+print(b)
+
+//10.向list 集合中添加元素
+list.add('哈哈')
+print(list)
+
+//11.向 list 集合中的索引第2个位置添加 值
+list.add(2,'测试')
+print(list)
+
+//12.向 list 中添加另外一个集合
+list2 = ['哈哈']
+
+list.addAll(list2)
+print(list)
+
+
+// 13. list 遍历
+/**
+0 1
+1 2
+2 测试
+3 lisi
+4 zhangsan
+5 {'username': '瞿贻晓','age': 28}
+6 哈哈
+7 哈哈
+*/
+for(i ,item in list){
+    print(i,item)
+}
+

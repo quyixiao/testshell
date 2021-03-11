@@ -1,0 +1,24 @@
+def add1(x, y, z=6){
+    print('*'*30,x,y,z)
+    return x + y + z
+}
+
+def logger(fn){
+    def _logger(*args, **kwargs){
+        print('before', *args)
+        ret = fn(*args, **kwargs)
+        print('end ', ret)
+        return ret
+    }
+    return _logger
+}
+
+t = logger(add1)
+
+xx = [4,9]
+
+t(4,9,20,z=10)
+
+print('----------------------------------')
+
+logger(add1)(1,2,10, 3 )

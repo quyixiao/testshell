@@ -1,0 +1,39 @@
+a = 1
+while(a < 10){
+    print(a)
+    a ++
+}
+
+print('*'*30)
+
+b = 1
+
+lable_1:
+while(true){
+    switch(b){
+        case 5 :
+            break lable_1
+        default:
+            print(b)
+            break;
+    }
+    b ++
+}
+
+
+/**
+1
+2
+3
+4
+5
+6
+7
+8
+9
+******************************
+1
+2
+3
+4
+*/

@@ -1,0 +1,6 @@
+// 1. SHA-256加密 ,result : a5bf4df04790c0e3ea477554382a0dbd7dd75298c09e35e72d5bcda0e877cb62
+print(sha256('netType=xxxx&userName=184xxx'))
+
+// 2. md5 加密 ,result :  f561aaf6ef0bf14d4208bb46a4ccb3ad
+print(md5('xxx'))
+
