@@ -251,7 +251,7 @@ public class ParserTokenManager extends Utils implements ParserConstants {
         } else if (!continueReader && eqOR(kind, DOT)) {    //. 的处理
             String image = input_stream.GetImage().trim();
             image = image.substring(0, image.length() - 1);
-            if (TStringUtil.isNumber(image)) { //如果前面是数字，则直接略过
+            if (TStringUtil.isNumber(image)) { //如果前面是数字，则继续读取
                 return 0;
             }
             if (image.length() > 0) {
