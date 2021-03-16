@@ -157,7 +157,18 @@ public class Utils {
                 }
             }
         }
-        map.putAll(current);
+        if(current !=null){
+            for (Map.Entry<String, Object> m : current.entrySet()) {
+                Object obj = m.getValue();
+                if (obj instanceof TshMethod) {
+                    Object newObj = nameSpace.getMethod(m.getKey(), new Class[]{null});
+                    putNotNull(map, m.getKey(), obj, newObj);
+                } else {
+                    Object newObj = nameSpace.getVariable(m.getKey());
+                    putNotNull(map, m.getKey(), obj, newObj);
+                }
+            }
+        }
         return map;
     }
 

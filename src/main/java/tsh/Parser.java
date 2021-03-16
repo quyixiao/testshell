@@ -1619,26 +1619,35 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         jjtree.openNodeScope(jjtn000);
         jjtreeOpenNodeScope(jjtn000);
         Token t = null;
-        StringBuffer s = null;
+        StringBuilder sb = new StringBuilder();
         try {
             jj_consume_token(IMPORT);
-            t = jj_consume_token(IDENTIFIER);
-            s = new StringBuffer(t.image);
-            label_5:
             while (true) {
-                if (jj_2_7(2)) {
-                    ;
-                } else {
-                    break label_5;
+                if (jj_2_33(3, COMMA)) {
+                    jj_consume_token(COMMA);
                 }
-                jj_consume_token(DOT);
                 t = jj_consume_token(IDENTIFIER);
-                s.append("." + t.image);
+                StringBuffer s = new StringBuffer(t.image);
+                label_5:
+                while (true) {
+                    if (jj_2_7(2)) {
+                        ;
+                    } else {
+                        break label_5;
+                    }
+                    jj_consume_token(DOT);
+                    t = jj_consume_token(IDENTIFIER);
+                    s.append("." + t.image);
+                }
+                sb.append(s.toString()).append(",");
+                if (jj_2_33(3, NEXT_LINE)) {
+                    break;
+                }
             }
             jjtree.closeNodeScope(jjtn000, true);
             jjtc000 = false;
             jjtreeCloseNodeScope(jjtn000);
-            jjtn000.text = s.toString();
+            jjtn000.text = sb.toString();
         } catch (Throwable jjte000) {
             if (jjtc000) {
                 jjtree.clearNodeScope(jjtn000);
@@ -3576,9 +3585,9 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         Token xsp;
         while (true) {
             xsp = jj_scanpos;
-            if(jj_scan_token(EOF)){
+            if (jj_scan_token(EOF)) {
                 jj_scanpos = xsp;
-            }else{
+            } else {
                 return true;
             }
             if (!jj_scan_token(FOR)) return false;      //
