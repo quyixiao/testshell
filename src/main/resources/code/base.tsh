@@ -5,3 +5,15 @@ def open(url,method='POST',headers,data){
         return http2(url,method,data)
     }
 }
+
+
+
+def upload(url,headers,data,files){
+    if(headers == null){
+        headers = {}
+    }
+    if(data == null ){
+        data = {}
+    }
+    return uploadFile(url,headers,data,files)
+}

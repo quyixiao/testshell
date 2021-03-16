@@ -1,12 +1,22 @@
 package tsh.methods;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import tsh.entity.TBigDecimal;
-import tsh.util.Console;
-import tsh.util.TNumberUtil;
-import tsh.util.TStringUtil;
+import tsh.util.*;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -86,5 +96,106 @@ public class CommonMethod {
         }
         return new LinkedHashMap<>();
     }
+
+
+    public static Object uploadFile(Object... t) throws Exception {
+        List<File> fileList = new ArrayList<>();
+        StringBuilder result = new StringBuilder();
+        CloseableHttpClient httpClient = null;
+        CloseableHttpResponse httpResponse = null;
+        try {
+            String url = t[0].toString();
+            Map<String, Object> headers = null;
+            Map<String, String> files = null;
+            if (t.length > 1) {
+                headers = (Map<String, Object>) t[1];
+            }
+            Map<String, String> data = null;
+            if (t.length > 2) {
+                data = (Map<String, String>) t[2];
+            }
+            if (t.length > 3) {
+                files = (Map<String, String>) t[3];
+            }
+            httpClient = HttpClientBuilder.create().build();
+            RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(200000).setSocketTimeout(200000000).build();
+            if (data != null) {
+                int i = 0;
+                StringBuilder sb = new StringBuilder(url);
+                for (Map.Entry<String, String> d : data.entrySet()) {
+                    if (i == 0) {
+                        sb.append("?");
+                    } else {
+                        sb.append("&");
+                    }
+                    sb.append(d.getKey()).append("=").append(d.getValue());
+                }
+                url = sb.toString();
+            }
+            HttpPost httpPost = new HttpPost(url);
+            httpPost.setConfig(requestConfig);
+            if (headers != null) {
+                for (Map.Entry<String,Object> map : headers.entrySet()) {
+                    if(map.getValue() instanceof Map){
+                        httpPost.setHeader(map.getKey(), JSON.toJSONString(map.getValue()));
+                    }else{
+                        httpPost.setHeader(map.getKey(), map.getValue() + "");
+                    }
+                }
+            }
+            MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
+            //multipartEntityBuilder.setCharset(Charset.forName("UTF-8"));
+            //File file = new File("F:\\Ken\\1.PNG");
+            //FileBody bin = new FileBody(file);
+            if (files != null) {
+                ClassLoader classLoader = TClassUtils.getDefaultClassLoader();
+                URL pathUrl = classLoader.getResource("");
+                String path = pathUrl.getPath();
+                for (Map.Entry<String, String> fileUrl : files.entrySet()) {
+                    String value = fileUrl.getValue();
+                    int i = value.lastIndexOf("/");
+                    String fileName = value.substring(i + 1);
+                    String filePath = path + fileName;
+                    THttpUtil.downloadFile(value, filePath);
+                    File file = new File(filePath);
+                    fileList.add(file);
+                    //multipartEntityBuilder.addBinaryBody("file", file,ContentType.create("image/png"),"abc.pdf");
+                    //当设置了setSocketTimeout参数后，以下代码上传PDF不能成功，将setSocketTimeout参数去掉后此可以上传成功。上传图片则没有个限制
+                    //multipartEntityBuilder.addBinaryBody("file",file,ContentType.create("application/octet-stream"),"abd.pdf");
+                    multipartEntityBuilder.addBinaryBody(fileUrl.getKey(), file);
+                }
+            }
+            //multipartEntityBuilder.addPart("comment", new StringBody("This is comment", ContentType.TEXT_PLAIN));
+            HttpEntity httpEntity = multipartEntityBuilder.build();
+            httpPost.setEntity(httpEntity);
+
+            httpResponse = httpClient.execute(httpPost);
+            HttpEntity responseEntity = httpResponse.getEntity();
+            int statusCode = httpResponse.getStatusLine().getStatusCode();
+
+            if (statusCode == 200) {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(responseEntity.getContent()));
+                String str = "";
+                while (!TStringUtil.isEmpty(str = reader.readLine())) {
+                    result.append(str);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            httpClient.close();
+            if (httpResponse != null) {
+                httpResponse.close();
+            }
+            //如果文件存在，则删除文件
+            for (File file : fileList) {
+                if (file.exists()) {
+                    file.delete();
+                }
+            }
+        }
+        return result.toString();
+    }
+
 
 }

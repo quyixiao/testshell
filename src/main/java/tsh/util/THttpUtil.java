@@ -17,6 +17,7 @@ import tsh.methods.CommonMethod;
 
 import javax.net.ssl.*;
 import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.cert.CertificateException;
@@ -131,7 +132,7 @@ public class THttpUtil {
 
     public static String post(String url, Map<String, Object> headers, Map<String, Object> data) {
         String param = JSON.toJSONString(data);
-        logger.print("doHttpPost begin url = {} param = {}", url, param);
+        logger.print("doHttpPost begin url " + url + " param : " + param);
         BufferedReader in = null;
         OutputStreamWriter out = null;
         String result = "";
@@ -141,12 +142,12 @@ public class THttpUtil {
             conn.setDoOutput(true);
             conn.setDoInput(true);
             conn.setConnectTimeout(20 * 1000);
-            if(headers !=null){
+            if (headers != null) {
                 for (Map.Entry<String, Object> header : headers.entrySet()) {
-                    if(header.getValue() instanceof String){
+                    if (header.getValue() instanceof String) {
                         conn.setRequestProperty(header.getKey(), header.getValue().toString());
-                    }else if (header.getValue() instanceof Map){
-                        conn.setRequestProperty(header.getKey(),JSON.toJSONString(header.getValue()));
+                    } else if (header.getValue() instanceof Map) {
+                        conn.setRequestProperty(header.getKey(), JSON.toJSONString(header.getValue()));
                     }
                 }
             }
@@ -174,7 +175,7 @@ public class THttpUtil {
                 ex.printStackTrace();
             }
         }
-        logger.print("doHttpPost result = {}", result);
+        logger.print("doHttpPost result = " + result);
         return result;
     }
 
@@ -629,4 +630,44 @@ public class THttpUtil {
     }
 
 
+    public static void downloadFile(String fileUrl, String path) throws Exception {
+        DataInputStream in =null;
+        DataOutputStream out = null;
+        try {
+            URL url = new URL(fileUrl);
+            HttpURLConnection urlCon = (HttpURLConnection) url.openConnection();
+            urlCon.setConnectTimeout(6000);
+            urlCon.setReadTimeout(6000);
+            int code = urlCon.getResponseCode();
+            if (code != HttpURLConnection.HTTP_OK) {
+                throw new Exception("文件读取失败");
+            }
+            //读文件流
+            in = new DataInputStream(urlCon.getInputStream());
+            out = new DataOutputStream(new FileOutputStream(path));
+            byte[] buffer = new byte[2048];
+            int count = 0;
+            while ((count = in.read(buffer)) > 0) {
+                out.write(buffer, 0, count);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            out.close();
+            in.close();
+        }
+    }
+
+    public static void main(String[] args)  throws Exception{
+        String url = "http://my-wallet.oss-cn-hangzhou.aliyuncs.com/ppl/test/1fbfbf16c4ae5763.jpeg";
+
+        ClassLoader classLoader = TClassUtils.getDefaultClassLoader();
+        URL pathUrl = classLoader.getResource("");
+        String path = pathUrl.getPath();
+        System.out.println(path);
+        int i = url.lastIndexOf("/");
+        String fileName = url.substring(i+1,url.length());
+        System.out.println(fileName);
+       // downloadFile(url,"/Users/quyixiao/Desktop/xxx.jpeg");
+    }
 }

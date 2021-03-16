@@ -84,7 +84,7 @@ public class RunTest {
         Map<String, Object> globals = new LinkedHashMap<>();
         Map<String, Object> imports = new LinkedHashMap<>();
         List<String> files = Arrays.asList(new String[]{
-                "/Users/quyixiao/git/java-python/script/lambda/lambda4.tsh"});
+                "/Users/quyixiao/git/java-python/script/yijie/uploadFile.tsh"});
 
         TTuple3<Map<String, Object>, Map<String, Object>, Map<String, Object>> data = null;
         for (String f : files) {
