@@ -8,6 +8,7 @@ import tsh.Interpreter;
 import tsh.NameSpace;
 import tsh.SimpleNode;
 import tsh.exception.EvalError;
+import tsh.exception.TargetError;
 import tsh.service.ImportHelpService;
 import tsh.t.TTuple1;
 import tsh.util.TStringUtil;
@@ -23,17 +24,14 @@ public class TSHImportDeclaration extends SimpleNode {
         super(id);
     }
 
-    public Object eval(Map<String, Object> globals, Map<String, Object> imports, ImportHelpService helpService, CallStack callstack, Interpreter interpreter) throws EvalError {
-        try {
-            String names[] = text.trim().split(",");
-            for (String name : names) {
-                if (TStringUtil.isBlank(name)) {
-                    continue;
-                }
-                importVaribaleOrMethod(name, globals, imports, helpService, callstack, interpreter);
+    public Object eval(Map<String, Object> globals, Map<String, Object> imports, ImportHelpService helpService,
+                       CallStack callstack, Interpreter interpreter) throws Exception {
+        String names[] = text.trim().split(",");
+        for (String name : names) {
+            if (TStringUtil.isBlank(name)) {
+                continue;
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+            importVaribaleOrMethod(name, globals, imports, helpService, callstack, interpreter);
         }
         return Primitive.VOID;
     }

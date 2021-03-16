@@ -1,6 +1,6 @@
 package tsh.service;
 
 public interface ImportHelpService {
-    String getCode(String path);
+    String getCode(String path) throws Exception;
 
 }

@@ -5,7 +5,6 @@ import tsh.Interpreter;
 import tsh.NameSpace;
 import tsh.SimpleNode;
 import tsh.exception.InterpreterError;
-import tsh.exception.ParseException;
 import tsh.expression.*;
 import tsh.service.ImportHelpService;
 import tsh.t.TSHTuple;
@@ -118,9 +117,9 @@ public class Utils {
                             }
                         }
                     }
-                } catch (ParseException e) {
-                    throw e;
                 } catch (Exception e) {
+                    throw e;
+                } catch (Error e) {
                     throw e;
                 } finally {
                     localInterpreter.get_jjtree().reset();
@@ -157,7 +156,7 @@ public class Utils {
                 }
             }
         }
-        if(current !=null){
+        if (current != null) {
             for (Map.Entry<String, Object> m : current.entrySet()) {
                 Object obj = m.getValue();
                 if (obj instanceof TshMethod) {
