@@ -60,6 +60,14 @@ public class CommonMethod {
     }
 
 
+
+    public Object number(Object... t) {
+        String a = t[0] + "";
+        int precision = TNumberUtil.getPrecision(a);
+        return new TBigDecimal(TNumberUtil.objToBigDecimalDefault(a,BigDecimal.ZERO),precision);
+    }
+
+
     public Object type(Object... t) {
         Object v = t[0];
         if (v instanceof Boolean) {

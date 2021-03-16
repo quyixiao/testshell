@@ -137,7 +137,7 @@ public class Utils {
             try {
                 in.close();
             } catch (IOException e) {
-                throw e;
+                e.printStackTrace();
             }
         }
     }

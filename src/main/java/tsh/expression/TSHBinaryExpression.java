@@ -51,7 +51,11 @@ public class TSHBinaryExpression extends SimpleNode implements ParserConstants {
 
         switch (kind) {
             case EQ:
-                return (lhs == rhs) ? Primitive.TRUE : Primitive.FALSE;
+                if(lhs instanceof String && rhs instanceof String){
+                    return (lhs.equals(rhs)) ? Primitive.TRUE : Primitive.FALSE;
+                }else{
+                    return (lhs == rhs) ? Primitive.TRUE : Primitive.FALSE;
+                }
             case NE:
                 return (lhs != rhs) ? Primitive.TRUE : Primitive.FALSE;
             case PLUS:
