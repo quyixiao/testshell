@@ -31,6 +31,7 @@ import tsh.Capabilities;
 import tsh.Interpreter;
 import tsh.exception.EvalError;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -53,6 +54,29 @@ public class Console {
             log.set(list);
         }
         return sb.toString();
+    }
+
+    public static List<String> infoList() {
+        List<String> result = new ArrayList<>();
+        List<String> list = log.get();
+        if (list != null) {
+            for (String s : list) {
+                result.add(s);
+            }
+            list.clear();
+            log.set(list);
+        }
+        return result;
+    }
+
+
+    public static void info(String info) {
+        List<String> list = log.get();
+        if (list == null) {
+            list = new ArrayList<>();
+        }
+        list.add(info);
+        log.set(list);
     }
 
     public static void main(String args[]) {

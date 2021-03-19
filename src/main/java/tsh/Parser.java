@@ -866,7 +866,6 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
 
 
     final public void DoStatement() throws ParseException {
-        /*@bgen(jjtree) WhileStatement */
         TSHWhileStatement jjtn000 = new TSHWhileStatement(T_WhileStatement);
         boolean jjtc000 = true;
         jjtree.openNodeScope(jjtn000);
@@ -878,7 +877,6 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
             jj_consume_token(LPAREN);
             Expression();
             jj_consume_token(RPAREN);
-            jj_consume_token(SEMICOLON);
             jjtree.closeNodeScope(jjtn000, true);
             jjtc000 = false;
             jjtreeCloseNodeScope(jjtn000);

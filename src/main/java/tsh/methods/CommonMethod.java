@@ -45,6 +45,9 @@ public class CommonMethod {
     }
 
     public Object date(Object... t) {
+        if(t.length == 1 ){
+            return new Date(TNumberUtil.objToLong(t[0]));
+        }
         return new Date();
     }
 

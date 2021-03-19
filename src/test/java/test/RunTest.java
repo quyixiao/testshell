@@ -84,7 +84,7 @@ public class RunTest {
         Map<String, Object> globals = new LinkedHashMap<>();
         Map<String, Object> imports = new LinkedHashMap<>();
         List<String> files = Arrays.asList(new String[]{
-                "/Users/quyixiao/git/java-python/script/try_catch_throw.tsh"});
+                "/Users/quyixiao/git/java-python/script/try_catch_throw1.tsh"});
 
         TTuple3<Map<String, Object>, Map<String, Object>, Map<String, Object>> data = null;
         try {
@@ -125,6 +125,55 @@ public class RunTest {
         } finally {
         }
     }
+
+
+
+    @Test
+    public void test4() throws Exception {
+        ResouceHelp resouceHelp = new ResouceHelp();
+        Map<String, Object> init = new LinkedHashMap<>();
+        Map<String, Object> globals = new LinkedHashMap<>();
+        Map<String, Object> imports = new LinkedHashMap<>();
+        List<String> files = Arrays.asList(new String[]{
+                "/Users/quyixiao/project/testshell/src/test/script/do.tsh"});
+        TTuple3<Map<String, Object>, Map<String, Object>, Map<String, Object>> data = null;
+        try {
+            for (String f : files) {
+                String content = TFileUtils.readToStr(f);
+                data = Utils.run(content, init, globals, imports, resouceHelp).getData();
+                globals = data.getSecond();
+                imports = data.getThird();
+            }
+        } catch (Exception e) {
+            System.out.println("-----------------");
+            e.printStackTrace();
+        } finally {
+        }
+    }
+
+  @Test
+    public void test5() throws Exception {
+        ResouceHelp resouceHelp = new ResouceHelp();
+        Map<String, Object> init = new LinkedHashMap<>();
+        Map<String, Object> globals = new LinkedHashMap<>();
+        Map<String, Object> imports = new LinkedHashMap<>();
+        List<String> files = Arrays.asList(new String[]{
+                "/Users/quyixiao/project/testshell/src/test/script/try_catch_throw2.tsh"});
+        TTuple3<Map<String, Object>, Map<String, Object>, Map<String, Object>> data = null;
+        try {
+            for (String f : files) {
+                String content = TFileUtils.readToStr(f);
+                data = Utils.run(content, init, globals, imports, resouceHelp).getData();
+                globals = data.getSecond();
+                imports = data.getThird();
+            }
+        } catch (Exception e) {
+            System.out.println("-----------------");
+            e.printStackTrace();
+        } finally {
+        }
+    }
+
 
 
 }

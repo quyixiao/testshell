@@ -135,6 +135,14 @@ public class Reflect {
                 returnValue = method.invoke(object, new Object[]{tmpArgs});
             } else {
                 returnValue = method.invoke(object, tmpArgs);
+                if (object instanceof Exception) {
+                    try {
+                        String message = TExceptionUtils.dealException((Exception) object);
+                        Console.info(message);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
             }
             if (returnValue == null)
                 returnValue = Primitive.NULL;
@@ -458,7 +466,7 @@ public class Reflect {
     private static Method findOverloadedMethod(
             Class baseClass, String methodName, Class[] types, boolean publicOnly) {
         if (Interpreter.DEBUG)
-            Interpreter.debug("Searching for method: " + TStringUtil.methodString(methodName, types)+ " in '" + baseClass.getName() + "'");
+            Interpreter.debug("Searching for method: " + TStringUtil.methodString(methodName, types) + " in '" + baseClass.getName() + "'");
 
         Method[] methods = getCandidateMethods(baseClass, methodName, types.length, publicOnly);
 
