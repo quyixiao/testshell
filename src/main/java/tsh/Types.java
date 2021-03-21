@@ -306,7 +306,9 @@ public class Types {
             Object fromValue, Class toType, int operation)
             throws UtilEvalError {
         if (fromValue == null)
-            throw new InterpreterError("null fromValue");
+            // quyixiao modify null
+            // throw new InterpreterError("null fromValue");
+            return null;
 
         Class fromType = fromValue instanceof Primitive ? ((Primitive) fromValue).getType() : fromValue.getClass();
         return castObject(toType, fromType, fromValue, operation, false/*checkonly*/);

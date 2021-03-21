@@ -214,16 +214,19 @@ public class Name implements java.io.Serializable {
         if (obj == Primitive.VOID) {
             obj = namespace.getMethod(methodName, new Class[]{null});
         }
-        if (obj == null)
-            throw new InterpreterError("【 " + methodName + " 】method or variable is null value in toObject()");
+
+        // quyixiao modify null
+        //if (obj == null)
+        //    throw new InterpreterError("【 " + methodName + " 】method or variable is null value in toObject()");
 
         return obj;
     }
 
     private Object completeRound(
             String lastEvalName, String nextEvalName, Object returnObject) {
-        if (returnObject == null)
-            throw new InterpreterError("lastEvalName = " + lastEvalName);
+        // quyixiao modify null
+        //if (returnObject == null)
+//            throw new InterpreterError("lastEvalName = " + lastEvalName);
         this.lastEvalName = lastEvalName;
         this.evalName = nextEvalName;
         this.evalBaseObject = returnObject;
@@ -477,8 +480,8 @@ public class Name implements java.io.Serializable {
             }
         }
 
-        if (obj == null)
-            throw new InterpreterError("null this field ref:" + varName);
+        //if (obj == null)
+          //  throw new InterpreterError("null this field ref:" + varName);
 
         return obj;
     }

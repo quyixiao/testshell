@@ -158,7 +158,7 @@ public class RunTest {
         Map<String, Object> globals = new LinkedHashMap<>();
         Map<String, Object> imports = new LinkedHashMap<>();
         List<String> files = Arrays.asList(new String[]{
-                "/Users/quyixiao/project/testshell/src/test/script/try_catch_throw2.tsh"});
+                "/Users/quyixiao/project/testshell/src/test/script/test.tsh"});
         TTuple3<Map<String, Object>, Map<String, Object>, Map<String, Object>> data = null;
         try {
             for (String f : files) {

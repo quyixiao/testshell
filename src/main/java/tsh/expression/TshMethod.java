@@ -316,7 +316,8 @@ public class TshMethod implements ParserConstants, java.io.Serializable {
         if (argValues != null)
             for (int i = 0; i < argValues.length; i++) {
                 if (argValues[i] == null) {
-                    throw new Error("HERE!");
+                    // quyixiao modify null
+                   // throw new Error("HERE!");
                 }
             }
         if (javaMethod != null) {

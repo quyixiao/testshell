@@ -25,6 +25,7 @@ public class TSHAmbiguousName extends SimpleNode {
         try {
             return getName(callstack.top()).toObjectNew(callstack, interpreter, forceClass,text);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new EvalError(e.getMessage(), this, callstack);
         }
     }

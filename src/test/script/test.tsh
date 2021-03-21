@@ -1,27 +1,5 @@
-def logger(x){
-    def _logger(fn){
-        def wrapper(*args, **kwargs){
-            print('before', *args)
-            preTime = time()
-            ret = fn(*args, **kwargs)
-            afterTime = time()
-            print('end ', ret)
-            return ret
-        }
-        return wrapper
-    }
-    return _logger
+def foo3(w ,u = 'abc',z = 123){
+    print(w,u,z)
 }
 
-@logger(1)
-
-
-
-
-
-
-
-print(add1(1,2))
-
-print('*' * 30 )
-print(add2(1,2,3))
+foo3()
