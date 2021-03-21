@@ -32,7 +32,15 @@ public class TSHArguments extends SimpleNode implements ParserConstants {
                     }
                 }
                 SimpleNode rhsNode = (SimpleNode) argsI.jjtGetChild(1);
-                Object value = rhsNode.eval(callstack, interpreter);
+                Object value = null;
+                SimpleNode parent = ((SimpleNode) rhsNode.jjtGetParent());
+                // 如果 parent 的【operator】操作符号是 += ，-= ，*= ， /= ，%=
+                if (parent instanceof TSHAssignment && !"=".equals(((TSHAssignment) parent).operator)) {
+                    value = parent.eval(callstack, interpreter);
+                    list.add(value);
+                    continue;
+                }
+                value = rhsNode.eval(callstack, interpreter);
                 TVar tVar = new TVar(paramName, value);
                 list.add(tVar);
             } else if (argsI instanceof TSHStarArgument) {

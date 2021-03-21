@@ -244,12 +244,11 @@ public final class Primitive implements ParserConstants, java.io.Serializable {
             return booleanBinaryOperation((Boolean) lhs, (Boolean) rhs, kind);
         else if (lhs instanceof TBigDecimal && rhs instanceof TBigDecimal) {
             int lp = ((TBigDecimal) lhs).getPrecision();
-            int rp = ((TBigDecimal) lhs).getPrecision();
+            int rp = ((TBigDecimal) rhs).getPrecision();
             return bigdecimalBinaryOperation(((TBigDecimal) lhs).getValue(), ((TBigDecimal) rhs).getValue(), kind, lp > rp ? lp : rp);
         } else {
             throw new UtilEvalError("Invalid types in binary operator");
         }
-
     }
 
     static Boolean booleanBinaryOperation(Boolean B1, Boolean B2, String kind) {
@@ -313,7 +312,7 @@ public final class Primitive implements ParserConstants, java.io.Serializable {
                 return new TBigDecimal(d1.multiply(d2), precision);
 
             case SLASH:
-                return new TBigDecimal(d1.divide(d2), precision);
+                return new TBigDecimal(d1.divide(d2,precision, BigDecimal.ROUND_HALF_UP), precision);
 
             case MOD:
                 return new TBigDecimal(new BigDecimal(new Double(lhs % rhs)), precision);

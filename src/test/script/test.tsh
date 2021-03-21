@@ -1,5 +1,2 @@
-def foo3(w ,u = 'abc',z = 123){
-    print(w,u,z)
-}
-
-foo3()
+i5 = 1
+print('i += 1 ，', i5+=1 )       // += 语法

@@ -31,7 +31,11 @@ public class TBigDecimal {
 
 
     public TBigDecimal(BigDecimal value, int precision) {
-        this.value = value;
+        if (precision == 0) {
+            this.value = new BigDecimal(value.intValue());
+        } else {
+            this.value = value.setScale(precision, BigDecimal.ROUND_HALF_UP);
+        }
         this.precision = precision;
     }
 
