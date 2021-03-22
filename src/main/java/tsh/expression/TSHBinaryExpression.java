@@ -22,14 +22,14 @@ public class TSHBinaryExpression extends SimpleNode implements ParserConstants {
         SimpleNode simpleNode = ((SimpleNode) jjtGetChild(0));
         Object lhs = simpleNode.eval(callstack, interpreter);
 
-        if (Utils.eq(kind, BOOL_AND)) {
+        if (Utils.eq(kind, BOOL_AND)) {                 //如果是 && 表达式 ，如果左边表达式是 false ，则右边表达式不再计算
             Object obj = lhs;
             if (isPrimitiveValue(lhs))
                 obj = ((Primitive) lhs).getValue();
             if (obj instanceof Boolean && (((Boolean) obj).booleanValue() == false))
                 return Primitive.FALSE;
         }
-        if (Utils.eq(kind, BOOL_OR)) {
+        if (Utils.eq(kind, BOOL_OR)) {                  // 如果是 || 表达式，如果左边表达式是 true，则右边表达式不再计算
             Object obj = lhs;
             if (isPrimitiveValue(lhs))
                 obj = ((Primitive) lhs).getValue();

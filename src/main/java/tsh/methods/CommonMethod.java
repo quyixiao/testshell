@@ -140,6 +140,7 @@ public class CommonMethod {
                         sb.append("&");
                     }
                     sb.append(d.getKey()).append("=").append(d.getValue());
+                    i ++;
                 }
                 url = sb.toString();
             }

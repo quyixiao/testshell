@@ -149,6 +149,7 @@ public interface ParserConstants {
             IN,
             HOOK,
             SSTAR,
+            TILDE,
             AT,
             NEW,
             IMPORT,

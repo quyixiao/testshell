@@ -28,6 +28,17 @@ public class TSHExportStatement extends SimpleNode {
                     Object value = simpleNode.eval(callstack, interpreter);
                     result.put(((TSHAmbiguousName) obj).text.trim(), value);
                 }
+            } else if (simpleNode instanceof TSHAssignment) {
+                SimpleNode lhsNode = (SimpleNode) simpleNode.jjtGetChild(0);
+                String paramName = null;
+                if (lhsNode instanceof TSHPrimaryExpression) {
+                    SimpleNode llhsNode = (SimpleNode) lhsNode.jjtGetChild(0);
+                    if (llhsNode instanceof TSHAmbiguousName) {
+                        paramName = llhsNode.getText().trim();
+                    }
+                }
+                Object value = simpleNode.eval(callstack, interpreter);
+                result.put(paramName,value);
             }
         }
         return new ExportControl(result);

@@ -1,6 +1,7 @@
 package tsh.util;
 
 
+import org.apache.commons.codec.binary.StringUtils;
 import tsh.Token;
 import tsh.constant.ParserConstants;
 import tsh.exception.TokenMgrError;
@@ -238,7 +239,7 @@ public class ParserTokenManager extends Utils implements ParserConstants {
                 }
             }
         } else if (!continueReader && eqOR(kind, LPAREN, RPAREN, LBRACE, RBRACE, LBRACKET, RBRACKET, SEMICOLON, COMMA,
-                COLON, HOOK,AT)) {
+                COLON, HOOK,AT,TILDE)) {
             String image = input_stream.GetImage().trim();
             if (eqOR(image, SEMICOLON)) {                            //如果是; ，略过
                 input_stream.tokenBegin += 1;
@@ -335,7 +336,11 @@ public class ParserTokenManager extends Utils implements ParserConstants {
         boolean preFlag = true;
         if (preMatches != null && preMatches.length > 0) {
             for (char m : preMatches) {
-                if (eq(image, m + "")) {
+                String temp = image;                    // 如 <<= 的情况，读取到最后一个等于符号时
+                if(TStringUtil.isNotBlank(temp) && temp.trim().length() > 0 ){
+                    temp = temp.substring(temp.length() -1 );
+                }
+                if (eq(temp, m + "")) {
                     preFlag = false;
                     break;
                 }

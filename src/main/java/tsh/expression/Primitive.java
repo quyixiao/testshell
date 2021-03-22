@@ -268,8 +268,17 @@ public final class Primitive implements ParserConstants, java.io.Serializable {
             case BOOL_AND:
                 return lhs && rhs ? Boolean.TRUE : Boolean.FALSE;
 
+            case AND:
+                return lhs & rhs ? Boolean.TRUE : Boolean.FALSE;
+
+            case OR:
+                return lhs | rhs ? Boolean.TRUE : Boolean.FALSE;
+
+            case XOR:
+                return lhs ^ rhs ? Boolean.TRUE : Boolean.FALSE;
+
             default:
-                throw new InterpreterError("unimplemented binary operator");
+                throw new InterpreterError("un implemented binary operator");
         }
     }
 

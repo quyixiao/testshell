@@ -24,9 +24,9 @@ public class TestXX {
 
     @Test
     public void a (){
-        double a = 1  / 0.5;
-        System.out.println(a);
-        List<Object> list = new ArrayList<>();
+        int i39 = 10;
+        i39 >>>= 3;
+        System.out.println(i39);
     }
 
 }
