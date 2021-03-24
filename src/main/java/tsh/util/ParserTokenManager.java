@@ -10,11 +10,15 @@ import tsh.t.TTuple2;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ParserTokenManager extends Utils implements ParserConstants {
 
     public static List<char[]> type = new ArrayList<>();
+
+
 
     static {
         for (String temp : tempType) {
@@ -154,13 +158,18 @@ public class ParserTokenManager extends Utils implements ParserConstants {
             jjmatchedKind = default_jjmatchedKind;            // 2147483647
             jjmatchedPos = 0;
             curPos = jjMoveStringLiteralDfa0_0();
-            if (curPos == -1) {
+            if (curPos == -1) {     // 如读取到续行符 \ 时，继续向下读取
                 continue;
             }
             if (jjmatchedKind != default_jjmatchedKind) {
+                //文件读取结束
                 if (eqOR(jjmatchedKind, EOF)) {
                     return jjFillToken();
                 }
+                //如果返回的位置小于当前读取到的位置，回退到当前返回位置
+                // 如 buffer = [a,b,c,d,e,f,g]
+                // jjmatchedPos = 3
+                // curPos = 6,则需要回退 6 - 3 - 1 = 2 ，因此下次从 e 开始读取
                 if (jjmatchedPos + 1 < curPos) {
                     input_stream.backup(curPos - jjmatchedPos - 1);
                 }
@@ -183,6 +192,7 @@ public class ParserTokenManager extends Utils implements ParserConstants {
                     continue EOFLoop;
                 }
             }
+            //如果读取不正确，返回出错的行和列
             int error_line = input_stream.getEndLine();
             int error_column = input_stream.getEndColumn();
             String error_after = null;
@@ -208,25 +218,27 @@ public class ParserTokenManager extends Utils implements ParserConstants {
     }
 
     private final int jjStartNfaWithStates_0(String kind) {
+        //continueReader 主要是用于处理字符串，只要""或''包裹的任意字符，都当成字符串来处理
         if (!continueReader && eqOR(kind, TAB, SPACE)) {               //如果遇到 tab ,空格， 和逗号
             return getCommon();
-        } else if (!continueReader && eqOR(kind, ENTER, NEXT_LINE)) {
+        } else if (!continueReader && eqOR(kind, ENTER, NEXT_LINE)) {  //当读取到\r和 \n
             String image = input_stream.GetImage().trim();
             if (image.length() > 0) {
                 input_stream.backup(1);
             } else {
                 jjmatchedPos = input_stream.bufpos;
                 jjmatchedKind = NEXT_LINE;
-                return 1;   //
+                return 1;
             }
             return getCommon();
-        } else if (!continueReader && eqOR(kind, CONTINUE_LINE)) {
+        } else if (!continueReader && eqOR(kind, CONTINUE_LINE)) { //当读取到续行符 \ 时
             char c = readChar();
             if (c > 0) {
                 input_stream.backup(1);
             }
             String temp = c + "";
             if (c == 0 || TStringUtil.isBlank(temp)) {
+                //如果续行符前面的类型不为空时，返回续行符前面的内容
                 String image = input_stream.GetImage().trim();
                 if (image.length() > 1) {
                     input_stream.backup(1);
@@ -239,9 +251,9 @@ public class ParserTokenManager extends Utils implements ParserConstants {
                 }
             }
         } else if (!continueReader && eqOR(kind, LPAREN, RPAREN, LBRACE, RBRACE, LBRACKET, RBRACKET, SEMICOLON, COMMA,
-                COLON, HOOK,AT,TILDE)) {
+                COLON, HOOK,AT,TILDE)) { //如果读取到 （ ）{ } [ ]  ； , : ? @ ~
             String image = input_stream.GetImage().trim();
-            if (eqOR(image, SEMICOLON)) {                            //如果是; ，略过
+            if (eqOR(image, SEMICOLON)) {     //如果是; ，略过, 在 java中代码必需以;结尾，但是在脚本中，写不写;都不影响
                 input_stream.tokenBegin += 1;
                 return -1;
             }
@@ -399,15 +411,16 @@ public class ParserTokenManager extends Utils implements ParserConstants {
     public int getCommon() {
         String image = input_stream.GetImage().trim();
         if (TStringUtil.isNotBlank(image)) {       //表明前面有非空格，tab，的字符
+            // 如 image = for ,和我们的关键字 for 匹配上了，则 match = for
             String match = matchs(image.trim().toCharArray());
             jjmatchedPos = input_stream.bufpos;
             if (TStringUtil.isNotBlank(match)) {
-                jjmatchedKind = match;
+                jjmatchedKind = match;      //设置 匹配到的类型
             } else {
-                if (TStringUtil.isNumber(image)) {
+                if (TStringUtil.isNumber(image)) {      //判断当前字符串是不是数字类型
                     jjmatchedKind = NUMBER;
                 } else {
-                    jjmatchedKind = IDENTIFIER;
+                    jjmatchedKind = IDENTIFIER;         //如果既不是关键字类型，也还是数字类型，则只能是identifier类型了
                 }
             }
             return 2;
@@ -456,35 +469,43 @@ public class ParserTokenManager extends Utils implements ParserConstants {
     }
 
     public static void main(String[] args) {
+
         char[] a = {'&'};
         String b = matchs(a);
         System.out.println(b);
+        StringBuilder sb = new StringBuilder();
+        for(Map.Entry<Integer,String> map : mapChar.entrySet()){
+            sb.append(map.getValue()).append(",");
+        }
+        System.out.println(sb);
     }
 
     public int jjMoveStringLiteralDfa0_0() {
         while (true) {
             try {
                 int flag = 0;
-                if (curChar == '\t') {
+                if (curChar == '\t') {              //如果是 TAB 类型
                     flag = jjStartNfaWithStates_0(TAB);
-                } else if (curChar == ' ') {
+                } else if (curChar == ' ') {        //如果是 空格 类型
                     flag = jjStartNfaWithStates_0(SPACE);
-                } else if (curChar == '\r') {
+                } else if (curChar == '\r') {       //如果是 回车 类型
                     flag = jjStartNfaWithStates_0(ENTER);
-                } else if (curChar == '\n') {
+                } else if (curChar == '\n') {       //如果是换行符
                     flag = jjStartNfaWithStates_0(NEXT_LINE);
-                } else if ((curChar >= 48 && curChar <= 57) || (curChar >= 65 && curChar <= 90) || (curChar >= 97 && curChar <= 122)) {
+                } else if ((curChar >= 48 && curChar <= 57)
+                        || (curChar >= 65 && curChar <= 90)
+                        || (curChar >= 97 && curChar <= 122)) { //如果是 a~z,A~Z,0~9 三种情况，表示是字面量类型
                     flag = jjStartNfaWithStates_0(IDENTIFIER);
-                } else {
+                } else {//@,[,\,],^,_,`,!,",#,$,%,&,',(,),*,+,-,.,/,:,;,{,<,|,=,},>,~,? 类型
                     flag = jjStartNfaWithStates_0(mapChar.get(new Integer(curChar)));
                 }
-                if (flag > 0) {
+                if (flag > 0) {         //如果 flag > 0 ，表示本次读取结束 ，如读取到 for 了
                     return input_stream.bufpos + 1;
                 }
-                if (flag == -1) {
+                if (flag == -1) {                       // 当读取到续行符  \ 时，表示不要返回，继续读取
                     return -1;
                 }
-                curChar = input_stream.readChar();
+                curChar = input_stream.readChar();      //继续向后读取一个字符
             } catch (IOException e) {
                 jjStartNfaWithStates_0(SPACE);
                 return input_stream.bufpos + 1;
@@ -495,6 +516,8 @@ public class ParserTokenManager extends Utils implements ParserConstants {
         }
 
     }
+
+
 
 
 }

@@ -1,7 +1,10 @@
 package test;
 
+import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.Reader;
+import java.util.Arrays;
 
 public class JavaCharStreamTest {
     public static final boolean staticFlag = false;
@@ -82,10 +85,13 @@ public class JavaCharStreamTest {
         int newbufcolumn[] = new int[bufsize + DEFAULT_BUFSIZE];
 
         try {
+
             if (wrapAround) {
                 System.arraycopy(buffer, tokenBegin, newbuffer, 0, bufsize - tokenBegin);
                 System.arraycopy(buffer, 0, newbuffer, bufsize - tokenBegin, bufpos);
                 buffer = newbuffer;
+
+
 
                 System.arraycopy(bufline, tokenBegin, newbufline, 0, bufsize - tokenBegin);
                 System.arraycopy(bufline, 0, newbufline, bufsize - tokenBegin, bufpos);
@@ -348,58 +354,6 @@ public class JavaCharStreamTest {
         this(dstream, startline, startcolumn, DEFAULT_MAX_NEXT_CHAR_IND);
     }
 
-    public JavaCharStreamTest(java.io.Reader dstream) {
-        this(dstream, 1, 1, DEFAULT_MAX_NEXT_CHAR_IND);
-    }
-
-    public void ReInit(java.io.Reader dstream, int startline, int startcolumn, int buffersize) {
-        inputStream = dstream;
-        line = startline;
-        column = startcolumn - 1;
-
-        if (buffer == null || buffersize != buffer.length) {
-            available = bufsize = buffersize;
-            buffer = new char[buffersize];
-            bufline = new int[buffersize];
-            bufcolumn = new int[buffersize];
-            nextCharBuf = new char[DEFAULT_MAX_NEXT_CHAR_IND];
-        }
-        prevCharIsLF = prevCharIsCR = false;
-        tokenBegin = inBuf = maxNextCharInd = 0;
-        nextCharInd = bufpos = -1;
-    }
-
-    public void ReInit(java.io.Reader dstream, int startline, int startcolumn) {
-        ReInit(dstream, startline, startcolumn, DEFAULT_MAX_NEXT_CHAR_IND);
-    }
-
-    public void ReInit(java.io.Reader dstream) {
-        ReInit(dstream, 1, 1, DEFAULT_MAX_NEXT_CHAR_IND);
-    }
-
-    public JavaCharStreamTest(java.io.InputStream dstream, int startline, int startcolumn, int buffersize) {
-        this(new java.io.InputStreamReader(dstream), startline, startcolumn, DEFAULT_MAX_NEXT_CHAR_IND);
-    }
-
-    public JavaCharStreamTest(java.io.InputStream dstream, int startline, int startcolumn) {
-        this(dstream, startline, startcolumn, DEFAULT_MAX_NEXT_CHAR_IND);
-    }
-
-    public JavaCharStreamTest(java.io.InputStream dstream) {
-        this(dstream, 1, 1, DEFAULT_MAX_NEXT_CHAR_IND);
-    }
-
-    public void ReInit(java.io.InputStream dstream, int startline, int startcolumn, int buffersize) {
-        ReInit(new java.io.InputStreamReader(dstream), startline, startcolumn, DEFAULT_MAX_NEXT_CHAR_IND);
-    }
-
-    public void ReInit(java.io.InputStream dstream, int startline, int startcolumn) {
-        ReInit(dstream, startline, startcolumn, DEFAULT_MAX_NEXT_CHAR_IND);
-    }
-
-    public void ReInit(java.io.InputStream dstream) {
-        ReInit(dstream, 1, 1, DEFAULT_MAX_NEXT_CHAR_IND);
-    }
 
     public String GetImage() {
         if (bufpos >= tokenBegin) {
@@ -410,75 +364,81 @@ public class JavaCharStreamTest {
         }
     }
 
-    public char[] GetSuffix(int len) {
-        char[] ret = new char[len];
-        if ((bufpos + 1) >= len)
-            System.arraycopy(buffer, bufpos - len + 1, ret, 0, len);
-        else {
-            System.arraycopy(buffer, bufsize - (len - bufpos - 1), ret, 0, len - bufpos - 1);
-            System.arraycopy(buffer, 0, ret, len - bufpos - 1, bufpos + 1);
-        }
-        return ret;
-    }
+    // [0,1,2,3,4,-1,-1,-1]
+    // [0,1,2,3,4,-1,-1,5]
 
-    public void Done() {
-        nextCharBuf = null;
-        buffer = null;
-        bufline = null;
-        bufcolumn = null;
-    }
+    public static void test1() throws Exception {
+        Reader in = new FileReader("/Users/quyixiao/project/testshell/src/test/resources/test.tsh");
+        JavaCharStreamTest jj_input_stream = new JavaCharStreamTest(in, 1, 1);
+        jj_input_stream.BeginToken();
+        String a = jj_input_stream.read(jj_input_stream, 5);
+        jj_input_stream.backup(7);
+        System.out.println("第一次读取："+jj_input_stream.GetImage());
 
-    public void adjustBeginLineColumn(int newLine, int newCol) {
-        int start = tokenBegin;
-        int len;
+        jj_input_stream.BeginToken();
+        String c = jj_input_stream.read(jj_input_stream, 17);
+        System.out.println("第二次读取："+jj_input_stream.GetImage());
 
-        if (bufpos >= tokenBegin) {
-            len = bufpos - tokenBegin + inBuf + 1;
-        } else {
-            len = bufsize - tokenBegin + bufpos + 1 + inBuf;
-        }
-
-        int i = 0, j = 0, k = 0;
-        int nextColDiff = 0, columnDiff = 0;
-
-        while (i < len &&
-                bufline[j = start % bufsize] == bufline[k = ++start % bufsize]) {
-            bufline[j] = newLine;
-            nextColDiff = columnDiff + bufcolumn[k] - bufcolumn[j];
-            bufcolumn[j] = newCol + columnDiff;
-            columnDiff = nextColDiff;
-            i++;
-        }
-
-        if (i < len) {
-            bufline[j] = newLine++;
-            bufcolumn[j] = newCol + columnDiff;
-
-            while (i++ < len) {
-                if (bufline[j = start % bufsize] != bufline[++start % bufsize])
-                    bufline[j] = newLine++;
-                else
-                    bufline[j] = newLine;
-            }
-        }
-
-        line = bufline[j];
-        column = bufcolumn[j];
     }
 
 
     public static void main(String[] args) throws Exception {
-        Reader in = new FileReader("/Users/quyixiao/git/java-python/script/base.tsh");
+       //test1();
+       test2();
+        //test3();
+
+
+        char c = '\u2605';
+        System.out.println(c);
+
+        c = (char) (hexval('2') << 12 |
+                hexval('6') << 8 |
+                hexval('0') << 4 |
+                hexval('5'));
+        System.out.println(c);
+    }
+
+    public static void test2() throws Exception {
+        Reader in = new FileReader("/Users/quyixiao/project/testshell/src/test/resources/test.tsh");
         JavaCharStreamTest jj_input_stream = new JavaCharStreamTest(in, 1, 1);
-        for(int i = 0 ;i < 30 ;i ++){
-            if(i == 3 ){
-                System.out.println("i == 3 ");
-            }
-            char c = jj_input_stream.readChar();
-            System.out.println(c);
-        }
+        jj_input_stream.BeginToken();
+        String a = jj_input_stream.read(jj_input_stream, 5);
+        jj_input_stream.backup(7);
+        System.out.println("第一次读取内容：" + jj_input_stream.GetImage());
+
+
+        jj_input_stream.BeginToken();
+        jj_input_stream.read(jj_input_stream, 17);
+        System.out.println("第二次读取内容：" + jj_input_stream.GetImage());
+
+        jj_input_stream.BeginToken();
+        jj_input_stream.read(jj_input_stream, 10);
+        System.out.println("第三次读取内容：" + jj_input_stream.GetImage());
+
 
     }
 
+    public static void test3() {
+        for (int i = 0; i < 30; i++) {
+            System.out.println(i + " " + (i & 1));
+        }
+
+
+    }
+
+
+    public String read(JavaCharStreamTest jj_input_stream, int p) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < p; i++) {
+            try {
+                char a = jj_input_stream.readChar();
+                sb.append(a + "");
+                System.out.println("i = "  +i + " ,c = " + a + " ,buffer = "+   Arrays.toString(buffer) );
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return sb.toString();
+    }
 
 }

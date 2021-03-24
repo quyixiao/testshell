@@ -14,13 +14,16 @@ public class PaserTest {
 
     @Test
     public void test3() throws Exception {
-        Reader in = new FileReader("/Users/quyixiao/project/testshell/src/test/script/test.tsh");
+        Reader in = new FileReader("/Users/quyixiao/project/testshell/src/test/resources/test2.tsh");
         Parser parser = new Parser(in);
         parser.setRetainComments(true);
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 100; i++) {
             Token token = parser.token_source.getNextToken();
             System.out.println(i + "    " + token.image + "          :           " + (token.kind == "\n" ? "\\n" : token.kind));
+            sb.append(token.image).append(",");
         }
+        //System.out.println(sb.toString());
     }
 
     @Test
