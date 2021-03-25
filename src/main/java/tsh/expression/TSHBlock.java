@@ -49,8 +49,7 @@ public class TSHBlock extends SimpleNode {
     }
 
 
-    Object evalBlock(CallStack callstack, Interpreter interpreter,boolean overrideNamespace, NodeFilter nodeFilter)
-            throws EvalError {
+    Object evalBlock(CallStack callstack, Interpreter interpreter,boolean overrideNamespace, NodeFilter nodeFilter) throws EvalError {
         Object ret = Primitive.VOID;
         NameSpace enclosingNameSpace = null;
         if (!overrideNamespace) {

@@ -90,7 +90,7 @@ public class JJTParserState {
         return sp - mk;
     }
 
-
+    //出现异常时调用
     public void clearNodeScope(Node n) {
         while (sp > mk) {
             popNode();
@@ -105,11 +105,7 @@ public class JJTParserState {
         n.jjtOpen();
     }
 
-
-    /* A definite node is constructed from a specified number of
-       children.  That number of nodes are popped from the stack and
-       made the children of the definite node.  Then the definite node
-       is pushed on to the stack. */
+    /* 一个确定的节点由指定数量的子代构成。从堆栈中弹出该数量的节点，并将其作为确定节点的子代。然后将确定的节点压入堆栈。 */
     public void closeNodeScope(Node n, int num) {
         mk = ((Integer) marks.pop()).intValue();
         while (num-- > 0) {
@@ -123,11 +119,7 @@ public class JJTParserState {
     }
 
 
-    /* A conditional node is constructed if its condition is true.  All
-       the nodes that have been pushed since the node was opened are
-       made children of the the conditional node, which is then pushed
-       on to the stack.  If the condition is false the node is not
-       constructed and they are left on the stack. */
+    /* 如果条件为真，则构造条件节点。自从节点打开以来，所有已推入的节点成为条件节点的子代，然后将其推入堆栈。如果条件为假，则不构造该节点，并且将它们保留在堆栈中。*/
     public void closeNodeScope(Node n, boolean condition) {
         if (condition) {
             int a = nodeArity();

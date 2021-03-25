@@ -178,6 +178,81 @@ public class RunTest {
 
 
 
+    @Test
+    public void test6() throws Exception {
+        ResouceHelp resouceHelp = new ResouceHelp();
+        Map<String, Object> init = new LinkedHashMap<>();
+        Map<String, Object> globals = new LinkedHashMap<>();
+        Map<String, Object> imports = new LinkedHashMap<>();
+        List<String> files = Arrays.asList(new String[]{
+                "/Users/quyixiao/project/testshell/src/test/resources/test3.tsh"
+        });
+        TTuple3<Map<String, Object>, Map<String, Object>, Map<String, Object>> data = null;
+        try {
+            for (String f : files) {
+                String content = TFileUtils.readToStr(f);
+                data = Utils.run(content, init, globals, imports, resouceHelp).getData();
+                globals = data.getSecond();
+                imports = data.getThird();
+            }
+        } catch (Exception e) {
+            System.out.println("-----------------");
+            e.printStackTrace();
+        } finally {
+        }
+    }
+
+    @Test
+    public void test7() throws Exception {
+        ResouceHelp resouceHelp = new ResouceHelp();
+        Map<String, Object> init = new LinkedHashMap<>();
+        Map<String, Object> globals = new LinkedHashMap<>();
+        Map<String, Object> imports = new LinkedHashMap<>();
+        List<String> files = Arrays.asList(new String[]{
+                "/Users/quyixiao/project/testshell/src/test/resources/test4.tsh"
+        });
+        TTuple3<Map<String, Object>, Map<String, Object>, Map<String, Object>> data = null;
+        try {
+            for (String f : files) {
+                String content = TFileUtils.readToStr(f);
+                data = Utils.run(content, init, globals, imports, resouceHelp).getData();
+                globals = data.getSecond();
+                imports = data.getThird();
+            }
+        } catch (Exception e) {
+            System.out.println("-----------------");
+            e.printStackTrace();
+        } finally {
+        }
+    }
+
+
+
+
+
+    @Test
+    public void test8() throws Exception {
+        ResouceHelp resouceHelp = new ResouceHelp();
+        Map<String, Object> init = new LinkedHashMap<>();
+        Map<String, Object> globals = new LinkedHashMap<>();
+        Map<String, Object> imports = new LinkedHashMap<>();
+        List<String> files = Arrays.asList(new String[]{
+                "/Users/quyixiao/project/testshell/src/test/resources/test5.tsh"
+        });
+        TTuple3<Map<String, Object>, Map<String, Object>, Map<String, Object>> data = null;
+        try {
+            for (String f : files) {
+                String content = TFileUtils.readToStr(f);
+                data = Utils.run(content, init, globals, imports, resouceHelp).getData();
+                globals = data.getSecond();
+                imports = data.getThird();
+            }
+        } catch (Exception e) {
+            System.out.println("-----------------");
+            e.printStackTrace();
+        } finally {
+        }
+    }
 }
 
 
