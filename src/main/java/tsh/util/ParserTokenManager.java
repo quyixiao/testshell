@@ -9,10 +9,8 @@ import tsh.t.TSHTuple;
 import tsh.t.TTuple2;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Array;
+import java.util.*;
 
 public class ParserTokenManager extends Utils implements ParserConstants {
 
@@ -474,8 +472,8 @@ public class ParserTokenManager extends Utils implements ParserConstants {
         String b = matchs(a);
         System.out.println(b);
         StringBuilder sb = new StringBuilder();
-        for(Map.Entry<Integer,String> map : mapChar.entrySet()){
-            sb.append(map.getValue()).append(",");
+        for(char [] t : type){
+            sb.append(t).append(" , ");
         }
         System.out.println(sb);
     }

@@ -262,7 +262,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         lable_:
         while (true) {
             switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
-                case NEXT_LINE:
+                case NEXT_LINE:     //一直消费，直到不为 \n 时，停止消息
                     jj_consume_token(NEXT_LINE);
                     break;
                 default:
@@ -431,35 +431,39 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
 
 
     final public boolean BlockStatement() throws ParseException {
+        //消费掉所有的的行符
         jj_consume_token_next_line();
-        if (jj_2_33(3, EOF)) return false;
-        if (isMethod()) {
+        if (jj_2_33(3, EOF)) return false;      //如果文件己经结束，则终止执行树的创建
+        if (isMethod()) {           //如果是方法声明，我们定义以 def 开头的都是方法声明
             MethodDeclaration();
-        } else if (jj_2_31(2147483647)) {
+        } else if (jj_2_31(2147483647)) {   //变量声明，只要是 变量=的情况都是变量声明，也可以是 变量,变量...变量 = 的情况
             VariableDeclarator();
-        } else if (jj_2_33(3, AT)) {
+        } else if (jj_2_33(3, AT)) {        //当解析到@时，表明是一个注解
             AnnotationMethodInvocationDeclarator();
-        } else if (jj_2_33(3, IMPORT)) {
+        } else if (jj_2_33(3, IMPORT)) {    //当解析到import时，表示是引入一个变量或源码
             ImportDeclaration();
-        } else if (jj_2_33(3, GLOBAL)) {
+        } else if (jj_2_33(3, GLOBAL)) {    // global 定义全局变量
             GlobalDeclaration();
         } else {
-            Statement();
+            Statement();                        //普通表达式的创建
         }
         return true;
     }
 
 
     private void MethodDeclaration() throws ParseException {
+        //如果是方法的声明，创建TSHMethodDeclaration节点
         TSHMethodDeclaration jjtn000 = new TSHMethodDeclaration(T_MethodDeclaration);
         boolean jjtc000 = true;
         jjtree.openNodeScope(jjtn000);
         jjtreeOpenNodeScope(jjtn000);
         Token t = null;
         try {
+            //消费掉 def
             jj_consume_token(DEF);
+            //消费掉方法名
             t = jj_consume_token(IDENTIFIER);
-            jjtn000.methodName = t.image;
+            jjtn000.methodName = t.image;       //设置方法名
             FormalParameters();
             switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
                 case LBRACE:
@@ -498,7 +502,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
-
+    // 块内解析
     final public void Block() throws ParseException {
         TSHBlock jjtn000 = new TSHBlock(T_Block);
         boolean jjtc000 = true;
@@ -506,17 +510,23 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         jjtreeOpenNodeScope(jjtn000);
         Token s = null;
         try {
-            jj_consume_token(LBRACE);
+            jj_consume_token(LBRACE); //消费掉 {
             label_22:
             while (true) {
+                // jj_2_23()方法的判断很简单，如果遇到 } ,则终止循环，可能有人会犯诋估了， 如果 @1{ ... @2{ ... @3} ... @4}
+                //这种情况，上面消费掉@1的{ ,如果消费掉@3 } 怎么办呢？
+                // 大家不用担心，因为@1所对应的 { ，只可能消费掉@4 对应的 }
+                // 因为在解析@2时 { ，会成对的将@3 } 消费掉，因此，@1所对应的{,只能是@4对应的 }，因此在消费掉一个{后，只需要等到
+                // 下一个}出现，即可退出 {} 内节点的解析
                 if (jj_2_23(1)) {
                     ;
                 } else {
                     break label_22;
                 }
+                //继续块的解析
                 BlockStatement();
             }
-            jj_consume_token_util(RBRACE);
+            jj_consume_token_util(RBRACE);      // } ，为什么会直到消费掉 }呢？因为在 }之前可能会有多个回车换行
             jjtree.closeNodeScope(jjtn000, true);
             jjtc000 = false;
             jjtreeCloseNodeScope(jjtn000);
@@ -579,17 +589,19 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
     }
 
 
+    //方法参数出现的形式 (a,b,c) 或 (a = 1 ,b = 2 ,c ) 或 (a = 1 ,* args ,**kwargs )或(a = 1 , b = lambda x ,y : x + y )等
     final public void FormalParameters() throws ParseException {
+        //方法参数列表对象
         TSHFormalParameters jjtn000 = new TSHFormalParameters(T_FormalParameters);
         boolean jjtc000 = true;
         jjtree.openNodeScope(jjtn000);
         jjtreeOpenNodeScope(jjtn000);
         try {
-            jj_consume_token(LPAREN);
+            jj_consume_token(LPAREN);   //消费方法名后的(
             switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
                 case STAR:
                 case SSTAR:
-                case IDENTIFIER:
+                case IDENTIFIER:        //如果当前参数是*,**,或 字符常量,创建子节点FormalParameter
                     FormalParameter();
                     label_3:
                     while (true) {
@@ -601,8 +613,8 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
                                 jj_la1[16] = jj_gen;
                                 break label_3;
                         }
-                        jj_consume_token(COMMA);
-                        FormalParameter();
+                        jj_consume_token(COMMA);    //消费掉逗号
+                        FormalParameter();          //再次创建子节点
                     }
                     break;
                 default:
@@ -652,13 +664,13 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
                 jj_consume_token(SSTAR);
                 jjtn000.kind = SSTAR;
             }
-            t = jj_consume_token(IDENTIFIER);
+            t = jj_consume_token(IDENTIFIER);       //消费得到方法参数变量名
             jjtree.closeNodeScope(jjtn000, true);
             jjtc000 = false;
             jjtreeCloseNodeScope(jjtn000);
             jjtn000.name = t.image;
-            if (jj_2_33(3, ASSIGN)) {           //如果没有扫描到=号，则变量的定义肯定是 a ,b = xxx
-                jj_consume_token(ASSIGN);
+            if (jj_2_33(3, ASSIGN)) { //如果没有扫描到=号，则变量的定义肯定是(a ,b)
+                jj_consume_token(ASSIGN); //如果扫描到=号，则解析等号后面的表达式，如(a = lambda x ,y : x + y )
                 Expression();
             }
         } catch (Throwable jjte000) {
@@ -748,18 +760,17 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
 
 
     final public void Statement() throws ParseException {
-        jj_consume_token_next_line();
-        if (jj_3_40(3)) {
-            LabeledStatement();                         // break lable_;的情况
+        jj_consume_token_next_line();           //消费掉所有的行
+        if (jj_3_40(3)) {                   //如果是 三目运算符  如 a > b ? a : b
+            LabeledStatement();                 // break lable_;的情况
         } else {
-            doStatement();
+            doStatement();      // 正在开始解析表达式
         }
     }
 
-
     final public void doStatement() throws ParseException {
         switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
-            case LBRACE:
+            case LBRACE:                //如果是 { ,表明是一个执行块 ，如 { c= a + b \n print(c ,a ,b )}等
                 Block();
                 break;
             case FALSE:
@@ -776,42 +787,42 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
             case PLUS:
             case MINUS:
             case MAP:
-                StatementExpression();
+                StatementExpression();                      // 如 map1 = {'username':'zhangsan' ,'age':18} ...
                 break;
             case SWITCH:
-                SwitchStatement();
+                SwitchStatement();                          // swith(...) { case condition1: ... break \n case condition2 : ... break label_1 \n default : ... break  }
                 break;
             case IF:
-                IfStatement();
+                IfStatement();                              //if(condition) {...}
                 break;
             case WHILE:
-                WhileStatement();
+                WhileStatement();                           //while(condition) { ...}
                 break;
             case DO:
-                DoStatement();
+                DoStatement();                      // do {...} while(condition)
                 break;
             default:
                 jj_la1[69] = jj_gen;
                 switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
                     case FOR:
-                        ForAfterStatement();
+                        ForAfterStatement();                // for (i in range( 5 )) { ...}
                         break;
                     case BREAK:
-                        BreakStatement();
+                        BreakStatement();                   // break 或break label_1
                         break;
-                    case CONTINUE:
+                    case CONTINUE:                          // continue 或continue label_1
                         ContinueStatement();
                         break;
-                    case RETURN:
+                    case RETURN:                            // return a 或return a ,b ,c
                         ReturnStatement();
                         break;
                     case THROW:
-                        ThrowStatement();
+                        ThrowStatement();                   // throw new Exception(...)
                         break;
                     case TRY:
-                        TryStatement();
+                        TryStatement();                     //try {...} catch (..) { ...}
                         break;
-                    case EXPORT:
+                    case EXPORT:                            // export a ,b ,c  或 export a ,a + b
                         ExportStatement();
                         break;
                     case EOF:
@@ -824,7 +835,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
-    //while
+    //while 表达式解析
     final public void WhileStatement() throws ParseException {
         TSHWhileStatement jjtn000 = new TSHWhileStatement(T_WhileStatement);
         boolean jjtc000 = true;
@@ -864,7 +875,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
-
+    // do { ...} while( condition ) ，do while 表达式解析
     final public void DoStatement() throws ParseException {
         TSHWhileStatement jjtn000 = new TSHWhileStatement(T_WhileStatement);
         boolean jjtc000 = true;
@@ -909,6 +920,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
+    // 三目运算符解析 a > b ? a > c ? a : c : b > c  ? b : c ，计算 a b c 的最大值
     final public void LabeledStatement() throws ParseException {
         TSHLabeledStatement jjtn000 = new TSHLabeledStatement(T_LabeledStatement);
         boolean jjtc000 = true;
@@ -916,8 +928,10 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         jjtreeOpenNodeScope(jjtn000);
         try {
             Token t = jj_consume_token(IDENTIFIER);
-            jj_consume_token(COLON);
+            jj_consume_token(COLON);        //消费掉 :
             jj_consume_token_next_line();
+            // 可能会出现 a > b ? sum(a - b ) : sub(b - a ) ，计算绝对值，因此Statement()解析的不一定是一个变量名，
+            //也可能是一个表达式，因此调用Statement
             Statement();
             jjtn000.label = t.image;
         } catch (Throwable jjte000) {
@@ -949,9 +963,12 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
     }
 
     final public void StatementExpression() throws ParseException {
+        //表达式解析
         Expression();
     }
 
+
+    // swith ( ... ) { case condition1 :  ....; condition2 : ... break label_1 } 的情况
     final public void SwitchStatement() throws ParseException {
         TSHSwitchStatement jjtn000 = new TSHSwitchStatement(T_SwitchStatement);
         boolean jjtc000 = true;
@@ -978,9 +995,9 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
                 SwitchLabel();
                 int i = 0;
                 label_24:
-                while (true && i != 1) {
+                while (true && i != 1) {                // case condition1 : condition2 : ....  break 的情况
                     i = jj_2_29(1);
-                    if (i == 2 || i == 1) {             //如果是 break i = 1 ,则下次退出
+                    if (i == 2 || i == 1) {             //如果是  i = 1 ,则下次退出
                         ;
                     } else {                            //如果遇到 case 或 } 情况，直接终止到label_24
                         break label_24;
@@ -1017,7 +1034,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
-
+    // switch 表达式解析,switch (...) { case condition:  ... ; default : ... ;  }
     final public void SwitchLabel() throws ParseException {
         TSHSwitchLabel jjtn000 = new TSHSwitchLabel(T_SwitchLabel);
         boolean jjtc000 = true;
@@ -1071,7 +1088,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
-
+    // if 表达式 if( condition ) { ... }
     final public void IfStatement() throws ParseException {
         TSHIfStatement jjtn000 = new TSHIfStatement(T_IfStatement);
         boolean jjtc000 = true;
@@ -1084,7 +1101,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
             jj_consume_token(RPAREN);
             Statement();
             switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
-                case ELSE:
+                case ELSE:          //如果有 else  ,如 if(condition) { ... }else {...} 的情况
                     jj_consume_token(ELSE);
                     Statement();
                     break;
@@ -1120,6 +1137,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
+    // for 表达式在之前的情况，为[]集体赋值 ，如 [x + 1 for (x in range(10))] 得到 [1,2,3,4,5,6,7,8,9,10]
     final public void ForBeforeStatement() throws ParseException {
         TSHBeforeForStatement jjtn000 = new TSHBeforeForStatement(T_BeforeForStatement);
         boolean jjtc000 = true;
@@ -1173,7 +1191,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
-
+    // for(i in range(5)) { ... } ，for表达式解析
     final public void ForAfterStatement() throws ParseException {
         TSHForStatement jjtn000 = new TSHForStatement(T_ForStatement);
         boolean jjtc000 = true;
@@ -1227,7 +1245,9 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
-    final public void BreakStatement() throws ParseException {      // break ; 或 break label_1 ; 两种情况
+
+    // break  或 break label_1 两种情况
+    final public void BreakStatement() throws ParseException {
         TSHReturnStatement jjtn000 = new TSHReturnStatement(T_ReturnStatement);
         boolean jjtc000 = true;
         jjtree.openNodeScope(jjtn000);
@@ -1235,7 +1255,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         try {
             jj_consume_token(BREAK);
             switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
-                case IDENTIFIER:
+                case IDENTIFIER:        // break label_1 的情况
                     Token t = jj_consume_token(IDENTIFIER);
                     jjtn000.label = t.image;
                     break;
@@ -1255,7 +1275,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
-
+    // continue 块
     final public void ContinueStatement() throws ParseException {       // continue 和 continue label_1;
         TSHReturnStatement jjtn000 = new TSHReturnStatement(T_ReturnStatement);
         boolean jjtc000 = true;
@@ -1264,7 +1284,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         try {
             jj_consume_token(CONTINUE);
             switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
-                case IDENTIFIER:
+                case IDENTIFIER:        // continue label_1 的解析
                     Token t = jj_consume_token(IDENTIFIER);
                     jjtn000.label = t.image;
                     break;
@@ -1284,15 +1304,16 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
-    final public void ReturnStatement() throws ParseException {     // return 表达式 ;
+    // return 表达式
+    final public void ReturnStatement() throws ParseException {
         TSHReturnStatement jjtn000 = new TSHReturnStatement(T_ReturnStatement);
         boolean jjtc000 = true;
         jjtree.openNodeScope(jjtn000);
         jjtreeOpenNodeScope(jjtn000);
         try {
-            jj_consume_token(RETURN);
+            jj_consume_token(RETURN);       // return  sum(a + b )
             Expression();
-            while (jj_2_33(3, COMMA)) {
+            while (jj_2_33(3, COMMA)) { //下面是 return sum(a + b ) ,a ,b  返回一个元组
                 jj_consume_token(COMMA);
                 Expression();
             }
@@ -1328,15 +1349,15 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
-
+    // throw new Exception()表达式解析
     final public void ThrowStatement() throws ParseException {
         TSHThrowStatement jjtn000 = new TSHThrowStatement(T_ThrowStatement);
         boolean jjtc000 = true;
         jjtree.openNodeScope(jjtn000);
         jjtreeOpenNodeScope(jjtn000);
         try {
-            jj_consume_token(THROW);
-            Expression();
+            jj_consume_token(THROW);     //消费掉 throw
+            Expression();           // 会被AllocationExpression方法解析到，new Exception(...)
         } catch (Throwable jjte000) {
             if (jjtc000) {
                 jjtree.clearNodeScope(jjtn000);
@@ -1365,7 +1386,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
-
+    // try 表达式 ,java 中的语法 try { \n ... \n } catch(e){ \n e.printStackTrace() \n}finally{\n .... \n }
     final public void TryStatement() throws ParseException {
         TSHTryStatement jjtn000 = new TSHTryStatement(T_TryStatement);
         boolean jjtc000 = true;
@@ -1374,7 +1395,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         boolean closed = false;
         try {
             jj_consume_token(TRY);
-            Block();
+            Block(); // {} 块表达式解析
             label_27:
             while (true) {
                 switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
@@ -1387,9 +1408,9 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
                 }
                 jj_consume_token(CATCH);
                 jj_consume_token(LPAREN);
-                FormalParameter();
+                FormalParameter();          // 解析 catch( e ) 的方法参数
                 jj_consume_token(RPAREN);
-                Block();
+                Block();        // 再解析 catch 后的{}表达式
                 closed = true;
             }
             switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
@@ -1435,12 +1456,15 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
+    // export 表达式解析
     final public void ExportStatement() throws ParseException {
         TSHExportStatement jjtn000 = new TSHExportStatement(T_ExportStatement);
         boolean jjtc000 = true;
         jjtree.openNodeScope(jjtn000);
         jjtreeOpenNodeScope(jjtn000);
         try {
+            //export sum(a,b) , (lambda x ,y : x - y )(5,4) 这种写法
+            //export a ,b 都可以，因此第一个参数是 export，每个表达式都是,隔开
             jj_consume_token(EXPORT);
             Expression();
             while (jj_2_33(3, COMMA)) {
@@ -1479,7 +1503,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
-
+    //变量声明
     final public void VariableDeclarator() throws ParseException {
         TSHVariableDeclarator jjtn000 = new TSHVariableDeclarator(T_VariableDeclarator);
         boolean jjtc000 = true;
@@ -1488,19 +1512,19 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         Token t;
         try {
             List<String> list = new ArrayList<>();
-            t = jj_consume_token(IDENTIFIER);
+            t = jj_consume_token(IDENTIFIER); //变量声明的第一个参数肯定是identifier
             list.add(t.image);
-            if (!jj_2_33(3, ASSIGN)) {           //如果没有扫描到=号，则变量的定义肯定是 a ,b = xxx
+            if (!jj_2_33(3, ASSIGN)) {   //如果变量后面第一个参数不是=号，申明了多个变量名 a ,b .... = []
                 do {
                     jj_consume_token(COMMA);
                     t = jj_consume_token(IDENTIFIER);
                     list.add(t.image);
-                } while (!jj_2_33(3, ASSIGN));
+                } while (!jj_2_33(3, ASSIGN));      //直到出现等号结束变量
             }
             switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
                 case ASSIGN:
                     jj_consume_token(ASSIGN);
-                    VariableInitializer();
+                    VariableInitializer();      //变量初始化
                     break;
                 default:
                     jj_la1[12] = jj_gen;
@@ -1537,13 +1561,13 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
-
+    //变量初始化
     final public void VariableInitializer() throws ParseException {
         switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
-            case LBRACKET:
+            case LBRACKET:                  // 如果 [开头，表示的是list 初始化
                 ListInitializer();
                 break;
-            case LBRACE:
+            case LBRACE:                    //如果{开头，表示map 初始化
                 MapInitializer();
                 break;
             case LPAREN:
@@ -1559,10 +1583,10 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
             case DECR:
             case PLUS:
             case MINUS:
-                if (jj_3_42(10)) {
+                if (jj_3_42(10)) {     // 可能是 [x for ( i in range(5))] ，这种情况
                     ForBeforeStatement();
                 } else {
-                    Expression();
+                    Expression();           //普通表达式的解析
                 }
                 break;
             default:
@@ -1572,7 +1596,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
-
+    //下面这种情况，注解情况的处理 ，如@logger \n def method( a ){\n print(a) \n} 这种情况处理
     final public void AnnotationMethodInvocationDeclarator() throws ParseException {
         TSHAnnotationMethodDeclaration jjtn000 = new TSHAnnotationMethodDeclaration(T_AnnotationMethodDeclaration);
         boolean jjtc000 = true;
@@ -1610,7 +1634,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
-
+    // import 开头的变量声明， import 有两种情况， import a ,b 这种还有 import common.tsh 引入公共方法
     final public void ImportDeclaration() throws ParseException {
         TSHImportDeclaration jjtn000 = new TSHImportDeclaration(T_ImportDeclaration);
         boolean jjtc000 = true;
@@ -1619,12 +1643,12 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         Token t = null;
         StringBuilder sb = new StringBuilder();
         try {
-            jj_consume_token(IMPORT);
+            jj_consume_token(IMPORT);       // import 以,隔开
             while (true) {
                 if (jj_2_33(3, COMMA)) {
                     jj_consume_token(COMMA);
                 }
-                t = jj_consume_token(IDENTIFIER);
+                t = jj_consume_token(IDENTIFIER);        //消费变量名
                 StringBuffer s = new StringBuffer(t.image);
                 label_5:
                 while (true) {
@@ -1674,6 +1698,8 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
+
+    //变量全局变量 global a = 1 ，在所有的后续脚本调用中都可以修改，引用此变量
     final public void GlobalDeclaration() throws ParseException {
         TSHGlobalStatement jjtn000 = new TSHGlobalStatement(T_GlobalDeclaration);
         boolean jjtc000 = true;
@@ -1710,8 +1736,10 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
-
+    //表达式解析
     final public void Expression() throws ParseException {
+        //等于表达式 ，如 a,b,c.... = .... 的情况
+        //也可能是 a += b ,a -=b ， a >>>=b ,a <<=b 等等
         if (jj_2_8(2147483647)) {
             Assignment();
         } else {
@@ -1757,7 +1785,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
-
+    // list 类型初始化
     final public void ListInitializer() throws ParseException {
         TSHListInitializer jjtn000 = new TSHListInitializer(T_ListInitializer);
         boolean jjtc000 = true;
@@ -1910,6 +1938,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
+    // * 类型参数
     final public void StarArgument() throws ParseException {
         TSHStarArgument jjtn000 = new TSHStarArgument(T_StarArgument);
         boolean jjtc000 = true;
@@ -1947,6 +1976,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
+    // lambda表达式声明
     private void LambdaDeclaration() throws ParseException {
         TSHLambdaDeclaration jjtn000 = new TSHLambdaDeclaration(T_LambdaDeclaration);
         boolean jjtc000 = true;
@@ -2065,10 +2095,10 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         jjtreeOpenNodeScope(jjtn000);
         String op;
         try {
-            PrimaryExpression();
-            op = AssignmentOperator();
-            jjtn000.operator = op;
-            Expression();
+            PrimaryExpression();            //解析主表达式
+            op = AssignmentOperator();      //解析操作符 = ，+= ，-= ，*= ，/= ,%= ,>>>= ,== 等等
+            jjtn000.operator = op;          //TSHAssignment保存当前表达式的操作符类型
+            Expression();                   //解析右节点表达式  如 sum(1 ,2 ) ， a > b ? a : b 情况太多
         } catch (Throwable jjte000) {
             if (jjtc000) {
                 jjtree.clearNodeScope(jjtn000);
@@ -2159,16 +2189,16 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
     final public void ConditionalExpression() throws ParseException {
         ConditionalOrExpression();
         switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
-            case HOOK:
+            case HOOK:  //如果当前是？,那么一定是三目运算符 条件表达式 ? 表达式 : 表达式
                 jj_consume_token(HOOK);
-                Expression();
+                Expression();            //表达式节点解析
                 jj_consume_token(COLON);
                 TSHTernaryExpression jjtn001 = new TSHTernaryExpression(T_TernaryExpression);
                 boolean jjtc001 = true;
                 jjtree.openNodeScope(jjtn001);
                 jjtreeOpenNodeScope(jjtn001);
                 try {
-                    ConditionalExpression();
+                    ConditionalExpression();        //条件表达式
                 } catch (Throwable jjte001) {
                     if (jjtc001) {
                         jjtree.clearNodeScope(jjtn001);
@@ -2202,13 +2232,14 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
     }
 
 
+    // || 表达式解析
     final public void ConditionalOrExpression() throws ParseException {
         Token t = null;
         ConditionalAndExpression();
         label_7:
         while (true) {
             switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
-                case BOOL_OR:
+                case BOOL_OR:       //   ||
                     ;
                     break;
                 default:
@@ -2225,6 +2256,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
                     throw new ParseException();
             }
             ConditionalAndExpression();
+            //三元表达式
             TSHBinaryExpression jjtn001 = new TSHBinaryExpression(T_BinaryExpression);
             boolean jjtc001 = true;
             jjtree.openNodeScope(jjtn001);
@@ -2243,13 +2275,14 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
+    // && 表达式解析
     final public void ConditionalAndExpression() throws ParseException {
         Token t = null;
         InclusiveOrExpression();
         label_8:
         while (true) {
             switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
-                case BOOL_AND:
+                case BOOL_AND:          // &&
                     ;
                     break;
                 default:
@@ -2284,7 +2317,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
-
+    // |
     final public void InclusiveOrExpression() throws ParseException {
         Token t = null;
         ExclusiveOrExpression();
@@ -2326,7 +2359,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
-    // ^
+    // ^ 取反表达式解析
     final public void ExclusiveOrExpression() throws ParseException {
         Token t = null;
         AndExpression();
@@ -2360,13 +2393,14 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
+    // & 表达式解析
     final public void AndExpression() throws ParseException {
         Token t = null;
         EqualityExpression();
         label_11:
         while (true) {
             switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
-                case AND:
+                case AND:           // &
                     ;
                     break;
                 default:
@@ -2408,8 +2442,8 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         label_12:
         while (true) {
             switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
-                case EQ:
-                case NE:
+                case EQ:    // =
+                case NE:    // !=
                     ;
                     break;
                 default:
@@ -2454,10 +2488,10 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         label_13:
         while (true) {
             switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
-                case GT:
-                case LT:
-                case LE:
-                case GE:
+                case GT:    // >
+                case LT:    // <
+                case LE:    // <=
+                case GE:    // >=
                     ;
                     break;
                 default:
@@ -2465,16 +2499,16 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
                     break label_13;
             }
             switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
-                case LT:
+                case LT:    // <
                     t = jj_consume_token(LT);
                     break;
-                case GT:
+                case GT:    // >
                     t = jj_consume_token(GT);
                     break;
-                case LE:
+                case LE:    // <=
                     t = jj_consume_token(LE);
                     break;
-                case GE:
+                case GE:    // >=
                     t = jj_consume_token(GE);
                     break;
                 default:
@@ -2500,15 +2534,15 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
             }
         }
     }
-
+    // 位移表达式 << >> >>>
     final public void ShiftExpression() throws ParseException {
         Token t = null;
         AdditiveExpression();
         label_14:
         while (true) {
             switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
-                case LSHIFT:    // <<
-                case RSIGNEDSHIFT:  // >>
+                case LSHIFT:            // <<
+                case RSIGNEDSHIFT:      // >>
                 case RUNSIGNEDSHIFT:    // >>>
                     ;
                     break;
@@ -2517,13 +2551,13 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
                     break label_14;
             }
             switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
-                case LSHIFT:
+                case LSHIFT:            //<<
                     t = jj_consume_token(LSHIFT);
                     break;
-                case RSIGNEDSHIFT:
+                case RSIGNEDSHIFT:      //>>
                     t = jj_consume_token(RSIGNEDSHIFT);
                     break;
-                case RUNSIGNEDSHIFT:
+                case RUNSIGNEDSHIFT:    //>>>
                     t = jj_consume_token(RUNSIGNEDSHIFT);
                     break;
                 default:
@@ -2551,17 +2585,15 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
     }
 
 
-    /**
-     * + -
-     */
+    // + -
     final public void AdditiveExpression() throws ParseException {
         Token t = null;
         MultiplicativeExpression();
         label_15:
         while (true) {
             switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
-                case PLUS:
-                case MINUS:
+                case PLUS:          // +
+                case MINUS:         // -
                     ;
                     break;
                 default:
@@ -2569,10 +2601,10 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
                     break label_15;
             }
             switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
-                case PLUS:
+                case PLUS:          // +
                     t = jj_consume_token(PLUS);
                     break;
-                case MINUS:
+                case MINUS:         // -
                     t = jj_consume_token(MINUS);
                     break;
                 default:
@@ -2600,18 +2632,16 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
     }
 
 
-    /**
-     * * / % 处理
-     */
+    // / % 处理
     final public void MultiplicativeExpression() throws ParseException {
         Token t = null;
         UnaryExpression();
         label_16:
         while (true) {
             switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
-                case STAR:
-                case SLASH:
-                case MOD:
+                case STAR:              // *
+                case SLASH:             // /
+                case MOD:               // %
                     ;
                     break;
                 default:
@@ -2619,13 +2649,13 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
                     break label_16;
             }
             switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
-                case STAR:
+                case STAR:              // *
                     t = jj_consume_token(STAR);
                     break;
-                case SLASH:
+                case SLASH:             // /
                     t = jj_consume_token(SLASH);
                     break;
-                case MOD:
+                case MOD:               // %
                     t = jj_consume_token(MOD);
                     break;
                 default:
@@ -2634,6 +2664,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
                     throw new ParseException();
             }
             UnaryExpression();
+            //二元表达式处理
             TSHBinaryExpression jjtn001 = new TSHBinaryExpression(T_BinaryExpression);
             boolean jjtc001 = true;
             jjtree.openNodeScope(jjtn001);
@@ -2652,17 +2683,17 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
-
+    // 一元表达式处理
     final public void UnaryExpression() throws ParseException {
         Token t = null;
         switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
-            case PLUS:      // +
-            case MINUS:     // -
+            case PLUS:              // +
+            case MINUS:             // -
                 switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
-                    case PLUS: // ++
+                    case PLUS:      // ++
                         t = jj_consume_token(PLUS);
                         break;
-                    case MINUS: // --
+                    case MINUS:     // --
                         t = jj_consume_token(MINUS);
                         break;
                     default:
@@ -2670,6 +2701,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
                         jj_consume_token(default_1);
                         throw new ParseException();
                 }
+                // 一元表达式
                 UnaryExpression();
                 TSHUnaryExpression jjtn001 = new TSHUnaryExpression(T_UnaryExpression);
                 boolean jjtc001 = true;
@@ -2687,10 +2719,10 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
                     }
                 }
                 break;
-            case INCR: // ++
+            case INCR: // ++ i
                 PreIncrementExpression();
                 break;
-            case DECR:  // --
+            case DECR:  // -- i
                 PreDecrementExpression();
                 break;
             case BOOL:
@@ -2703,7 +2735,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
             case LPAREN:
             case BANG:
             case TILDE:
-            case NEW:
+            case NEW:                   // 非 + ，- 的一元表达式
                 UnaryExpressionNotPlusMinus();
                 break;
             default:
@@ -2804,7 +2836,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
                     case NUMBER:
                     case LPAREN:
                     case NEW:
-                        PostfixExpression();
+                        PostfixExpression();            //后缀表达式
                         break;
                     default:
                         jj_la1[50] = jj_gen;
@@ -2820,10 +2852,10 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         if (jj_2_12(2147483647)) {
             PrimaryExpression();
             switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
-                case INCR:
+                case INCR:      // i ++
                     t = jj_consume_token(INCR);
                     break;
-                case DECR:
+                case DECR:      // i --
                     t = jj_consume_token(DECR);
                     break;
                 default:
@@ -2874,20 +2906,20 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         jjtree.openNodeScope(jjtn000);
         jjtreeOpenNodeScope(jjtn000);
         try {
-            PrimaryPrefix();
+            PrimaryPrefix();                // 前缀表达式处理
             label_17:
             while (true) {
                 switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
-                    case LBRACE:
-                    case LBRACKET:
-                    case DOT:
+                    case LBRACE:            // {
+                    case LBRACKET:          // [
+                    case DOT:               // .
                         ;
                         break;
                     default:
                         jj_la1[56] = jj_gen;
                         break label_17;
                 }
-                PrimarySuffix();
+                PrimarySuffix();            //后缀表达式
             }
         } catch (Throwable jjte000) {
             if (jjtc000) {
@@ -2924,23 +2956,23 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
             case TRUE:
             case NUMBER:
             case STR:
-                Literal();
+                Literal();          // false ,null ,true ,number ,str 常量表达式
                 break;
-            case LPAREN:
-                jj_consume_token(LPAREN);
+            case LPAREN:            // ( a + b ) 的情况
+                jj_consume_token(LPAREN);           // 为表达式去括号
                 Expression();
                 jj_consume_token(RPAREN);
                 break;
             case NEW:
-                AllocationExpression();
+                AllocationExpression();         // new Exception()情况
                 break;
             default:
                 jj_la1[57] = jj_gen;
-                if (jj_2_14(2147483647)) {
+                if (jj_2_14(2147483647)) {  //方法调用 ，如 sum(1,2)
                     MethodInvocation();
                 } else {
                     switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
-                        case IDENTIFIER:
+                        case IDENTIFIER:        // 变量名  a = 1 ,此时 a 是变量名，需要从名称空间中取变量的
                             AmbiguousName();
                             break;
                         default:
@@ -2952,6 +2984,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
+    // lambda 表达式方法调用
     final public Token LambdaMethodInvocation(String methodName) throws ParseException {
         TSHMethodInvocation jjtn000 = new TSHMethodInvocation(T_MethodInvocation);
         boolean jjtc000 = true;
@@ -2992,6 +3025,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         return t;
     }
 
+    // 方法调用
     final public void MethodInvocation() throws ParseException {
         TSHMethodInvocation jjtn000 = new TSHMethodInvocation(T_MethodInvocation);
         boolean jjtc000 = true;
@@ -3048,7 +3082,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
-
+    //变量名，或方法引用名
     final public void AmbiguousName() throws ParseException {
         TSHAmbiguousName jjtn000 = new TSHAmbiguousName(T_AmbiguousName);
         boolean jjtc000 = true;
@@ -3082,7 +3116,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
-
+    // 自定义字面量节点
     final public void CustomLiteral(String kind, Object value) throws ParseException {
         TSHLiteral jjtn000 = new TSHLiteral(T_Literal);
         boolean jjtc000 = true;
@@ -3179,6 +3213,8 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         try {
             switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
                 case NUMBER:
+                    //如果是 number 类型，创建 TBigDecimal 对象，这个对象中值为BigDecimal 类型，精度为小数点后几位
+                    //在 java中 int类型的精度为0，值为 int类型的具体值，在 java中所有的数值类型都可以用TBigDecimal来封装
                     x = jj_consume_token(NUMBER);
                     jjtree.closeNodeScope(jjtn000, true);
                     jjtc000 = false;
@@ -3196,12 +3232,13 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
                         }
                     }
                     break;
-                case STR:
+                case STR:           //字符串类型，
                     x = jj_consume_token(STR);
                     jjtree.closeNodeScope(jjtn000, true);
                     jjtc000 = false;
                     jjtreeCloseNodeScope(jjtn000);
                     try {
+                        //字符串类型，处理掉字符串中的转化义字符
                         jjtn000.stringSetup(x.image.substring(1, x.image.length() - 1));
                     } catch (Exception e) {
                         {
@@ -3209,7 +3246,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
                         }
                     }
                     break;
-                case FALSE:
+                case FALSE:         //true ，false 表示 boolean 类型字面量
                 case TRUE:
                     b = BooleanLiteral();
                     jjtree.closeNodeScope(jjtn000, true);
@@ -3217,7 +3254,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
                     jjtreeCloseNodeScope(jjtn000);
                     jjtn000.value = b ? Primitive.TRUE : Primitive.FALSE;
                     break;
-                case NULL:
+                case NULL:          //空类型
                     NullLiteral();
                     jjtree.closeNodeScope(jjtn000, true);
                     jjtc000 = false;
@@ -3285,7 +3322,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         jj_consume_token(NULL);
     }
 
-
+    //参数列表
     final public Token Arguments() throws ParseException {
         TSHArguments jjtn000 = new TSHArguments(T_Arguments);
         boolean jjtc000 = true;
@@ -3368,7 +3405,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
-
+    // new 表达式解析
     final public void AllocationExpression() throws ParseException {
         TSHAllocationExpression jjtn000 = new TSHAllocationExpression(T_AllocationExpression);
         boolean jjtc000 = true;
@@ -3377,11 +3414,11 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         try {
             switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
                 case NEW:
-                    jj_consume_token(NEW);
+                    jj_consume_token(NEW);      //变量名
                     AmbiguousName();
                     switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
                         case LPAREN:
-                            Arguments();
+                            Arguments(); //方法参数  new A(a,b,c)的情况
                             break;
                         default:
                             jj_la1[65] = jj_gen;
@@ -3534,7 +3571,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
     final private boolean isMethod() {
         jj_lastpos = jj_scanpos = token;
         try {
-            return !notDef();
+            return !notDef();               //如果以def 开头，则表示是定义的是方法声明
         } catch (Parser.LookaheadSuccess ls) {
             return true;
         } finally {
