@@ -2041,6 +2041,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
     }
 
 
+    // map 调用
     private void MapInvocation() throws ParseException {
         TSHMapInvocation jjtn000 = new TSHMapInvocation(T_MapInvocation);
         boolean jjtc000 = true;
@@ -2088,6 +2089,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
+    // 等号表达式
     final public void Assignment() throws ParseException {
         TSHAssignment jjtn000 = new TSHAssignment(T_Assignment);
         boolean jjtc000 = true;
@@ -2127,7 +2129,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
         }
     }
 
-
+    // = 操作类型 = ， *= ，/= ,%= ,+= ,-= &= ,^= ,<<= ,>>= ,>>>=
     final public String AssignmentOperator() throws ParseException {
         Token t;
         switch ((jj_ntk == default_1) ? jj_ntk() : jj_ntk) {
