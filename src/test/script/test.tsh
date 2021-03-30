@@ -1,2 +1,6 @@
-a = 1
-export a = a + 1 , b = 2
+
+sum = 0
+for(i in range(1,5)){
+    sum = sum + i
+}
+print(sum)

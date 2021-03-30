@@ -1,0 +1,16 @@
+def add(x, y){
+    return x + y
+}
+
+def logger(fn){
+    def _logger(x,y){
+        print('before', x,y)
+        ret = fn(x,y)
+        print('end ', ret)
+        return ret
+    }
+    return _logger
+}
+t = logger(add)
+
+t(4,9)

@@ -1,0 +1,10 @@
+def sum(){
+    i = 1
+    def c (){
+        i += 2
+    }
+    return c
+}
+
+
+print(sum()())

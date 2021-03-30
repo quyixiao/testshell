@@ -237,7 +237,7 @@ public class RunTest {
         Map<String, Object> globals = new LinkedHashMap<>();
         Map<String, Object> imports = new LinkedHashMap<>();
         List<String> files = Arrays.asList(new String[]{
-                "/Users/quyixiao/project/testshell/src/test/script/method/method15.tsh"
+                "/Users/quyixiao/project/testshell/src/test/script/test.tsh"
         });
         TTuple3<Map<String, Object>, Map<String, Object>, Map<String, Object>> data = null;
         try {

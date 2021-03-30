@@ -1,0 +1,10 @@
+def add(x, y){
+    return x + y
+}
+
+
+def logger(a,b){
+    return add(a,b)
+}
+
+print(logger(1,2))
