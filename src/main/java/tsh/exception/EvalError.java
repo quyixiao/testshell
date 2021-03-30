@@ -39,7 +39,6 @@ import tsh.SimpleNode;
  * EvalError may be thrown for a script syntax error, an evaluation
  * error such as referring to an undefined variable, an internal error.
  * <p>
- *
  */
 public class EvalError extends Exception {
     SimpleNode node;

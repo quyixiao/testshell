@@ -18,8 +18,7 @@ import java.util.Map;
 public class MethodTest {
 
 
-
-    @Test
+    //@Test
     public void test1() throws Exception {
         ClassLoader classLoader = TClassUtils.getDefaultClassLoader();
         URL url = classLoader.getResource("code/base.tsh");

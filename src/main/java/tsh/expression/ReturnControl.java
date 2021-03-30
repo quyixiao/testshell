@@ -42,7 +42,7 @@ public class ReturnControl implements ParserConstants {
      */
     public SimpleNode returnPoint;
 
-    public ReturnControl(String kind, Object value, SimpleNode returnPoint,String label) {
+    public ReturnControl(String kind, Object value, SimpleNode returnPoint, String label) {
         this.kind = kind;
         this.value = value;
         this.returnPoint = returnPoint;

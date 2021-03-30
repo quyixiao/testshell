@@ -1,7 +1,6 @@
 package tsh.util;
 
 
-
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -9,8 +8,8 @@ import java.util.regex.Pattern;
 
 
 /**
- * 
  * 类NumberUtil.java的实现描述： 数字相关的工具类
+ *
  * @author 陈金虎 2015年12月20日 下午2:56:09
  */
 public class TNumberUtil {
@@ -20,9 +19,11 @@ public class TNumberUtil {
      * String convert to int,if string is null or empty or string convert failed, return -1;else return
      * Integer.parseInt(string);
      * </p>
-     * 
+     *
+     * @param str
+     * @return
      * @code{Integer for example:
-     * 
+     *
      * <pre>
      * strToInt(null) = -1;
      * strToInt('') = -1;
@@ -30,8 +31,6 @@ public class TNumberUtil {
      * strToInt('sb') = -1;
      * strToInt('100') = 100;
      * </pre>
-     * @param str
-     * @return
      */
     public static int strToInt(String str) {
         return strToIntWithDefault(str, -1);
@@ -42,9 +41,11 @@ public class TNumberUtil {
      * String convert to int with defaultInt ,if string is null or empty or string convert failed, return default;else
      * return Integer.parseInt(string);
      * </p>
-     * 
+     *
+     * @param str
+     * @return
      * @code{Integer for example:
-     * 
+     *
      * <pre>
      * strToInt(null) = defaultInt;
      * strToInt('') = defaultInt;
@@ -52,8 +53,6 @@ public class TNumberUtil {
      * strToInt('sb') = defaultInt;
      * strToInt('100') = 100;
      * </pre>
-     * @param str
-     * @return
      */
     public static int strToIntWithDefault(String str, int def) {
         if (TStringUtil.isBlank(str)) {
@@ -65,7 +64,7 @@ public class TNumberUtil {
             return def;
         }
     }
-    
+
     public static Integer strToIntWithDefault(String str, Integer def) {
         if (TStringUtil.isBlank(str)) {
             return def;
@@ -88,7 +87,7 @@ public class TNumberUtil {
      * objToLong('sb') = -1l;
      * objToLong('100l') = 100l;
      * </pre>
-     * 
+     *
      * @param obj
      * @return
      */
@@ -101,13 +100,13 @@ public class TNumberUtil {
      * String convert to long,if obj is null or convert failed, return defLong;else return Long.parseLong(string);
      * </p>
      * <code> Long </code> for example:
-     * 
+     *
      * <pre>
      * objToLongWithDefault(null, defLong) = defLong;
      * objToLongWithDefault('sb',defLong) = defLong;
      * objToLongWithDefault('100l',defLong) = 100l;
      * </pre>
-     * 
+     *
      * @param obj
      * @return
      */
@@ -121,7 +120,7 @@ public class TNumberUtil {
             return def;
         }
     }
-    
+
     public static Long objToLongWithDefault(Object obj, Long def) {
         if (null == obj) {
             return def;
@@ -145,7 +144,7 @@ public class TNumberUtil {
      * objToInt('sb') = -1;
      * objToInt('100') = 100;
      * </pre>
-     * 
+     *
      * @param obj
      * @return
      */
@@ -157,14 +156,15 @@ public class TNumberUtil {
      * <p>
      * String convert to int,if obj is null or convert failed, return defInt;else return Integer.parseInt(string);
      * </p>
-     * 
+     *
      * <code> Integer </code>  for example:
-     * 
+     *
      * <pre>
      * objToInt(null) = defInt;
      * objToInt('sb') = defInt;
      * objToInt('100') = 100;
      * </pre>
+     *
      * @param obj
      * @return
      */
@@ -208,7 +208,7 @@ public class TNumberUtil {
             return def;
         }
     }
-    
+
     public static BigDecimal objToBigDecimalDefault(Object obj, BigDecimal defaultValue) {
         if (null == obj) {
             return defaultValue;
@@ -219,7 +219,7 @@ public class TNumberUtil {
             return defaultValue;
         }
     }
-    
+
     public static Long objToLongDefault(Object obj, long defaultValue) {
         if (null == obj) {
             return defaultValue;
@@ -230,7 +230,7 @@ public class TNumberUtil {
             return defaultValue;
         }
     }
-    
+
     public static Long objToLongDefault(Object obj, Long defaultValue) {
         if (null == obj) {
             return defaultValue;
@@ -241,7 +241,7 @@ public class TNumberUtil {
             return defaultValue;
         }
     }
-    
+
     public static Boolean objToBooleanDefault(Object obj, Boolean defaultValue) {
         if (null == obj) {
             return defaultValue;
@@ -252,19 +252,19 @@ public class TNumberUtil {
             return defaultValue;
         }
     }
-    
+
     public static Long objToPageLongDefault(Object obj, Long defaultValue) {
         if (null == obj) {
             return defaultValue;
         }
         try {
-        	Long pageNum = Long.parseLong(obj.toString());
+            Long pageNum = Long.parseLong(obj.toString());
             return pageNum == 0L ? 1L : pageNum;
         } catch (Exception e) {
             return defaultValue;
         }
     }
-    
+
     public static int objToIntDefault(Object obj, int defaultValue) {
         if (null == obj) {
             return defaultValue;
@@ -275,7 +275,7 @@ public class TNumberUtil {
             return defaultValue;
         }
     }
-    
+
     public static Integer objToIntDefault(Object obj, Integer defaultValue) {
         if (null == obj) {
             return defaultValue;
@@ -286,7 +286,6 @@ public class TNumberUtil {
             return defaultValue;
         }
     }
-
 
 
     public static Double objToDoubleWithDefault(Object obj, Double def) {
@@ -420,17 +419,17 @@ public class TNumberUtil {
     }
 
 
-    public static boolean isNumeric(String str){
+    public static boolean isNumeric(String str) {
         Pattern pattern = Pattern.compile("[0-9]*");
         return pattern.matcher(str).matches();
     }
 
     public static int getPrecision(String literal) {
         int a = literal.indexOf(".");
-        if(a == -1 ){
+        if (a == -1) {
             return 0;
         }
-        return literal.length() - a -1 ;
+        return literal.length() - a - 1;
     }
 
     public static void main(String[] args) {

@@ -10,7 +10,6 @@ import tsh.util.TStringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class TSHBeforeForStatement extends SimpleNode implements ParserConstants {
 
@@ -79,7 +78,6 @@ public class TSHBeforeForStatement extends SimpleNode implements ParserConstants
         callstack.swap(enclosingNameSpace);
         return returnControl;
     }
-
 
 
 }

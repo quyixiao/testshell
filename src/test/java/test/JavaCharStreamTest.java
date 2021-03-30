@@ -1,6 +1,5 @@
 package test;
 
-import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
@@ -90,7 +89,6 @@ public class JavaCharStreamTest {
                 System.arraycopy(buffer, tokenBegin, newbuffer, 0, bufsize - tokenBegin);
                 System.arraycopy(buffer, 0, newbuffer, bufsize - tokenBegin, bufpos);
                 buffer = newbuffer;
-
 
 
                 System.arraycopy(bufline, tokenBegin, newbufline, 0, bufsize - tokenBegin);
@@ -373,18 +371,18 @@ public class JavaCharStreamTest {
         jj_input_stream.BeginToken();
         String a = jj_input_stream.read(jj_input_stream, 5);
         jj_input_stream.backup(7);
-        System.out.println("第一次读取："+jj_input_stream.GetImage());
+        System.out.println("第一次读取：" + jj_input_stream.GetImage());
 
         jj_input_stream.BeginToken();
         String c = jj_input_stream.read(jj_input_stream, 17);
-        System.out.println("第二次读取："+jj_input_stream.GetImage());
+        System.out.println("第二次读取：" + jj_input_stream.GetImage());
 
     }
 
 
     public static void main(String[] args) throws Exception {
-       //test1();
-       test2();
+        //test1();
+        test2();
         //test3();
 
 
@@ -433,7 +431,7 @@ public class JavaCharStreamTest {
             try {
                 char a = jj_input_stream.readChar();
                 sb.append(a + "");
-                System.out.println("i = "  +i + " ,c = " + a + " ,buffer = "+   Arrays.toString(buffer) );
+                System.out.println("i = " + i + " ,c = " + a + " ,buffer = " + Arrays.toString(buffer));
             } catch (IOException e) {
                 e.printStackTrace();
             }

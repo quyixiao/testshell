@@ -44,12 +44,12 @@ public class TSHBlock extends SimpleNode {
         return eval(callstack, interpreter, false);
     }
 
-    public Object eval( CallStack callstack, Interpreter interpreter,boolean overrideNamespace)throws EvalError {
+    public Object eval(CallStack callstack, Interpreter interpreter, boolean overrideNamespace) throws EvalError {
         return evalBlock(callstack, interpreter, overrideNamespace, null/*filter*/);
     }
 
 
-    Object evalBlock(CallStack callstack, Interpreter interpreter,boolean overrideNamespace, NodeFilter nodeFilter) throws EvalError {
+    Object evalBlock(CallStack callstack, Interpreter interpreter, boolean overrideNamespace, NodeFilter nodeFilter) throws EvalError {
         Object ret = Primitive.VOID;
         NameSpace enclosingNameSpace = null;
         if (!overrideNamespace) {

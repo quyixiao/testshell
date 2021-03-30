@@ -1,15 +1,12 @@
 package test;
 
-import tsh.Interpreter;
 import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.List;
+import tsh.Interpreter;
 
 public class TestXX {
 
 
-    @Test
+    ////@Test
     public void testAMulB() throws Exception {
         Interpreter i = new Interpreter();  // Construct an interpreter
         try {
@@ -21,9 +18,8 @@ public class TestXX {
     }
 
 
-
-    @Test
-    public void a (){
+    //@Test
+    public void a() {
         int i39 = 10;
         i39 >>>= 3;
         System.out.println(i39);

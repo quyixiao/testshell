@@ -5,7 +5,6 @@ import tsh.Interpreter;
 import tsh.SimpleNode;
 import tsh.exception.EvalError;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 

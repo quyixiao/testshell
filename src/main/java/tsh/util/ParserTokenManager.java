@@ -1,7 +1,6 @@
 package tsh.util;
 
 
-import org.apache.commons.codec.binary.StringUtils;
 import tsh.Token;
 import tsh.constant.ParserConstants;
 import tsh.exception.TokenMgrError;
@@ -9,13 +8,12 @@ import tsh.t.TSHTuple;
 import tsh.t.TTuple2;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ParserTokenManager extends Utils implements ParserConstants {
 
     public static List<char[]> type = new ArrayList<>();
-
 
 
     static {
@@ -125,7 +123,7 @@ public class ParserTokenManager extends Utils implements ParserConstants {
         t.kind = default_1;
         t.image = "";
         t.beginLine = 0;
-        t.beginColumn =0;
+        t.beginColumn = 0;
         t.endLine = 0;
         t.endColumn = 0;
         return t;
@@ -249,7 +247,7 @@ public class ParserTokenManager extends Utils implements ParserConstants {
                 }
             }
         } else if (!continueReader && eqOR(kind, LPAREN, RPAREN, LBRACE, RBRACE, LBRACKET, RBRACKET, SEMICOLON, COMMA,
-                COLON, HOOK,AT,TILDE)) { //如果读取到 （ ）{ } [ ]  ； , : ? @ ~
+                COLON, HOOK, AT, TILDE)) { //如果读取到 （ ）{ } [ ]  ； , : ? @ ~
             String image = input_stream.GetImage().trim();
             if (eqOR(image, SEMICOLON)) {     //如果是; ，略过, 在 java中代码必需以;结尾，但是在脚本中，写不写;都不影响
                 input_stream.tokenBegin += 1;
@@ -303,7 +301,7 @@ public class ParserTokenManager extends Utils implements ParserConstants {
         } else if (!continueReader && eqOR(kind, ASSIGN)) {     // = ,后面只能接 =,如 ==，<=，<<=，>=，>>=，>>>=，!=，+=，-=，*=，/=，&=，|=，^=，%=
             return getSpecial(new char[]{'=', '<', '>', '!', '+', '-', '*', '/', '&', '|', '^', '%'}, '=');
         } else if (!continueReader && eqOR(kind, STAR)) {     // ! ,*  ,^,% ,后面只能接 =
-            return getSpecial(new char[]{'*'}, '*','=');
+            return getSpecial(new char[]{'*'}, '*', '=');
         } else if (!continueReader && eqOR(kind, BANG, XOR, MOD)) {     // ! ,*  ,^,% ,后面只能接 =
             return getSpecial(null, '=');
         } else if (!continueReader && eqOR(kind, PLUS)) {            // + 号后面能接 +,= 有 ，++ 和+= 两种情况
@@ -347,8 +345,8 @@ public class ParserTokenManager extends Utils implements ParserConstants {
         if (preMatches != null && preMatches.length > 0) {
             for (char m : preMatches) {
                 String temp = image;                    // 如 <<= 的情况，读取到最后一个等于符号时
-                if(TStringUtil.isNotBlank(temp) && temp.trim().length() > 0 ){
-                    temp = temp.substring(temp.length() -1 );
+                if (TStringUtil.isNotBlank(temp) && temp.trim().length() > 0) {
+                    temp = temp.substring(temp.length() - 1);
                 }
                 if (eq(temp, m + "")) {
                     preFlag = false;
@@ -472,7 +470,7 @@ public class ParserTokenManager extends Utils implements ParserConstants {
         String b = matchs(a);
         System.out.println(b);
         StringBuilder sb = new StringBuilder();
-        for(char [] t : type){
+        for (char[] t : type) {
             sb.append(t).append(" , ");
         }
         System.out.println(sb);
@@ -514,8 +512,6 @@ public class ParserTokenManager extends Utils implements ParserConstants {
         }
 
     }
-
-
 
 
 }

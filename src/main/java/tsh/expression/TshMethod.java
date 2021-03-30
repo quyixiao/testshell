@@ -89,19 +89,18 @@ public class TshMethod implements ParserConstants, java.io.Serializable {
     public TMethodData methodData;
 
 
-
-    public TshMethod(TSHMethodDeclaration method, NameSpace declaringNameSpace,TMethodData methodData) {
+    public TshMethod(TSHMethodDeclaration method, NameSpace declaringNameSpace, TMethodData methodData) {
         this(method.methodName, Object.class, method.paramsNode.getParamNames(), method.paramsNode.paramTypes, method.blockNode,
                 declaringNameSpace, method.paramsNode.getParamDefaultValues(), methodData);
     }
 
     public TshMethod(String name, Class returnType, String[] paramNames, Class[] paramTypes, TSHBlock methodBody,
                      NameSpace declaringNameSpace, TVar[] defaultValues) {
-        this(name,returnType,paramNames,paramTypes,methodBody,declaringNameSpace,defaultValues,null);
+        this(name, returnType, paramNames, paramTypes, methodBody, declaringNameSpace, defaultValues, null);
     }
 
     public TshMethod(String name, Class returnType, String[] paramNames, Class[] paramTypes, TSHBlock methodBody,
-                     NameSpace declaringNameSpace, TVar[] defaultValues,TMethodData methodData) {
+                     NameSpace declaringNameSpace, TVar[] defaultValues, TMethodData methodData) {
         this.name = name;
         this.creturnType = returnType;
         this.paramNames = paramNames;
@@ -150,7 +149,7 @@ public class TshMethod implements ParserConstants, java.io.Serializable {
     }
 
 
-    public Object invokeNew(Object[] argValues, Interpreter interpreter, CallStack callstack, SimpleNode callerInfo,boolean overrideNameSpace) throws EvalError {
+    public Object invokeNew(Object[] argValues, Interpreter interpreter, CallStack callstack, SimpleNode callerInfo, boolean overrideNameSpace) throws EvalError {
         return invokeImplNew(argValues, interpreter, callstack, callerInfo, overrideNameSpace);
     }
 
@@ -226,9 +225,9 @@ public class TshMethod implements ParserConstants, java.io.Serializable {
                 if (argValue == null) {
                     argValue = dVs.get(i).getValue();                //设置默认值
                 }
-                if (argValue instanceof  TshMethod) {
+                if (argValue instanceof TshMethod) {
                     localNameSpace.setMethod(paramName, (TshMethod) argValue);
-                }else{
+                } else {
                     localNameSpace.setLocalVariable(paramName, argValue, interpreter.getStrictJava());
                 }
             } catch (UtilEvalError e3) {
@@ -317,7 +316,7 @@ public class TshMethod implements ParserConstants, java.io.Serializable {
             for (int i = 0; i < argValues.length; i++) {
                 if (argValues[i] == null) {
                     // quyixiao modify null
-                   // throw new Error("HERE!");
+                    // throw new Error("HERE!");
                 }
             }
         if (javaMethod != null) {

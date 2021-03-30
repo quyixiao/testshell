@@ -57,8 +57,8 @@
 
 package tsh.exception;
 
-import tsh.constant.ParserConstants;
 import tsh.Token;
+import tsh.constant.ParserConstants;
 import tsh.util.Utils;
 
 /**
@@ -308,7 +308,7 @@ public class ParseException extends EvalError implements ParserConstants {
         Token tok = currentToken.next;
         for (int i = 0; i < maxSize; i++) {
             if (i != 0) retval += " ";
-            if (Utils.eq(tok.kind,EOF)) {
+            if (Utils.eq(tok.kind, EOF)) {
                 retval += tokenImage[0];
                 break;
             }

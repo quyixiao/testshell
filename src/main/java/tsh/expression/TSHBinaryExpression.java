@@ -51,9 +51,9 @@ public class TSHBinaryExpression extends SimpleNode implements ParserConstants {
 
         switch (kind) {
             case EQ:
-                if(lhs instanceof String && rhs instanceof String){
+                if (lhs instanceof String && rhs instanceof String) {
                     return (lhs.equals(rhs)) ? Primitive.TRUE : Primitive.FALSE;
-                }else{
+                } else {
                     return (lhs == rhs) ? Primitive.TRUE : Primitive.FALSE;
                 }
             case NE:
@@ -63,13 +63,13 @@ public class TSHBinaryExpression extends SimpleNode implements ParserConstants {
                     return lhs.toString() + rhs.toString();
             case STAR:
                 StringBuilder sb = new StringBuilder();
-                if(lhs instanceof TBigDecimal){
-                    for(int i =0;i < ((TBigDecimal) lhs).getValue().intValue(); i ++){
+                if (lhs instanceof TBigDecimal) {
+                    for (int i = 0; i < ((TBigDecimal) lhs).getValue().intValue(); i++) {
                         sb.append(rhs.toString());
                     }
                 }
-                if(rhs instanceof  TBigDecimal){
-                    for(int i = 0 ;i < ((TBigDecimal) rhs).getValue().intValue();i ++){
+                if (rhs instanceof TBigDecimal) {
+                    for (int i = 0; i < ((TBigDecimal) rhs).getValue().intValue(); i++) {
                         sb.append(lhs.toString());
                     }
                 }
@@ -104,8 +104,6 @@ public class TSHBinaryExpression extends SimpleNode implements ParserConstants {
         return (obj instanceof Boolean ||
                 obj instanceof Character || obj instanceof Number || obj instanceof TBigDecimal);
     }
-
-
 
 
 }

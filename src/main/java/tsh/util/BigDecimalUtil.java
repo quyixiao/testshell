@@ -1,4 +1,3 @@
-
 //
 // Source code recreated from a .class file by IntelliJ IDEA
 // (powered by Fernflower decompiler)
@@ -46,7 +45,7 @@ public class BigDecimalUtil {
         double[] arr$ = params;
         int len$ = params.length;
 
-        for(int i$ = 0; i$ < len$; ++i$) {
+        for (int i$ = 0; i$ < len$; ++i$) {
             double param = arr$[i$];
             BigDecimal b2 = new BigDecimal(Double.toString(param));
             b1 = b1.add(b2);
@@ -56,35 +55,32 @@ public class BigDecimalUtil {
     }
 
 
-
-
-
     public static BigDecimal add(BigDecimal... params) {
         BigDecimal b1 = new BigDecimal(0);
         BigDecimal[] arr$ = params;
         int len$ = params.length;
 
-        for(int i$ = 0; i$ < len$; ++i$) {
+        for (int i$ = 0; i$ < len$; ++i$) {
             BigDecimal param = arr$[i$];
             b1 = b1.add(param);
         }
         return BigDecimalUtil.set2Scale(b1);
     }
 
-    public static BigDecimal set2Scale(BigDecimal bigDecimal){
-        if(bigDecimal == null){
+    public static BigDecimal set2Scale(BigDecimal bigDecimal) {
+        if (bigDecimal == null) {
             bigDecimal = BigDecimal.ZERO;
         }
-        bigDecimal = bigDecimal.setScale(2,BigDecimal.ROUND_HALF_UP);
+        bigDecimal = bigDecimal.setScale(2, BigDecimal.ROUND_HALF_UP);
         return bigDecimal;
     }
 
 
-    public static BigDecimal setScale(BigDecimal bigDecimal,int num){
-        if(bigDecimal == null){
+    public static BigDecimal setScale(BigDecimal bigDecimal, int num) {
+        if (bigDecimal == null) {
             bigDecimal = BigDecimal.ZERO;
         }
-        bigDecimal = bigDecimal.setScale(num,BigDecimal.ROUND_HALF_UP);
+        bigDecimal = bigDecimal.setScale(num, BigDecimal.ROUND_HALF_UP);
         return bigDecimal;
     }
 
@@ -101,7 +97,7 @@ public class BigDecimalUtil {
         } else {
             BigDecimal b1 = new BigDecimal(Double.toString(params[0]));
 
-            for(int i = 1; i < len; ++i) {
+            for (int i = 1; i < len; ++i) {
                 BigDecimal b2 = new BigDecimal(Double.toString(params[i]));
                 b1 = b1.subtract(b2);
             }
@@ -119,8 +115,8 @@ public class BigDecimalUtil {
         } else {
             BigDecimal b1 = params[0];
 
-            for(int i = 1; i < len; ++i) {
-                BigDecimal b2 =  params[i];
+            for (int i = 1; i < len; ++i) {
+                BigDecimal b2 = params[i];
                 b1 = b1.subtract(b2);
             }
 
@@ -178,7 +174,7 @@ public class BigDecimalUtil {
         double[] arr$ = params;
         int len$ = params.length;
 
-        for(int i$ = 0; i$ < len$; ++i$) {
+        for (int i$ = 0; i$ < len$; ++i$) {
             double param = arr$[i$];
             BigDecimal b2 = new BigDecimal(Double.toString(param));
             b1 = b1.multiply(b2);
@@ -204,6 +200,7 @@ public class BigDecimalUtil {
     /**
      * 除法 v1/v2(v2为0时未抛异常，注意不传空)
      * 保留四位有效小数
+     *
      * @param v1
      * @param v2
      * @return
@@ -220,6 +217,7 @@ public class BigDecimalUtil {
     /**
      * 除法 v1/v2(v2为0时未抛异常，注意不传空)
      * 保留四位有效小数
+     *
      * @param v1
      * @param v2
      * @return
@@ -245,7 +243,7 @@ public class BigDecimalUtil {
         BigDecimal[] arr$ = params;
         int len$ = params.length;
 
-        for(int i$ = 0; i$ < len$; ++i$) {
+        for (int i$ = 0; i$ < len$; ++i$) {
             BigDecimal param = arr$[i$];
             BigDecimal b2 = param;
             b1 = b1.multiply(b2);

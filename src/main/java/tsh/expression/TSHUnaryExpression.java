@@ -55,19 +55,19 @@ public class TSHUnaryExpression extends SimpleNode implements ParserConstants {
     }
 
     private Object unaryOperation(Object op, String kind) throws UtilEvalError {
-        if (op instanceof Boolean || op instanceof Character || op instanceof Number ) {
+        if (op instanceof Boolean || op instanceof Character || op instanceof Number) {
             return primitiveWrapperUnaryOperation(op, kind);
         }
-        if(op instanceof TBigDecimal){
-            Object obj  = ((TBigDecimal) op).getValue();
+        if (op instanceof TBigDecimal) {
+            Object obj = ((TBigDecimal) op).getValue();
             int precision = ((TBigDecimal) op).getPrecision();
-            if(((TBigDecimal) op).getPrecision() > 0){
-                op = TNumberUtil.objToDoubleWithDefault(obj,0.0d);
-            }else{
+            if (((TBigDecimal) op).getPrecision() > 0) {
+                op = TNumberUtil.objToDoubleWithDefault(obj, 0.0d);
+            } else {
                 op = TNumberUtil.objToInt(obj);
             }
-            Object result =  primitiveWrapperUnaryOperation(op, kind);
-            return new TBigDecimal(TNumberUtil.objToBigDecimalDefault(result,BigDecimal.ZERO),precision);
+            Object result = primitiveWrapperUnaryOperation(op, kind);
+            return new TBigDecimal(TNumberUtil.objToBigDecimalDefault(result, BigDecimal.ZERO), precision);
         }
         if (!(op instanceof Primitive)) {
             throw new UtilEvalError("Unary operation " + id + " inappropriate for object");
@@ -102,7 +102,7 @@ public class TSHUnaryExpression extends SimpleNode implements ParserConstants {
             return new Float(Primitive.floatUnaryOperation((Float) operand, kind));
         } else if (operand instanceof Double) {
             return new Double(Primitive.doubleUnaryOperation((Double) operand, kind));
-        }else {
+        } else {
             throw new InterpreterError("An error occurred.  Please call technical support.");
         }
     }

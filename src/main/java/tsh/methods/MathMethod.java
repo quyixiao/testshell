@@ -129,9 +129,9 @@ public class MathMethod {
     public Object pow(Object... t) {
         TBigDecimal v1 = (TBigDecimal) t[0];
         TBigDecimal v2 = (TBigDecimal) t[1];
-        int p = v1.getPrecision() > v2.getPrecision()? v1.getPrecision():v2.getPrecision();
-        double a = Math.pow(TNumberUtil.objToDoubleWithDefault(v1.getValue(),0d),
-                TNumberUtil.objToDoubleWithDefault(v2.getValue(),0d)
+        int p = v1.getPrecision() > v2.getPrecision() ? v1.getPrecision() : v2.getPrecision();
+        double a = Math.pow(TNumberUtil.objToDoubleWithDefault(v1.getValue(), 0d),
+                TNumberUtil.objToDoubleWithDefault(v2.getValue(), 0d)
         );
         return new TBigDecimal(new BigDecimal(a), p);
     }
@@ -140,7 +140,7 @@ public class MathMethod {
     public Object radians(Object... t) {
         TBigDecimal v = (TBigDecimal) t[0];
         double a = Math.toRadians(TNumberUtil.objToDoubleWithDefault(v.getValue(), 0d));
-        return new TBigDecimal(new BigDecimal(a),16);
+        return new TBigDecimal(new BigDecimal(a), 16);
     }
 
 
@@ -148,7 +148,7 @@ public class MathMethod {
     public Object sin(Object... t) {
         TBigDecimal v = (TBigDecimal) t[0];
         double a = Math.sin(TNumberUtil.objToDoubleWithDefault(v.getValue(), 0d));
-        return new TBigDecimal(new BigDecimal(a),16);
+        return new TBigDecimal(new BigDecimal(a), 16);
     }
 
 
@@ -156,7 +156,7 @@ public class MathMethod {
     public Object sqrt(Object... t) {
         TBigDecimal v = (TBigDecimal) t[0];
         double a = Math.sqrt(TNumberUtil.objToDoubleWithDefault(v.getValue(), 0d));
-        return new TBigDecimal(new BigDecimal(a),16);
+        return new TBigDecimal(new BigDecimal(a), 16);
     }
 
 
@@ -164,7 +164,7 @@ public class MathMethod {
     public Object tan(Object... t) {
         TBigDecimal v = (TBigDecimal) t[0];
         double a = Math.tan(TNumberUtil.objToDoubleWithDefault(v.getValue(), 0d));
-        return new TBigDecimal(new BigDecimal(a),16);
+        return new TBigDecimal(new BigDecimal(a), 16);
     }
 
 

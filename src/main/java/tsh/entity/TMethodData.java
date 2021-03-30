@@ -6,10 +6,10 @@ public class TMethodData {
     public TSHMethodInvocation invocation;
 
 
-    public TMethodData(){
+    public TMethodData() {
     }
 
-    public TMethodData(TSHMethodInvocation invocation){
+    public TMethodData(TSHMethodInvocation invocation) {
         this.invocation = invocation;
     }
 }

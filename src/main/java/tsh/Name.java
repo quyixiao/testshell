@@ -475,13 +475,13 @@ public class Name implements java.io.Serializable {
 
         if (obj == Primitive.VOID) {
             obj = thisNameSpace.getMethod(varName, new Class[]{null});
-            if(obj == null){
+            if (obj == null) {
                 obj = Primitive.VOID;
             }
         }
 
         //if (obj == null)
-          //  throw new InterpreterError("null this field ref:" + varName);
+        //  throw new InterpreterError("null this field ref:" + varName);
 
         return obj;
     }

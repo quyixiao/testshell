@@ -228,9 +228,9 @@ public class Types {
 
             if ((rhsType == Float.TYPE) && (lhsType == Double.TYPE))
                 return true;
-        }else if((rhsType == TBigDecimal.class) &&
-                    (lhsType == Long.TYPE || lhsType == Float.TYPE || lhsType == Double.TYPE
-                        || lhsType == Integer.TYPE || lhsType == BigDecimal.class || lhsType == Short.TYPE)){
+        } else if ((rhsType == TBigDecimal.class) &&
+                (lhsType == Long.TYPE || lhsType == Float.TYPE || lhsType == Double.TYPE
+                        || lhsType == Integer.TYPE || lhsType == BigDecimal.class || lhsType == Short.TYPE)) {
             return true;
         } else if (lhsType.isAssignableFrom(rhsType))
             return true;

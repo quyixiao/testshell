@@ -14,9 +14,8 @@ public class TSHAnnotationMethodDeclaration extends SimpleNode {
 
     public Object eval(CallStack callstack, Interpreter interpreter) throws EvalError {
         TSHMethodInvocation invocation = ((TSHMethodInvocation) jjtGetChild(0));
-        return ((TSHMethodDeclaration) jjtGetChild(1)).eval(callstack, interpreter,invocation);
+        return ((TSHMethodDeclaration) jjtGetChild(1)).eval(callstack, interpreter, invocation);
     }
-
 
 
 }

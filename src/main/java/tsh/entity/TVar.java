@@ -18,7 +18,7 @@ public class TVar {
         this.value = value;
     }
 
-    public TVar( String name, Object value,String kind) {
+    public TVar(String name, Object value, String kind) {
         this.name = name;
         this.value = value;
         this.kind = kind;

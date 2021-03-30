@@ -7,8 +7,8 @@ import tsh.exception.*;
 import tsh.t.TSHTuple;
 import tsh.t.TTuple3;
 import tsh.util.CollectionManager;
-import tsh.util.TNumberUtil;
 import tsh.util.Reflect;
+import tsh.util.TNumberUtil;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
@@ -179,8 +179,8 @@ public class TSHPrimarySuffix extends SimpleNode implements ParserConstants {
                     if (obj instanceof List) {
                         beginIndex = getRealIndex(((List) obj).size(), getInt(data.getSecond()));
                         endIndex = getRealIndex(((List) obj).size(), getInt(data.getThird()));
-                        List<Object> list =  ((List) obj).subList(beginIndex, endIndex);
-                        if(list.size() == 1 ){
+                        List<Object> list = ((List) obj).subList(beginIndex, endIndex);
+                        if (list.size() == 1) {
                             return list.get(0);
                         }
                         return list;

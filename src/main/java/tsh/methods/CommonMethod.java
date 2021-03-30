@@ -45,7 +45,7 @@ public class CommonMethod {
     }
 
     public Object date(Object... t) {
-        if(t.length == 1 ){
+        if (t.length == 1) {
             return new Date(TNumberUtil.objToLong(t[0]));
         }
         return new Date();
@@ -63,11 +63,10 @@ public class CommonMethod {
     }
 
 
-
     public Object number(Object... t) {
         String a = t[0] + "";
         int precision = TNumberUtil.getPrecision(a);
-        return new TBigDecimal(TNumberUtil.objToBigDecimalDefault(a,BigDecimal.ZERO),precision);
+        return new TBigDecimal(TNumberUtil.objToBigDecimalDefault(a, BigDecimal.ZERO), precision);
     }
 
 
@@ -140,17 +139,17 @@ public class CommonMethod {
                         sb.append("&");
                     }
                     sb.append(d.getKey()).append("=").append(d.getValue());
-                    i ++;
+                    i++;
                 }
                 url = sb.toString();
             }
             HttpPost httpPost = new HttpPost(url);
             httpPost.setConfig(requestConfig);
             if (headers != null) {
-                for (Map.Entry<String,Object> map : headers.entrySet()) {
-                    if(map.getValue() instanceof Map){
+                for (Map.Entry<String, Object> map : headers.entrySet()) {
+                    if (map.getValue() instanceof Map) {
                         httpPost.setHeader(map.getKey(), JSON.toJSONString(map.getValue()));
-                    }else{
+                    } else {
                         httpPost.setHeader(map.getKey(), map.getValue() + "");
                     }
                 }

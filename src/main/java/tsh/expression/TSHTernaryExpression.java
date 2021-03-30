@@ -49,7 +49,7 @@ public class TSHTernaryExpression extends SimpleNode {
 
         if (TSHIfStatement.evaluateCondition(cond, callstack, interpreter)) {
             return evalTrue.eval(callstack, interpreter);
-        }else {
+        } else {
             return evalFalse.eval(callstack, interpreter);
         }
     }

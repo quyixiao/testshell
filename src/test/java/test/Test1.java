@@ -16,7 +16,7 @@ import java.io.Reader;
 
 public class Test1 {
 
-    @Test
+    //@Test
     public void test() throws Exception {
         Object retVal = null;
         String file = "/Users/quyixiao/git/java-python/script/base.tsh";

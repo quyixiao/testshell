@@ -5,8 +5,6 @@ import tsh.Interpreter;
 import tsh.SimpleNode;
 import tsh.exception.EvalError;
 
-import java.util.ArrayList;
-
 public class TSHLambdaDeclaration extends TSHMethodDeclaration {
 
     public TSHLambdaDeclaration(String id) {

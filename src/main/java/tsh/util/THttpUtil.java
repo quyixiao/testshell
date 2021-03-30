@@ -631,7 +631,7 @@ public class THttpUtil {
 
 
     public static void downloadFile(String fileUrl, String path) throws Exception {
-        DataInputStream in =null;
+        DataInputStream in = null;
         DataOutputStream out = null;
         try {
             URL url = new URL(fileUrl);
@@ -658,7 +658,7 @@ public class THttpUtil {
         }
     }
 
-    public static void main(String[] args)  throws Exception{
+    public static void main(String[] args) throws Exception {
         String url = "http://my-wallet.oss-cn-hangzhou.aliyuncs.com/ppl/test/1fbfbf16c4ae5763.jpeg";
 
         ClassLoader classLoader = TClassUtils.getDefaultClassLoader();
@@ -666,8 +666,8 @@ public class THttpUtil {
         String path = pathUrl.getPath();
         System.out.println(path);
         int i = url.lastIndexOf("/");
-        String fileName = url.substring(i+1,url.length());
+        String fileName = url.substring(i + 1, url.length());
         System.out.println(fileName);
-       // downloadFile(url,"/Users/quyixiao/Desktop/xxx.jpeg");
+        // downloadFile(url,"/Users/quyixiao/Desktop/xxx.jpeg");
     }
 }

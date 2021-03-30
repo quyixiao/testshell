@@ -36,9 +36,9 @@ import tsh.exception.UtilTargetError;
 import tsh.expression.Primitive;
 import tsh.expression.TshMethod;
 import tsh.util.CollectionManager;
-import tsh.util.TNumberUtil;
 import tsh.util.Reflect;
 import tsh.util.ReflectManager;
+import tsh.util.TNumberUtil;
 
 import java.lang.reflect.Field;
 import java.util.List;

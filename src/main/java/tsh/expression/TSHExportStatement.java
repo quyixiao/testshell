@@ -38,7 +38,7 @@ public class TSHExportStatement extends SimpleNode {
                     }
                 }
                 Object value = simpleNode.eval(callstack, interpreter);
-                result.put(paramName,value);
+                result.put(paramName, value);
             }
         }
         return new ExportControl(result);

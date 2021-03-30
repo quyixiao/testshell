@@ -12,7 +12,7 @@ import java.util.Map;
 public class PaserTest {
 
 
-    @Test
+    //@Test
     public void test3() throws Exception {
         Reader in = new FileReader("/Users/quyixiao/project/testshell/src/test/resources/test2.tsh");
         Parser parser = new Parser(in);
@@ -26,7 +26,7 @@ public class PaserTest {
         //System.out.println(sb.toString());
     }
 
-    @Test
+    //@Test
     public void test4() throws Exception {
        /* Method mt  =  ClassUtils.getMethod("println");
         Class clazz = mt.getDeclaringClass();

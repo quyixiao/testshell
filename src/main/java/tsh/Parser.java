@@ -2536,6 +2536,7 @@ public class Parser extends Utils implements ParserConstants, ParserTreeConstant
             }
         }
     }
+
     // 位移表达式 << >> >>>
     final public void ShiftExpression() throws ParseException {
         Token t = null;

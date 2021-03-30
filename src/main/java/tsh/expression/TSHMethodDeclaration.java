@@ -44,7 +44,7 @@ public class TSHMethodDeclaration extends SimpleNode {
         NameSpace methodNamespace = namespace;
         BshClassManager bcm = namespace.getClassManager();
         if ("global".equals(namespace.getName())) {    //如果当前命名空间是全局命名空间，自定义方法命名空间,防止变量污染
-            methodNamespace = new NameSpace(bcm,"self_"+ methodName );
+            methodNamespace = new NameSpace(bcm, "self_" + methodName);
             methodNamespace.methods = namespace.methods;
         }
         TMethodData methodData = new TMethodData(invocation);

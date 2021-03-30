@@ -10,7 +10,6 @@ import java.io.StringWriter;
 public class TExceptionUtils {
 
 
-
     public static String dealException(Exception e) {
         return getExceptionInfo(e);
     }
@@ -24,11 +23,11 @@ public class TExceptionUtils {
         try {
             sw = new StringWriter();
             //将出错的栈信息输出到printWriter中
-            if(e instanceof TargetError){
+            if (e instanceof TargetError) {
                 e.getCause().printStackTrace(new PrintWriter(sw, true));
-            } else if (e instanceof EvalError){
+            } else if (e instanceof EvalError) {
                 e.printStackTrace(new PrintWriter(sw, true));
-            } else{
+            } else {
                 e.printStackTrace(new PrintWriter(sw, true));
             }
             String str = sw.toString();
@@ -47,9 +46,9 @@ public class TExceptionUtils {
 
     public static void main(String[] args) {
         try {
-            int a = 0 ;
-            int b = 1 ;
-            int c = b  / a ;
+            int a = 0;
+            int b = 1;
+            int c = b / a;
         } catch (Exception e) {
             String a = dealException(e);
             System.out.println(a);

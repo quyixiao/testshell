@@ -1,7 +1,6 @@
 package tsh.t;
 
 
-
 import java.io.Serializable;
 
 public class TSHTuple implements Serializable {
@@ -200,57 +199,57 @@ public class TSHTuple implements Serializable {
         TTuple11 elevent = tuple.getData();
         if (elevent.getFirst() != null) {
             sb.append(elevent.getFirst()).append("  ");
-        }else{
+        } else {
             return sb.toString();
         }
 
         if (elevent.getSecond() != null) {
             sb.append(elevent.getSecond()).append("  ");
-        }else{
+        } else {
             return sb.toString();
         }
 
         if (elevent.getThird() != null) {
             sb.append(elevent.getThird()).append("  ");
-        }else{
+        } else {
             return sb.toString();
         }
 
         if (elevent.getFourth() != null) {
             sb.append(elevent.getFourth()).append("  ");
-        }else{
+        } else {
             return sb.toString();
         }
 
         if (elevent.getFifth() != null) {
             sb.append(elevent.getFifth()).append("  ");
-        }else{
+        } else {
             return sb.toString();
         }
         if (elevent.getSixth() != null) {
             sb.append(elevent.getSixth()).append("  ");
-        }else{
+        } else {
             return sb.toString();
         }
         if (elevent.getElevent() != null) {
             sb.append(elevent.getElevent()).append("  ");
-        }else{
+        } else {
             return sb.toString();
         }
 
         if (elevent.getEight() != null) {
             sb.append(elevent.getEight()).append("  ");
-        }else{
+        } else {
             return sb.toString();
         }
         if (elevent.getNine() != null) {
             sb.append(elevent.getNine()).append("  ");
-        }else{
+        } else {
             return sb.toString();
         }
         if (elevent.getTen() != null) {
             sb.append(elevent.getTen()).append("  ");
-        }else{
+        } else {
             return sb.toString();
         }
         return sb.toString();

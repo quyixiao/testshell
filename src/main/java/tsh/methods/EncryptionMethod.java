@@ -4,15 +4,13 @@ import org.apache.commons.codec.digest.DigestUtils;
 import tsh.util.TStringUtil;
 
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 public class EncryptionMethod {
 
 
-
-    public static Object sha256(Object ... t)  {
+    public static Object sha256(Object... t) {
         try {
-            String signStrBefore = (String)t[0];
+            String signStrBefore = (String) t[0];
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             md.update(signStrBefore.getBytes());
             String tempStr = null;
@@ -35,8 +33,8 @@ public class EncryptionMethod {
         return null;
     }
 
-    public static String md5(Object ... t) {
-        String md5Str = (String)t[0];
+    public static String md5(Object... t) {
+        String md5Str = (String) t[0];
         if (TStringUtil.isBlank(md5Str)) {
             return null;
         }

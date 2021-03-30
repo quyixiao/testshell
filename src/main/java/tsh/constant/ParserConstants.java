@@ -1,4 +1,3 @@
-
 package tsh.constant;
 
 import java.util.Arrays;
@@ -38,7 +37,6 @@ public interface ParserConstants {
     String IN = "in";                            //变量
     String EXPORT = "export";                            // 变量导出
     String NEW = "new";                            //  创建
-
 
 
     String IDENTIFIER = "identifier";                            // 字符字面量

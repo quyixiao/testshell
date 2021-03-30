@@ -6,10 +6,10 @@
 package tsh.engine;
 
 import tsh.ExternalNameSpace;
-import tsh.This;
-import tsh.exception.*;
 import tsh.Interpreter;
 import tsh.NameSpace;
+import tsh.This;
+import tsh.exception.*;
 
 import javax.script.*;
 import java.io.*;

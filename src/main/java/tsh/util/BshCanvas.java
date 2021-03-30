@@ -27,9 +27,9 @@
 
 package tsh.util;
 
+import tsh.Interpreter;
 import tsh.This;
 import tsh.exception.EvalError;
-import tsh.Interpreter;
 
 import javax.swing.*;
 import java.awt.*;

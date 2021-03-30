@@ -113,7 +113,7 @@ public class CollectionManager {
          *
          * @param The object over which we are iterating
          * @throws IllegalArgumentException If the argument is not a
-         *                                            supported (i.e. iterable) type.
+         *                                  supported (i.e. iterable) type.
          * @throws NullPointerException     If the argument is null
          */
         public BasicBshIterator(Object iterateOverMe) {
@@ -127,7 +127,7 @@ public class CollectionManager {
          *                      StringBuffer or an array
          * @return an enumeration
          * @throws IllegalArgumentException If the argument is not a
-         *                                            supported (i.e. iterable) type.
+         *                                  supported (i.e. iterable) type.
          * @throws NullPointerException     If the argument is null
          */
         protected Enumeration createEnumeration(Object iterateOverMe) {

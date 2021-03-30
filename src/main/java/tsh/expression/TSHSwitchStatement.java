@@ -71,7 +71,7 @@ public class TSHSwitchStatement extends SimpleNode implements ParserConstants {
      * yuck: factor this out into Primitive.java
      */
     private boolean primitiveEquals(Object switchVal, Object targetVal, CallStack callstack, SimpleNode switchExp) throws EvalError {
-        if (switchVal instanceof Primitive || targetVal instanceof Primitive || switchVal instanceof TBigDecimal || targetVal instanceof TBigDecimal ) {
+        if (switchVal instanceof Primitive || targetVal instanceof Primitive || switchVal instanceof TBigDecimal || targetVal instanceof TBigDecimal) {
             try {
                 Object result = Primitive.binaryOperation(switchVal, targetVal, ParserConstants.EQ);
                 result = Primitive.unwrap(result);

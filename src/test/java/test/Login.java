@@ -32,7 +32,7 @@ public class Login {
                 "time") + "&appVersion=" + map.get("appVersion") + map.get("token");
         System.out.println(signStrBefore);
 
-        map.put("sign",EncryptionMethod.sha256(signStrBefore));
+        map.put("sign", EncryptionMethod.sha256(signStrBefore));
 
         Map<String, Object> headers = new LinkedHashMap<>();
         headers.put("Content-Type", "application/json;charset=UTF-8");
@@ -40,8 +40,8 @@ public class Login {
 
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("mobile", userName);
-        data.put("verifyCode","888888");
-        data.put("userName",userName);
+        data.put("verifyCode", "888888");
+        data.put("userName", userName);
         data.put("envData", "eyJwaG9uZVR5cGUiOiJvcyIsImRldk9TVmVyc2lvbiI6IjEwLjIifQ==");
         String result = THttpUtil.post(login_register_url, headers, data);
         System.out.println(result);

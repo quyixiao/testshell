@@ -321,7 +321,7 @@ public final class Primitive implements ParserConstants, java.io.Serializable {
                 return new TBigDecimal(d1.multiply(d2), precision);
 
             case SLASH:
-                return new TBigDecimal(d1.divide(d2,precision, BigDecimal.ROUND_HALF_UP), precision);
+                return new TBigDecimal(d1.divide(d2, precision, BigDecimal.ROUND_HALF_UP), precision);
 
             case MOD:
                 return new TBigDecimal(new BigDecimal(new Double(lhs % rhs)), precision);

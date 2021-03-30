@@ -275,7 +275,7 @@ public class NameSpace implements java.io.Serializable, BshClassManager.Listener
 
         // primitives should have been wrapped
         //if (value == null)
-          //  throw new InterpreterError("null variable value");
+        //  throw new InterpreterError("null variable value");
 
         // Locate the variable definition if it exists.
         Variable existing = getVariableImpl(name, recurse);
@@ -605,7 +605,6 @@ public class NameSpace implements java.io.Serializable, BshClassManager.Listener
     void setClassManager(BshClassManager classManager) {
         this.classManager = classManager;
     }
-
 
 
     /**

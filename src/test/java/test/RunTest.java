@@ -18,7 +18,7 @@ import java.util.Map;
 public class RunTest {
 
 
-    @Test
+    //@Test
     public void test() throws Exception {
         ClassLoader classLoader = TClassUtils.getDefaultClassLoader();
         URL url = classLoader.getResource("code/base.tsh");
@@ -53,14 +53,14 @@ public class RunTest {
     }
 
 
-    @Test
+    //@Test
     public void test1() throws Exception {
         ResouceHelp resouceHelp = new ResouceHelp();
         Map<String, Object> init = new LinkedHashMap<>();
         Map<String, Object> globals = new LinkedHashMap<>();
         Map<String, Object> imports = new LinkedHashMap<>();
 
-       List<String> files = Arrays.asList(new String[]{
+        List<String> files = Arrays.asList(new String[]{
                 "/Users/quyixiao/git/java-python/script/test/global1.tsh",
                 "/Users/quyixiao/git/java-python/script/test/global2.tsh",
                 "/Users/quyixiao/git/java-python/script/test/global3.tsh"});
@@ -77,7 +77,7 @@ public class RunTest {
     }
 
 
-    @Test
+    //@Test
     public void test2() throws Exception {
         ResouceHelp resouceHelp = new ResouceHelp();
         Map<String, Object> init = new LinkedHashMap<>();
@@ -102,8 +102,7 @@ public class RunTest {
     }
 
 
-
-    @Test
+    //@Test
     public void test3() throws Exception {
         ResouceHelp resouceHelp = new ResouceHelp();
         Map<String, Object> init = new LinkedHashMap<>();
@@ -127,8 +126,7 @@ public class RunTest {
     }
 
 
-
-    @Test
+    //@Test
     public void test4() throws Exception {
         ResouceHelp resouceHelp = new ResouceHelp();
         Map<String, Object> init = new LinkedHashMap<>();
@@ -151,7 +149,7 @@ public class RunTest {
         }
     }
 
-  @Test
+    //@Test
     public void test5() throws Exception {
         ResouceHelp resouceHelp = new ResouceHelp();
         Map<String, Object> init = new LinkedHashMap<>();
@@ -177,8 +175,7 @@ public class RunTest {
     }
 
 
-
-    @Test
+    //@Test
     public void test6() throws Exception {
         ResouceHelp resouceHelp = new ResouceHelp();
         Map<String, Object> init = new LinkedHashMap<>();
@@ -202,7 +199,7 @@ public class RunTest {
         }
     }
 
-    @Test
+    //@Test
     public void test7() throws Exception {
         ResouceHelp resouceHelp = new ResouceHelp();
         Map<String, Object> init = new LinkedHashMap<>();
@@ -227,10 +224,7 @@ public class RunTest {
     }
 
 
-
-
-
-    @Test
+    //@Test
     public void test8() throws Exception {
         ResouceHelp resouceHelp = new ResouceHelp();
         Map<String, Object> init = new LinkedHashMap<>();

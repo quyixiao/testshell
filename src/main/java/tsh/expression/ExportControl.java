@@ -34,9 +34,9 @@ import java.util.Map;
 
 public class ExportControl implements ParserConstants {
 
-    public Map<String,Object> export;
+    public Map<String, Object> export;
 
-    public ExportControl( Map<String,Object> map) {
+    public ExportControl(Map<String, Object> map) {
         this.export = map;
     }
 }
