@@ -1,0 +1,8 @@
+
+a = 1
+def sum(x,y){
+    a = 2
+    return x + y
+}
+print(a)
+print(sum(1,2))

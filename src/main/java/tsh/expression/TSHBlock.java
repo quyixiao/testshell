@@ -41,7 +41,7 @@ public class TSHBlock extends SimpleNode {
 
     public Object eval(CallStack callstack, Interpreter interpreter)
             throws EvalError {
-        return eval(callstack, interpreter, true);
+        return eval(callstack, interpreter, false);
     }
 
     public Object eval( CallStack callstack, Interpreter interpreter,boolean overrideNamespace)throws EvalError {

@@ -1043,7 +1043,7 @@ public class Interpreter
             //TRACE = Boolean.getBoolean("trace");
             TRACE = false;
             //LOCALSCOPING =  Boolean.getBoolean("localscoping");
-            LOCALSCOPING = true;
+            LOCALSCOPING = false;
             String outfilename = System.getProperty("outfile");
             if (outfilename != null)
                 redirectOutputToFile(outfilename);
