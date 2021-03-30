@@ -1,6 +1,10 @@
 
-sum = 0
-for(i in range(1,5)){
-    sum = sum + i
+def a (x ,y ){
+
 }
-print(sum)
+
+def sum(x,y){
+    a = x
+    print(a)
+}
+sum(1,2)

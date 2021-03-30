@@ -87,6 +87,7 @@ public class Utils {
             Interpreter localInterpreter = new Interpreter(in, System.out, System.err, false, null, null, script);
             BshClassManager bcm = BshClassManager.createClassManager(localInterpreter);
             NameSpace nameSpace = new NameSpace(bcm, "global");
+
             CallStack callstack = new CallStack(nameSpace);
             Utils.batchInitVariable(nameSpace, init);
             boolean eof = false;

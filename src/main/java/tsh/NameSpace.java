@@ -83,7 +83,7 @@ public class NameSpace implements java.io.Serializable, BshClassManager.Listener
     private String nsName;
     private NameSpace parent;
     private Hashtable variables;
-    private Hashtable methods;
+    public Hashtable methods;
 
     protected Hashtable importedClasses;
     private Vector importedPackages;
@@ -605,6 +605,8 @@ public class NameSpace implements java.io.Serializable, BshClassManager.Listener
     void setClassManager(BshClassManager classManager) {
         this.classManager = classManager;
     }
+
+
 
     /**
      * Used for serialization

@@ -186,8 +186,7 @@ public class LHS implements ParserConstants, java.io.Serializable {
     /**
      * Assign a value to the LHS.
      */
-    public Object assign(Object val, boolean strictJava)
-            throws UtilEvalError {
+    public Object assign(Object val, boolean strictJava) throws UtilEvalError {
         if (type == VARIABLE) {
             if (val instanceof TshMethod) {
                 nameSpace.setMethod(varName, (TshMethod) val);
