@@ -224,7 +224,7 @@ public class RunTest {
     }
 
 
-    //@Test
+    @Test
     public void test8() throws Exception {
         ResouceHelp resouceHelp = new ResouceHelp();
         Map<String, Object> init = new LinkedHashMap<>();
